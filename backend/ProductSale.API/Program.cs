@@ -1,3 +1,7 @@
+using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
+using ProductSale.Repository.Data;
+
 namespace ProductSale.API
 {
     public class Program
@@ -8,7 +12,15 @@ namespace ProductSale.API
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            builder
+                .Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; //ignore json cycle
+                });
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+            );
 
             var app = builder.Build();
 
@@ -17,7 +29,6 @@ namespace ProductSale.API
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
