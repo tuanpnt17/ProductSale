@@ -1,10 +1,17 @@
 plugins {
     alias(libs.plugins.android.application)
+    id 'com.google.dagger.hilt.android'
 }
+
+apply plugin: 'com.google.dagger.hilt.android'
+
 
 android {
     namespace 'com.prm392.assignment.productsale'
     compileSdk 35
+    buildFeatures {
+        buildConfig true
+    }
 
     defaultConfig {
         applicationId "com.prm392.assignment.productsale"
@@ -20,6 +27,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "BASE_URL", "\"https://localhost:7157\""
         }
     }
     compileOptions {
@@ -37,4 +45,29 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+
+    // Hilt DI
+    implementation 'com.google.dagger:hilt-android:2.55'
+    annotationProcessor 'com.google.dagger:hilt-compiler:2.55'
+
+    // For instrumentation tests
+    androidTestImplementation  'com.google.dagger:hilt-android-testing:2.55'
+    androidTestAnnotationProcessor 'com.google.dagger:hilt-compiler:2.55'
+
+    // For local unit tests
+    testImplementation 'com.google.dagger:hilt-android-testing:2.55'
+    testAnnotationProcessor 'com.google.dagger:hilt-compiler:2.55'
+
+    // Retrofit & OkHttp
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+
+    // Lifecycle, LiveData, ViewModel
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
 }
