@@ -22,11 +22,25 @@ namespace ProductSale.API
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
             );
 
+            // Add CORS
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    "AllowAndroid",
+                    corsPolicyBuilder =>
+                    {
+                        corsPolicyBuilder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                    }
+                );
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
+
+            app.UseCors("AllowAndroid");
 
             app.UseAuthorization();
 

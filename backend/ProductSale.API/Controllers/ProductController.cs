@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ProductSale.Repository.Data;
 
 namespace ProductSale.API.Controllers
@@ -11,12 +10,8 @@ namespace ProductSale.API.Controllers
         [HttpGet]
         public IActionResult GetProducts()
         {
-            var product = context
-                .Products.Include(x => x.Category)
-                .FirstOrDefault(p => p.ProductId == 2);
+            var product = context.Products.ToList();
             return Ok(product);
-            //var products = context.Categories.Include(x => x.Products).ToList();
-            //return Ok(products);
         }
     }
 }
