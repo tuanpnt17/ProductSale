@@ -1,47 +1,126 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProductSale.Repository.Data;
+using ProductSale.Repository.Helpers;
 using ProductSale.Repository.Interfaces;
 
 namespace ProductSale.Repository.Repositories
 {
-    public class GenericRepository<T> : IRepository<T>
-        where T : class
-    {
-        protected readonly ApplicationDbContext _context;
+	public class GenericRepository<T> : IGenericRepository<T>
+		where T : class
+	{
+		protected readonly ApplicationDbContext _context;
+		internal DbSet<T> dbSet;
 
-        public GenericRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+		public GenericRepository(ApplicationDbContext context)
+		{
+			_context = context;
+			dbSet = _context.Set<T>();
+		}
 
-        public async Task Add(T entity)
-        {
-            await _context.Set<T>().AddAsync(entity);
-        }
+		public async Task<T?> GetByIdAsync(int id)
+		{
+			return await _context.Set<T>().FindAsync(id);
+		}
+		public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter,string? includeProperties = null)
+		{
+			IQueryable<T> query = dbSet;
+			query = query.Where(filter);
+			if (includeProperties != null)
+			{
+				foreach (
+					var item in includeProperties.Split(
+						new char[] { ',' },
+						StringSplitOptions.RemoveEmptyEntries
+					)
+				)
+				{
+					query = query.Include(item);
+				}
+			}
+			return await query.ToListAsync();
+		}
+		public async Task InsertAsync(T entity)
+		{
+			 await dbSet.AddAsync(entity);
+		}
+		public async Task AddRangeAsync(IEnumerable<T> entities)
+		{
+			await dbSet.AddRangeAsync(entities);
+		}
+		public void Update(T entity)
+		{
+			dbSet.Update(entity);
+		}
 
-        public void Delete(T entity)
-        {
-            _context.Set<T>().Remove(entity);
-        }
+		public void Delete(T entity)
+		{
+			dbSet.Remove(entity);
+		}
+		public async Task<T> GetFirstOrDefaultAsync(
+		Expression<Func<T, bool>> predicate,
+		string? includeProperties = null
+	)
+		{
+			IQueryable<T> query = dbSet;
+			query = query.Where(predicate);
+			if (includeProperties != null)
+			{
+				foreach (
+					var item in includeProperties.Split(
+						new char[] { ',' },
+						StringSplitOptions.RemoveEmptyEntries
+					)
+				)
+				{
+					query = query.Include(item);
+				}
+			}
+			return await query.FirstOrDefaultAsync();
+		}
 
-        public async Task<IEnumerable<T>> GetAll()
-        {
-            return await _context.Set<T>().AsNoTracking().ToListAsync();
-        }
+		public async Task<Pagination<T>> GetPaginationAsync(
+		Expression<Func<T, bool>>? predicate = null,
+		string? includeProperties = null,
+		int pageIndex = 1,
+		int pageSize = 10
+	)
+		{
+			IQueryable<T> query = dbSet;
+			if (predicate != null)
+				query = query.Where(predicate);
+			if (includeProperties != null)
+			{
+				foreach (
+					var item in includeProperties.Split(
+						new char[] { ',' },
+						StringSplitOptions.RemoveEmptyEntries
+					)
+				)
+				{
+					query = query.Include(item);
+				}
+			}
+			var itemCount = await query.CountAsync();
+			var items = await query
+				.Skip((pageIndex - 1) * pageSize)
+				.Take(pageSize)
+				.AsNoTracking()
+				.ToListAsync();
+			var result = new Pagination<T>()
+			{
+				PageIndex = pageIndex,
+				PageSize = pageSize,
+				TotalItemsCount = itemCount,
+				Items = items,
+			};
 
-        public async Task<T?> GetById(int id)
-        {
-            return await _context.Set<T>().FindAsync(id);
-        }
-
-        public void Update(T entity)
-        {
-            _context.Set<T>().Update(entity);
-        }
-    }
+			return result;
+		}
+	}
 }

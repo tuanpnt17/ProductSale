@@ -1,6 +1,20 @@
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using ProductSale.API.Helpers;
+using ProductSale.Business.Category;
+using ProductSale.Business.ChatMessage;
+using ProductSale.Business.Notification;
+using ProductSale.Business.Order;
+using ProductSale.Business.Payment;
+using ProductSale.Business.Product;
+using ProductSale.Business.StoreLocation;
+using ProductSale.Business.User;
+using ProductSale.Bussiness.Cart;
 using ProductSale.Repository.Data;
+using ProductSale.Repository.Interfaces;
+using ProductSale.Repository.Repositories;
 
 namespace ProductSale.API
 {
@@ -33,13 +47,75 @@ namespace ProductSale.API
                 );
             });
 
-            var app = builder.Build();
+			builder.Services.AddSwaggerGen(options =>
+			{
+				options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+				{
+					Name = "Authorization",
+					In = ParameterLocation.Header,
+					Type = SecuritySchemeType.ApiKey,
+					Scheme = JwtBearerDefaults.AuthenticationScheme
+				});
 
-            // Configure the HTTP request pipeline.
+				options.AddSecurityRequirement(new OpenApiSecurityRequirement
+			    {
+				    {
+					    new OpenApiSecurityScheme
+					    {
+						    Reference = new OpenApiReference
+						    {
+							    Type = ReferenceType.SecurityScheme,
+							    Id = JwtBearerDefaults.AuthenticationScheme
+						    },
+						    Scheme = "Oauth2",
+						    Name = JwtBearerDefaults.AuthenticationScheme,
+						    In = ParameterLocation.Header
+					    },
+					    new List<string>()
+				    }
+			    });
+			});
+
+
+
+			builder.Services.AddAutoMapper(
+                opt =>
+                {
+                    opt.AddProfile<MappingProfile>();
+                },
+                typeof(AppDomain)
+            );
+
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<ICartRepository, CartRepository>();
+            builder.Services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
+            builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
+            builder.Services.AddScoped<IStoreLocationRepository, StoreLocationRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<ICartService, CartService>();
+            builder.Services.AddScoped<IChatMessageService, ChatMessageService>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
+            builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IStoreLocationService, StoreLocationService>();
+            builder.Services.AddScoped<IUserService, UserService>();
+
+            var app = builder.Build();
+            // Swagger
+
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
 
             //app.UseHttpsRedirection();
-
-            app.UseCors("AllowAndroid");
 
             app.UseCors("AllowAndroid");
 

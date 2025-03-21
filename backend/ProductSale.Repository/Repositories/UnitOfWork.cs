@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore.Storage;
-using ProductSale.Repository.Data;
+﻿using Microsoft.EntityFrameworkCore.Storage;
 using ProductSale.Repository.Data;
 using ProductSale.Repository.Interfaces;
 
@@ -16,18 +8,26 @@ namespace ProductSale.Repository.Repositories
     {
         private readonly ApplicationDbContext _context;
         private IDbContextTransaction? _transaction;
+		private readonly Dictionary<Type, object> _repositories = new Dictionary<Type, object>();
 
-        public UnitOfWork(ApplicationDbContext context, IDbContextTransaction transaction)
+		public UnitOfWork(ApplicationDbContext context, IDbContextTransaction transaction)
         {
             _context = context;
             _transaction = transaction;
         }
 
-        public IRepository<T> Repository<T>()
+        public IGenericRepository<T> GenericRepository<T>()
             where T : class
         {
-            throw new NotImplementedException();
-        }
+			if (_repositories.TryGetValue(typeof(T), out var repository))
+			{
+				return (IGenericRepository<T>)repository;
+			}
+
+			var newRepository = new GenericRepository<T>(_context);
+			_repositories.Add(typeof(T), newRepository);
+			return newRepository;
+		}
 
         public async Task<int> SaveChangesAsync()
         {
@@ -44,8 +44,8 @@ namespace ProductSale.Repository.Repositories
             if (_transaction != null)
             {
                 await _transaction.CommitAsync();
-                await _transaction.DisposeAsync();
-            }
+			    Dispose();
+			}
         }
 
         public async Task RollbackTransactionAsync()
@@ -53,7 +53,7 @@ namespace ProductSale.Repository.Repositories
             if (_transaction != null)
             {
                 await _transaction.RollbackAsync();
-                await _transaction.DisposeAsync();
+                Dispose();
             }
         }
 
