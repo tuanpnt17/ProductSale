@@ -37,7 +37,9 @@ namespace ProductSale.API
 
             // Configure the HTTP request pipeline.
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
+
+            app.UseCors("AllowAndroid");
 
             app.UseCors("AllowAndroid");
 
