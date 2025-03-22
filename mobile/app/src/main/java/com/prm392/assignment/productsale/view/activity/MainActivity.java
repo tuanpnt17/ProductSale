@@ -116,8 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
-
-
+            navController = Navigation.findNavController(this, R.id.main_FragmentContainer);
             firstLaunch = SharedPrefManager.get(this).isFirstLaunch();
             rememberMe = SharedPrefManager.get(this).isRememberMeChecked();
             signedIn = true; //SharedPrefManager.get(this).isSignedIn();
@@ -223,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
     public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
         super.onPostCreate(savedInstanceState, persistentState);
         try {
-            navController = Navigation.findNavController(this, R.id.main_FragmentContainer);
+
         } catch (Exception e) {
             Log.e("MainActivity", "Error inflating layout", e);
         }
@@ -240,10 +239,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        if (underlayNavigationDrawer.isOpened()) underlayNavigationDrawer.closeMenu();
-        else if (vb.menu.getCheckedRadioButtonId() != R.id.menu_home && navController.getBackQueue().getSize() == 3)
-            vb.menuHome.setChecked(true);
-        else super.onBackPressed();
+//        if (underlayNavigationDrawer.isOpened()) underlayNavigationDrawer.closeMenu();
+//        else if (vb.menu.getCheckedRadioButtonId() != R.id.menu_home && navController.getBackQueue().getSize() == 3)
+//            vb.menuHome.setChecked(true);
+//        else super.onBackPressed();
     }
 
     @Override
@@ -253,12 +252,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void navigateToFragment(int id) {
-        underlayNavigationDrawer.closeMenu();
-        new Handler().postDelayed(() -> {
-            navController.popBackStack(id, true);
-            navController.navigate(id, null, new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
 
-        }, underlayNavigationDrawer.getAnimationDuration());
+        try {
+            underlayNavigationDrawer.closeMenu();
+            new Handler().postDelayed(() -> {
+                navController.popBackStack(id, true);
+                navController.navigate(id, null, new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
+
+            }, underlayNavigationDrawer.getAnimationDuration());
+        } catch (Exception e) {
+            Log.e("MainActivity", "Error inflating layout", e);
+        }
     }
 
     public void syncUserData() {

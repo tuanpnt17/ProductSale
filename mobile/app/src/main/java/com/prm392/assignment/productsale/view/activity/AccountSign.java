@@ -1,5 +1,6 @@
 package com.prm392.assignment.productsale.view.activity;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -8,6 +9,7 @@ import androidx.navigation.Navigation;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 
@@ -34,8 +36,6 @@ public class AccountSign extends AppCompatActivity {
         setContentView(view);
 
         overridePendingTransition(R.anim.lay_on,R.anim.null_anim);
-
-        navController = Navigation.findNavController(this, R.id.account_sign_fragmentsContainer);
         viewModel = new ViewModelProvider(this).get(AccountSignViewModel.class);
         vb.accountSignBack.setOnClickListener(button -> {
             onBackPressed();
@@ -46,6 +46,12 @@ public class AccountSign extends AppCompatActivity {
 
         boolean forcedSignOut = getIntent().getBooleanExtra(UserAccountManager.FORCED_SIGN_OUT,false);
         if(forcedSignOut) DialogsProvider.get(this).messageDialog(getString(R.string.Session_Expired),getString(R.string.You_are_signed_out_for_account_security));
+    }
+
+    @Override
+    public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+        super.onPostCreate(savedInstanceState, persistentState);
+        navController = Navigation.findNavController(this, R.id.account_sign_fragmentsContainer);
     }
 
     @Override
