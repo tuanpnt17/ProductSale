@@ -153,7 +153,7 @@ public class SearchResultsFragment extends Fragment{
         new Handler().post(()->{
             navController = ((MainActivity)getActivity()).getAppNavController();
         });
-        viewModel = new ViewModelProvider(this).get(SearchResultsViewModel.class);
+        viewModel = new ViewModelProvider(this, ViewModelProvider.Factory.from(SearchResultsViewModel.initializer)).get(SearchResultsViewModel.class);
         if (getArguments() != null) viewModel.setKeyword(getArguments().getString("keyword"));
         vb.resultKeyword.setText(viewModel.getKeyword());
         vb.resultKeywordLoading.setText(viewModel.getKeyword());

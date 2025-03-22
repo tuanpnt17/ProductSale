@@ -65,7 +65,7 @@ public class OnSaleFragment extends Fragment {
         new Handler().post(()->{
             navController = ((MainActivity)getActivity()).getAppNavController();
         });
-        viewModel = new ViewModelProvider(this).get(OnSaleViewModel.class);
+        viewModel = new ViewModelProvider(this, ViewModelProvider.Factory.from(OnSaleViewModel.initializer)).get(OnSaleViewModel.class);
 
         adapter = new ProductsListAdapter(getContext(),vb.onSaleRecyclerVeiw);
         vb.onSaleRecyclerVeiw.setLayoutManager(new LinearLayoutManager(getContext()));

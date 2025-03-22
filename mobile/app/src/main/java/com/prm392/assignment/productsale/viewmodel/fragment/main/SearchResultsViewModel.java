@@ -1,5 +1,7 @@
 package com.prm392.assignment.productsale.viewmodel.fragment.main;
 
+import static androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY;
+
 import android.app.Application;
 
 import androidx.annotation.NonNull;
@@ -7,6 +9,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.viewmodel.ViewModelInitializer;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -49,6 +52,15 @@ public class SearchResultsViewModel extends ViewModel {
         categories = new HashSet<>();
         brands = new HashSet<>();
     }
+
+    public static final ViewModelInitializer<SearchResultsViewModel> initializer = new ViewModelInitializer<>(
+            SearchResultsViewModel.class,
+            creationExtras -> {
+                Application app = (Application) creationExtras.get(APPLICATION_KEY);
+                assert app != null;
+                return new SearchResultsViewModel(app);
+            }
+    );
 
     public LiveData<Response<ProductsResponseModel>> loadResults(){
         initialLoadedProducts = repository.searchProducts(token,

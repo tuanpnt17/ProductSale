@@ -78,7 +78,7 @@ public class StorePageFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         if(viewModel!=null) return;
 
-        viewModel = new ViewModelProvider(this).get(StorePageViewModel.class);
+        viewModel = new ViewModelProvider(this, ViewModelProvider.Factory.from(StorePageViewModel.initializer)).get(StorePageViewModel.class);
         if (getArguments() != null) viewModel.setStoreId(getArguments().getLong("storeId"));
 
         new Handler().post(()->{

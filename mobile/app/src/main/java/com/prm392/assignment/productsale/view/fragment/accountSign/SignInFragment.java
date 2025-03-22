@@ -35,7 +35,8 @@ public class SignInFragment extends Fragment {
     private SignInViewModel viewModel;
     private NavController navController;
 
-    public SignInFragment() { }
+    public SignInFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,8 @@ public class SignInFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        if(vb==null) vb = FragmentSignInBinding.inflate(inflater,container,false);
+        if (vb == null)
+            vb = FragmentSignInBinding.inflate(inflater, container, false);
         return vb.getRoot();
     }
 
@@ -60,7 +62,7 @@ public class SignInFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(((AccountSign) getActivity()).isBackButtonVisible()) {
+        if (((AccountSign) getActivity()).isBackButtonVisible()) {
             ((AccountSign) getActivity()).setTitle(getString(R.string.Sign_In));
             ((AccountSign) getActivity()).setBackButton(false);
         }
@@ -69,12 +71,12 @@ public class SignInFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(viewModel!=null) return;
+        if (viewModel != null) return;
 
         navController = Navigation.findNavController(view);
         viewModel = new ViewModelProvider(this).get(SignInViewModel.class);
 
-        if(viewModel.googleServicesNotAvailable()) vb.signInSocialAuth.setVisibility(View.GONE);
+        if (viewModel.googleServicesNotAvailable()) vb.signInSocialAuth.setVisibility(View.GONE);
 
         vb.signInEmail.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
@@ -90,13 +92,14 @@ public class SignInFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable editable) {
 
-                if(vb.signInEmail.getEditText().getText().length()>0){
+                if (vb.signInEmail.getEditText().getText().length() > 0) {
 
-                    if(TextFieldValidator.isValidEmail(editable.toString())) vb.signInEmail.setError(null);
-                    else vb.signInEmail.setError(getString(R.string.Email_not_complete_or_not_valid));
+                    if (TextFieldValidator.isValidEmail(editable.toString()))
+                        vb.signInEmail.setError(null);
+                    else
+                        vb.signInEmail.setError(getString(R.string.Email_not_complete_or_not_valid));
 
-                }
-                else vb.signInEmail.setError(null);
+                } else vb.signInEmail.setError(null);
 
             }
         });
@@ -115,27 +118,28 @@ public class SignInFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable editable) {
 
-                if(vb.signInPassword.getEditText().getText().length()>0){
-                    if(TextFieldValidator.isValidPassword(editable.toString())) vb.signInPassword.setError(null);
-                    else if(TextFieldValidator.outLengthRange(editable.toString(),TextFieldValidator.PASSWORD_MIN,TextFieldValidator.NO_MAX_VALUE)) vb.signInPassword.setError(getString(R.string.Password_Minimum_length_is) +  " "+ TextFieldValidator.PASSWORD_MIN);
+                if (vb.signInPassword.getEditText().getText().length() > 0) {
+                    if (TextFieldValidator.isValidPassword(editable.toString()))
+                        vb.signInPassword.setError(null);
+                    else if (TextFieldValidator.outLengthRange(editable.toString(), TextFieldValidator.PASSWORD_MIN, TextFieldValidator.NO_MAX_VALUE))
+                        vb.signInPassword.setError(getString(R.string.Password_Minimum_length_is) + " " + TextFieldValidator.PASSWORD_MIN);
                     else vb.signInPassword.setError(getString(R.string.Password_must_contain));
-                }
-                else vb.signInPassword.setError(null);
+                } else vb.signInPassword.setError(null);
 
             }
         });
 
         vb.signInButton.setOnClickListener(button -> {
-            if(isDataValid()) signIn();
+            if (isDataValid()) signIn();
         });
 
 
         vb.signInFacebook.setOnClickListener(button -> {
-                facebookAuth();
+            facebookAuth();
         });
 
         vb.signInGoogle.setOnClickListener(button -> {
-                googleAuth();
+            googleAuth();
         });
 
         vb.signInSignUp.setOnClickListener(button -> {
@@ -154,25 +158,25 @@ public class SignInFragment extends Fragment {
         if (requestCode == 1) getGoogleAuthResult(data);
     }
 
-    boolean isDataValid(){
+    boolean isDataValid() {
         boolean validData = true;
 
-        if(vb.signInPassword.getError()!=null || vb.signInPassword.getEditText().getText().length()==0){
+        if (vb.signInPassword.getError() != null || vb.signInPassword.getEditText().getText().length() == 0) {
             vb.signInPassword.requestFocus();
-            vb.signInPassword.startAnimation(AnimationUtils.loadAnimation(getContext(),R.anim.fieldmissing));
+            vb.signInPassword.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fieldmissing));
             validData = false;
         }
 
-        if(vb.signInEmail.getError()!=null || vb.signInEmail.getEditText().getText().length()==0){
+        if (vb.signInEmail.getError() != null || vb.signInEmail.getEditText().getText().length() == 0) {
             vb.signInEmail.requestFocus();
-            vb.signInEmail.startAnimation(AnimationUtils.loadAnimation(getContext(),R.anim.fieldmissing));
+            vb.signInEmail.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fieldmissing));
             validData = false;
         }
 
         return validData;
     }
 
-    void signIn(){
+    void signIn() {
         DialogsProvider.get(getActivity()).setLoading(true);
 
         viewModel.signIn(vb.signInEmail.getEditText().getText().toString(), vb.signInPassword.getEditText().getText().toString())
@@ -180,10 +184,10 @@ public class SignInFragment extends Fragment {
 
                     DialogsProvider.get(getActivity()).setLoading(false);
 
-                    switch (response.code()){
+                    switch (response.code()) {
                         case BaseResponseModel.SUCCESSFUL_OPERATION:
                             Intent intent = new Intent(getContext(), MainActivity.class);
-                            intent.putExtra(MainActivity.JUST_SIGNED_IN,true);
+                            intent.putExtra(MainActivity.JUST_SIGNED_IN, true);
 
                             SharedPrefManager.get(getContext()).setRememberMe(vb.signInRememberMe.isChecked());
                             UserAccountManager.signIn(getActivity(), intent, response.headers().get(Repository.AUTH_TOKEN_HEADER), response.body().getUser());
@@ -202,24 +206,24 @@ public class SignInFragment extends Fragment {
                             break;
 
                         default:
-                            DialogsProvider.get(getActivity()).messageDialog(getString(R.string.Server_Error),getString(R.string.Code)+ response.code());
+                            DialogsProvider.get(getActivity()).messageDialog(getString(R.string.Server_Error), getString(R.string.Code) + response.code());
                     }
 
                 });
 
     }
 
-    void facebookAuth(){
+    void facebookAuth() {
         DialogsProvider.get(getActivity()).setLoading(true);
 
-        viewModel.facebookAuth(SignInFragment.this).observe(getViewLifecycleOwner(),response -> {
+        viewModel.facebookAuth(SignInFragment.this).observe(getViewLifecycleOwner(), response -> {
             DialogsProvider.get(getActivity()).setLoading(false);
 
-            switch (response.code()){
+            switch (response.code()) {
                 case BaseResponseModel.SUCCESSFUL_OPERATION:
                 case BaseResponseModel.SUCCESSFUL_CREATION:
                     Intent intent = new Intent(getContext(), MainActivity.class);
-                    intent.putExtra(MainActivity.JUST_SIGNED_IN,true);
+                    intent.putExtra(MainActivity.JUST_SIGNED_IN, true);
 
                     UserModel userModel = new UserModel();
                     userModel.setId(viewModel.getFacebookSocialAuthModel().getClientId());
@@ -240,26 +244,26 @@ public class SignInFragment extends Fragment {
                     break;
 
                 default:
-                    DialogsProvider.get(getActivity()).messageDialog(getString(R.string.Server_Error),getString(R.string.Code)+ response.code());
+                    DialogsProvider.get(getActivity()).messageDialog(getString(R.string.Server_Error), getString(R.string.Code) + response.code());
             }
 
         });
     }
 
-    void googleAuth(){
+    void googleAuth() {
         DialogsProvider.get(getActivity()).setLoading(true);
         viewModel.googleAuth(SignInFragment.this);
     }
 
-    void getGoogleAuthResult(Intent data){
-        viewModel.googleAuthOnActivityResult(data,SignInFragment.this).observe(getViewLifecycleOwner(), response -> {
+    void getGoogleAuthResult(Intent data) {
+        viewModel.googleAuthOnActivityResult(data, SignInFragment.this).observe(getViewLifecycleOwner(), response -> {
             DialogsProvider.get(getActivity()).setLoading(false);
 
-            switch (response.code()){
+            switch (response.code()) {
                 case BaseResponseModel.SUCCESSFUL_OPERATION:
                 case BaseResponseModel.SUCCESSFUL_CREATION:
                     Intent intent = new Intent(getContext(), MainActivity.class);
-                    intent.putExtra(MainActivity.JUST_SIGNED_IN,true);
+                    intent.putExtra(MainActivity.JUST_SIGNED_IN, true);
 
                     UserModel userModel = new UserModel();
                     userModel.setId(viewModel.getGoogleSocialAuthModel().getClientId());
@@ -280,7 +284,7 @@ public class SignInFragment extends Fragment {
                     break;
 
                 default:
-                    DialogsProvider.get(getActivity()).messageDialog(getString(R.string.Server_Error),getString(R.string.Code)+ response.code());
+                    DialogsProvider.get(getActivity()).messageDialog(getString(R.string.Server_Error), getString(R.string.Code) + response.code());
             }
 
         });

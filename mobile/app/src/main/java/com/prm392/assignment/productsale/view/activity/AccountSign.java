@@ -5,11 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 
@@ -31,15 +33,23 @@ public class AccountSign extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(R.style.SaleHunter);
-        vb = ActivityAccountSignBinding.inflate(getLayoutInflater());
-        View view = vb.getRoot();
-        setContentView(view);
 
-        overridePendingTransition(R.anim.lay_on,R.anim.null_anim);
-        viewModel = new ViewModelProvider(this).get(AccountSignViewModel.class);
-        vb.accountSignBack.setOnClickListener(button -> {
-            onBackPressed();
-        });
+        try {
+            vb = ActivityAccountSignBinding.inflate(getLayoutInflater());
+            View view = vb.getRoot();
+            setContentView(view);
+            NavHostFragment navHostFragment =
+                    (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.account_sign_fragmentsContainer);
+
+            overridePendingTransition(R.anim.lay_on,R.anim.null_anim);
+            viewModel = new ViewModelProvider(this).get(AccountSignViewModel.class);
+            navController = navHostFragment.getNavController();
+            vb.accountSignBack.setOnClickListener(button -> {
+                onBackPressed();
+            });
+        } catch (Exception e) {
+            Log.d("AccountSign", "onCreate: " + e.getMessage());
+        }
 
         networkBroadcastReceiver = new NetworkBroadcastReceiver(this);
         registerReceiver(networkBroadcastReceiver , new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
@@ -51,7 +61,6 @@ public class AccountSign extends AppCompatActivity {
     @Override
     public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
         super.onPostCreate(savedInstanceState, persistentState);
-        navController = Navigation.findNavController(this, R.id.account_sign_fragmentsContainer);
     }
 
     @Override

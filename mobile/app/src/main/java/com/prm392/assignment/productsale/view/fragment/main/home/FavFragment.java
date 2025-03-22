@@ -70,7 +70,8 @@ public class FavFragment extends Fragment {
         new Handler().post(()->{
             navController = ((MainActivity)getActivity()).getAppNavController();
         });
-        viewModel = new ViewModelProvider(this).get(FavViewModel.class);
+        viewModel = new ViewModelProvider(this, ViewModelProvider.Factory.from(FavViewModel.initializer))
+                .get(FavViewModel.class);
 
         adapter = new ProductsListAdapter(getContext(),vb.favRecyclerVeiw);
         vb.favRecyclerVeiw.setLayoutManager(new LinearLayoutManager(getContext()));

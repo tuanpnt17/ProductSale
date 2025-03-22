@@ -112,7 +112,7 @@ public class ProductPageFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = new ViewModelProvider(this).get(ProductPageViewModel.class);
+        viewModel = new ViewModelProvider(this, ViewModelProvider.Factory.from(ProductPageViewModel.initializer)).get(ProductPageViewModel.class);
         if (getArguments() != null) viewModel.setProductId(getArguments().getLong("productId"));
 
         new Handler().post(()->{

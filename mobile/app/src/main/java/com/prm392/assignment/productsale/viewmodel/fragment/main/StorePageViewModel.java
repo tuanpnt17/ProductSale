@@ -1,5 +1,7 @@
 package com.prm392.assignment.productsale.viewmodel.fragment.main;
 
+import static androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY;
+
 import android.app.Application;
 
 import androidx.annotation.NonNull;
@@ -7,6 +9,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.viewmodel.ViewModelInitializer;
 
 import com.prm392.assignment.productsale.data.Repository;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
@@ -33,6 +36,15 @@ public class StorePageViewModel extends ViewModel {
 
         token = UserAccountManager.getToken(application,UserAccountManager.TOKEN_TYPE_BEARER);
     }
+
+    public static final ViewModelInitializer<StorePageViewModel> initializer = new ViewModelInitializer<>(
+            StorePageViewModel.class,
+            creationExtras -> {
+                Application app = (Application) creationExtras.get(APPLICATION_KEY);
+                assert app != null;
+                return new StorePageViewModel(app);
+            }
+    );
 
     public LiveData<Response<StorePageModel>> getStore(){
         storeData = repository.getStore(token,storeId,1);

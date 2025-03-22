@@ -63,7 +63,7 @@ public class HistoryFragment extends Fragment {
         new Handler().post(()->{
             navController = ((MainActivity)getActivity()).getAppNavController();
         });
-        viewModel = new ViewModelProvider(this).get(HistoryViewModel.class);
+        viewModel = new ViewModelProvider(this, ViewModelProvider.Factory.from(HistoryViewModel.initializer)).get(HistoryViewModel.class);
 
         adapter = new ProductsListAdapter(getContext(),vb.historyRecyclerVeiw);
         vb.historyRecyclerVeiw.setLayoutManager(new LinearLayoutManager(getContext()));

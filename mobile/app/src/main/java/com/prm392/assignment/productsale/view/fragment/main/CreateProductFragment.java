@@ -156,7 +156,7 @@ public class CreateProductFragment extends Fragment {
             storeId = getArguments().getLong(STORE_ID_KEY);
         }
 
-        viewModel = new ViewModelProvider(this).get(CreateProductViewModel.class);
+        viewModel = new ViewModelProvider(this, ViewModelProvider.Factory.from(CreateProductViewModel.initializer)).get(CreateProductViewModel.class);
 
         new Handler().post(()->{
             navController = ((MainActivity)getActivity()).getAppNavController();

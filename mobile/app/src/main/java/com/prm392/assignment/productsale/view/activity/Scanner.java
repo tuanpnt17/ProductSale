@@ -33,9 +33,10 @@ public class Scanner extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
-        vb.lazer.startAnimation(AnimationUtils.loadAnimation(this,R.anim.scanner_lazer_effect));
+        vb.lazer.startAnimation(AnimationUtils.loadAnimation(this, R.anim.scanner_lazer_effect));
 
-        viewModel = new ViewModelProvider(this).get(ScannerViewModel.class);
+        viewModel = new ViewModelProvider(this, ViewModelProvider.Factory.from(ScannerViewModel.initializer))
+                .get(ScannerViewModel.class);
 
         viewModel.bindCameraProvider(this, vb.cameraPreview.getSurfaceProvider());
 
@@ -44,7 +45,7 @@ public class Scanner extends AppCompatActivity {
             lookUpBarcode(result);
         });
 
-        vb.scannerDetectingTryAgain.setOnClickListener(button ->{
+        vb.scannerDetectingTryAgain.setOnClickListener(button -> {
             Intent returnIntent = new Intent();
             setResult(Scanner.RESULT_TRY_AGAIN, returnIntent);
             onBackPressed();
@@ -52,13 +53,13 @@ public class Scanner extends AppCompatActivity {
 
     }
 
-    void submitData(String productName){
+    void submitData(String productName) {
         String[] arrayOfWords = productName.split(" ");
 
         StringBuilder shortenedName = new StringBuilder();
-        for(int i=0; i< arrayOfWords.length; i++){
+        for (int i = 0; i < arrayOfWords.length; i++) {
             shortenedName.append(arrayOfWords[i]);
-            if(i<5) shortenedName.append(" ");
+            if (i < 5) shortenedName.append(" ");
             else break;
         }
 
@@ -68,35 +69,35 @@ public class Scanner extends AppCompatActivity {
         onBackPressed();
     }
 
-    void showDetectingProductLayout(String barcode){
+    void showDetectingProductLayout(String barcode) {
         vb.scannerScanningLayout.setVisibility(View.INVISIBLE);
         vb.scannerDetectingLayout.setVisibility(View.VISIBLE);
         vb.scannerDetectingBarcode.setText(barcode);
         vb.scannerDetectingTryAgain.setVisibility(View.GONE);
     }
 
-    void productNotDetected(String message){
+    void productNotDetected(String message) {
         vb.scannerDetectingBarcode.clearAnimation();
         vb.scannerDetectingImage.clearAnimation();
         vb.scannerDetectingLoading.setVisibility(View.GONE);
         vb.scannerDetectingText.setText(message);
         vb.scannerDetectingText.setTextColor(getResources().getColor(R.color.accent));
         vb.scannerDetectingTryAgain.setVisibility(View.VISIBLE);
-        vb.scannerDetectingTryAgain.startAnimation(AnimationUtils.loadAnimation(this,R.anim.lay_on));
+        vb.scannerDetectingTryAgain.startAnimation(AnimationUtils.loadAnimation(this, R.anim.lay_on));
     }
 
-    void lookUpBarcode(String barcode){
-       String product =  myDataBase.get(this).daoAccess().lookUpProduct(barcode);
-       if(product!=null) submitData(product);
-       else lookUpBarcodeAlt(barcode);
+    void lookUpBarcode(String barcode) {
+        String product = myDataBase.get(this).daoAccess().lookUpProduct(barcode);
+        if (product != null) submitData(product);
+        else lookUpBarcodeAlt(barcode);
     }
 
-    void lookUpBarcodeAlt(String barcode){
-        viewModel.barcodeLookupUpcItemDb(barcode).observe(this, response ->{
-            if(response.code() == 200) {
+    void lookUpBarcodeAlt(String barcode) {
+        viewModel.barcodeLookupUpcItemDb(barcode).observe(this, response -> {
+            if (response.code() == 200) {
                 viewModel.removeObserverUpcItemDb(this);
 
-                if(response.body().getItems().size()>0) {
+                if (response.body().getItems().size() > 0) {
                     String productName = response.body().getItems().get(0).getProductName();
                     submitData(productName);
                 } else lookUpBarcodeAlt2(barcode);
@@ -106,12 +107,12 @@ public class Scanner extends AppCompatActivity {
         });
     }
 
-    void lookUpBarcodeAlt2(String barcode){
-        viewModel.barcodeLookupBarcodeMonster(barcode).observe(this, responseAlt ->{
-            if(responseAlt.code() == 200) {
+    void lookUpBarcodeAlt2(String barcode) {
+        viewModel.barcodeLookupBarcodeMonster(barcode).observe(this, responseAlt -> {
+            if (responseAlt.code() == 200) {
                 viewModel.removeObserverBarcodeMonster(this);
 
-                if(responseAlt.body().getProductName() != null) {
+                if (responseAlt.body().getProductName() != null) {
                     String productName = responseAlt.body().getProductName();
                     submitData(productName);
                 } else productNotDetected(getString(R.string.Product_Not_Detected));

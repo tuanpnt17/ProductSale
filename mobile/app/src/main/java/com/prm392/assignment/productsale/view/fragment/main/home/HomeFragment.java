@@ -12,9 +12,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,12 +41,11 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        vb = FragmentHomeBinding.inflate(inflater,container,false);
+        vb = FragmentHomeBinding.inflate(inflater, container, false);
         return vb.getRoot();
     }
 
@@ -65,7 +66,7 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         vb.homeBottomAppBarFab.setVisibility(View.INVISIBLE);
-        switch (index){
+        switch (index) {
             case 0:
                 animateFab(vb.homeBarSearch, true);
                 vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.navbar_icon_search, getActivity().getTheme()));
@@ -84,87 +85,91 @@ public class HomeFragment extends Fragment {
                 break;
         }
 
-        navController = Navigation.findNavController(view.findViewById(R.id.home_framgmentContainer));
+
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-
-
+        navController = Navigation.findNavController(view.findViewById(R.id.home_framgmentContainer));
         vb.homeBarSearch.setOnClickListener(button -> {
             index = 0;
-            animateFab(button,false);
-            navController.navigate(R.id.searchFragment,null,new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
+            animateFab(button, false);
+            navController.navigate(R.id.searchFragment, null, new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
             vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.navbar_icon_search, getActivity().getTheme()));
         });
 
         vb.homeBarOnsale.setOnClickListener(button -> {
             index = 1;
-            animateFab(button,false);
-            navController.navigate(R.id.onSaleFragment,null,new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
+            animateFab(button, false);
+
+            navController = Navigation.findNavController(view.findViewById(R.id.home_framgmentContainer));
+
+            navController.navigate(R.id.action_searchFragment_to_onSaleFragment, null, new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
+
+
             vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.navbar_icon_onsale, getActivity().getTheme()));
         });
 
         vb.homeBarFavourite.setOnClickListener(button -> {
             index = 2;
-            animateFab(button,false);
-            navController.navigate(R.id.favFragment,null,new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
+            animateFab(button, false);
+            navController.navigate(R.id.favFragment, null, new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
             vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.navbar_icon_favourite, getActivity().getTheme()));
         });
 
         vb.homeBarHistory.setOnClickListener(button -> {
             index = 3;
-            animateFab(button,false);
-            navController.navigate(R.id.historyFragment,null,new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
+            animateFab(button, false);
+            navController.navigate(R.id.historyFragment, null, new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
             vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.menu_icon_history, getActivity().getTheme()));
         });
 
     }
 
-    public void setFabSelector(int  i){
+    public void setFabSelector(int i) {
 
     }
 
-    void animateFab(View view, boolean initial){
-        view.post(()->{
+    void animateFab(View view, boolean initial) {
+        view.post(() -> {
 
             int duration = 400;
 
             AnimatorSet animationSet = new AnimatorSet();
 
-            if(initial){
+            if (initial) {
                 duration = 0;
-                new Handler(Looper.getMainLooper()).postDelayed(()->{
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
                     vb.homeBottomAppBarFab.setVisibility(View.VISIBLE);
 
-                    ObjectAnimator animation1 = ObjectAnimator.ofFloat(vb.homeBottomAppBarFab, "scaleX",0.0f,1.0f);
+                    ObjectAnimator animation1 = ObjectAnimator.ofFloat(vb.homeBottomAppBarFab, "scaleX", 0.0f, 1.0f);
                     animation1.setDuration(400);
                     animation1.setInterpolator(new DecelerateInterpolator());
 
-                    ObjectAnimator animation2 = ObjectAnimator.ofFloat(vb.homeBottomAppBarFab, "scaleY",0.0f,1.0f);
+                    ObjectAnimator animation2 = ObjectAnimator.ofFloat(vb.homeBottomAppBarFab, "scaleY", 0.0f, 1.0f);
                     animation2.setDuration(400);
                     animation2.setInterpolator(new DecelerateInterpolator());
 
-                    animationSet.playTogether(animation1,animation2);
+                    animationSet.playTogether(animation1, animation2);
                     animationSet.start();
 
-                },duration);
+                }, duration);
             }
 
             Rect rect = new Rect();
             view.getGlobalVisibleRect(rect);
             float center = rect.exactCenterX();
 
-            ObjectAnimator animation = ObjectAnimator.ofFloat(vb.homeBottomAppBarFab, "X",center-(vb.homeBottomAppBarFab.getWidth()/2f));
+            ObjectAnimator animation = ObjectAnimator.ofFloat(vb.homeBottomAppBarFab, "X", center - (vb.homeBottomAppBarFab.getWidth() / 2f));
             animation.setDuration(duration);
             animation.setInterpolator(new DecelerateInterpolator());
 
-            ObjectAnimator animation2 = ObjectAnimator.ofFloat(vb.homeBottomAppBarFab, "scaleX",1.0f,0.75f,1.0f);
+            ObjectAnimator animation2 = ObjectAnimator.ofFloat(vb.homeBottomAppBarFab, "scaleX", 1.0f, 0.75f, 1.0f);
             animation2.setDuration(duration);
             animation2.setInterpolator(new DecelerateInterpolator());
 
-            ObjectAnimator animation3 = ObjectAnimator.ofFloat(vb.homeBottomAppBarFab, "scaleY",1.0f,0.75f,1.0f);
+            ObjectAnimator animation3 = ObjectAnimator.ofFloat(vb.homeBottomAppBarFab, "scaleY", 1.0f, 0.75f, 1.0f);
             animation3.setDuration(duration);
             animation3.setInterpolator(new DecelerateInterpolator());
 
-            animationSet.playTogether(animation,animation2,animation3);
+            animationSet.playTogether(animation, animation2, animation3);
             animationSet.start();
 
         });

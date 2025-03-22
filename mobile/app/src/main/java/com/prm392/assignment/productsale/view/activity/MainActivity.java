@@ -23,6 +23,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
@@ -116,7 +117,9 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
-            navController = Navigation.findNavController(this, R.id.main_FragmentContainer);
+            NavHostFragment navHostFragment =
+                    (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.main_FragmentContainer);
+            navController = navHostFragment.getNavController();
             firstLaunch = SharedPrefManager.get(this).isFirstLaunch();
             rememberMe = SharedPrefManager.get(this).isRememberMeChecked();
             signedIn = true; //SharedPrefManager.get(this).isSignedIn();

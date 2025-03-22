@@ -164,7 +164,7 @@ public class CreateStoreFragment extends Fragment {
             if(action == ACTION_EDIT_STORE) storeData = new Gson().fromJson(getArguments().getString(STORE_DATA_KEY),StoreModel.class);
         }
 
-        viewModel = new ViewModelProvider(this).get(CreateStoreViewModel.class);
+        viewModel = new ViewModelProvider(this, ViewModelProvider.Factory.from(CreateStoreViewModel.initializer)).get(CreateStoreViewModel.class);
 
         new Handler().post(()->{
             navController = ((MainActivity)getActivity()).getAppNavController();

@@ -1,5 +1,7 @@
 package com.prm392.assignment.productsale.viewmodel.activity;
 
+import static androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY;
+
 import android.app.Application;
 import android.content.Context;
 import android.media.Image;
@@ -19,6 +21,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.viewmodel.ViewModelInitializer;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -33,6 +36,7 @@ import com.prm392.assignment.productsale.R;
 import com.prm392.assignment.productsale.data.Repository;
 import com.prm392.assignment.productsale.model.BarcodeMonsterResponseModel;
 import com.prm392.assignment.productsale.model.UpcItemDbResponseModel;
+import com.prm392.assignment.productsale.viewmodel.fragment.main.home.SearchViewModel;
 
 import java.util.List;
 
@@ -125,6 +129,14 @@ public class ScannerViewModel extends ViewModel {
 
     }
 
+    public static final ViewModelInitializer<ScannerViewModel> initializer = new ViewModelInitializer<>(
+            ScannerViewModel.class,
+            creationExtras -> {
+                Application app = (Application) creationExtras.get(APPLICATION_KEY);
+                assert app != null;
+                return new ScannerViewModel(app);
+            }
+    );
     public MutableLiveData<String> getResult(){return result;};
 
     public void bindCameraProvider(LifecycleOwner lifecycleOwner, Preview.SurfaceProvider surfaceProvider){

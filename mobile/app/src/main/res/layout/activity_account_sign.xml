@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -58,15 +59,15 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <androidx.fragment.app.FragmentTabHost
+            <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/account_sign_fragmentsContainer"
                 android:name="androidx.navigation.fragment.NavHostFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fadingEdgeLength="20dp"
-                android:requiresFadingEdge="horizontal|vertical"
+                app:navGraph="@navigation/account_sign_nav"
                 app:defaultNavHost="true"
-                app:navGraph="@navigation/account_sign_nav" />
+                >
+            </androidx.fragment.app.FragmentContainerView>
 
         </LinearLayout>
     </ScrollView>

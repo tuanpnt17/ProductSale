@@ -75,7 +75,7 @@ public class DashboardFragment extends Fragment {
 
         if(viewModel!=null) return;
 
-        viewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
+        viewModel = new ViewModelProvider(this, ViewModelProvider.Factory.from(DashboardViewModel.initializer)).get(DashboardViewModel.class);
         if (getArguments() != null) viewModel.setStoreId(getArguments().getLong("storeId"));
 
         new Handler().post(()->{
