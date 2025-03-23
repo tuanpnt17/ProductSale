@@ -7,75 +7,45 @@ import lombok.Setter;
 
 public class UserModel {
 
+    private final String image;
     @Setter
     @Getter
-    @SerializedName("id")
+    @SerializedName("userId")
     private String id;
-
     @Setter
     @Getter
-    @SerializedName("fullname")
-    private String fullName;
-
+    @SerializedName("username")
+    private String userName;
     @Setter
     @Getter
     @SerializedName("email")
     private String email;
-
-    @SerializedName("profile_img")
-    private String image;
-
     @Setter
     @Getter
-    @SerializedName("last_seen")
-    private String lastSeen;
-
+    @SerializedName("phoneNumber")
+    private String phone;
     @Setter
     @Getter
-    @SerializedName("signedInWith")
-    private int signedInWith;
-
+    @SerializedName("address")
+    private String address;
     @Setter
     @Getter
-    @SerializedName("store_id")
-    private int storeId;
+    @SerializedName("role")
+    private String role;
 
-    public static final int SIGNED_IN_WITH_EMAIL = 0;
-    public static final int SIGNED_IN_WITH_GOOGLE = 1;
-    public static final int SIGNED_IN_WITH_FACEBOOK = 2;
-
-    public UserModel(){
-        id = "id";
-        fullName = "fullName";
-        email = "email@email.com";
-        image = "";
-        lastSeen = "";
-        signedInWith = SIGNED_IN_WITH_EMAIL;
+    public UserModel() {
+        image = "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg";
     }
 
     public String getImageLink() {
-        return image.replace("http:","https:");
-    }
-
-    public String getEncodedImage() {
-        if(image.contains("http")) return "";
         return image;
     }
 
-    public void setEncodedImage(String image) {
-        this.image = image;
+    public boolean hasStore() {
+        return role.equals("Admin");
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.image = imageUrl;
-    }
-
-    public boolean hasStore(){
-        return storeId != 0;
-    }
-
-    public String getAccountType(){
-        if (hasStore()) return "Seller Account";
-        else return "User Account";
+    public String getAccountType() {
+        return role;
     }
 }

@@ -1,25 +1,21 @@
 package com.prm392.assignment.productsale.data.remote;
 
 import com.prm392.assignment.productsale.model.BarcodeMonsterResponseModel;
-import com.prm392.assignment.productsale.model.ChangePasswordModel;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
+import com.prm392.assignment.productsale.model.ChangePasswordModel;
 import com.prm392.assignment.productsale.model.CreateProductRequestModel;
 import com.prm392.assignment.productsale.model.CreateStoreRequestModel;
 import com.prm392.assignment.productsale.model.CreateStoreResponseModel;
-import com.prm392.assignment.productsale.model.EmailVerificationModel;
-import com.prm392.assignment.productsale.model.FacebookSocialAuthModel;
 import com.prm392.assignment.productsale.model.ProductPageResponseModel;
 import com.prm392.assignment.productsale.model.ProductRateModel;
 import com.prm392.assignment.productsale.model.ProductsResponseModel;
-import com.prm392.assignment.productsale.model.ResetPasswordModel;
 import com.prm392.assignment.productsale.model.SignInModel;
 import com.prm392.assignment.productsale.model.SignUpModel;
-import com.prm392.assignment.productsale.model.GoogleSocialAuthModel;
-import com.prm392.assignment.productsale.model.SocialAuthResponseModel;
 import com.prm392.assignment.productsale.model.StorePageModel;
 import com.prm392.assignment.productsale.model.UpcItemDbResponseModel;
 import com.prm392.assignment.productsale.model.UserModel;
 import com.prm392.assignment.productsale.model.UserResponseModel;
+
 import io.reactivex.rxjava3.core.Observable;
 import retrofit2.Response;
 import retrofit2.http.Body;
@@ -34,34 +30,14 @@ import retrofit2.http.Query;
 
 public interface RetrofitInterface {
 
-    //Account Sign in/up & password reset
+    //Account Sign in/up
     @Headers({"client: mobile"})
-    @POST("users/auth/signin")
+    @POST("api/Auth/login")
     Observable<Response<UserResponseModel>> signIn(@Body SignInModel signInModel);
 
     @Headers({"client: mobile"})
-    @POST("users/auth/signup")
+    @POST("api/Auth/register")
     Observable<Response<UserResponseModel>> signUp(@Body SignUpModel signUpModel);
-
-    @Headers({"client: mobile"})
-    @POST("users/auth/google")
-    Observable<Response<SocialAuthResponseModel>> googleAuth(@Body GoogleSocialAuthModel googleSocialAuthModel);
-
-    @Headers({"client: mobile"})
-    @POST("users/auth/facebook")
-    Observable<Response<SocialAuthResponseModel>> facebookAuth(@Body FacebookSocialAuthModel facebookSocialAuthModel);
-
-    @Headers({"client: mobile"})
-    @POST("users/verifyEmail")
-    Observable<Response<BaseResponseModel>> sendEmailVerification(@Body EmailVerificationModel emailVerificationModel);
-
-    @Headers({"client: mobile"})
-    @GET("users/verifyEmailToken/{resetToken}")
-    Observable<Response<BaseResponseModel>> verifyToken(@Path("resetToken") String resetToken);
-
-    @Headers({"client: mobile"})
-    @PATCH("users/auth/resetPassword/{resetToken}")
-    Observable<Response<BaseResponseModel>> resetPassword(@Path("resetToken") String pin, @Body ResetPasswordModel resetPasswordModel);
 
     //User Data Calls
     @Headers({"client: mobile"})
@@ -151,7 +127,7 @@ public interface RetrofitInterface {
 
     @Headers({"client: mobile"})
     @PATCH("stores/{id}/products/{pid}/")
-    Observable<Response<BaseResponseModel>> updateProduct(@Header("Authorization") String token, @Path("id") long storeId, @Path("pid") long productId,@Body CreateProductRequestModel createProductRequestModel);
+    Observable<Response<BaseResponseModel>> updateProduct(@Header("Authorization") String token, @Path("id") long storeId, @Path("pid") long productId, @Body CreateProductRequestModel createProductRequestModel);
 
     @Headers({"client: mobile"})
     @DELETE("stores/{id}/products/{pid}/")

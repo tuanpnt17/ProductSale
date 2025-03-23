@@ -673,3 +673,5 @@ FodyWeavers.xsd
 /certificate.crt
 /certificate.key
 /backend/ProductSale.API/appsettings.Development.json
+/backend/ProductSale.API/appsettings.json
+/backend/ProductSale.API/appsettings.json

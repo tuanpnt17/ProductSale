@@ -52,6 +52,7 @@ namespace ProductSale.API.Helpers
             #region // ======= User =======
 
             CreateMap<RegistrationDto, User>();
+            CreateMap<User, UserResponseDto>();
 
             #endregion
         }

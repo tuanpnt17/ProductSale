@@ -4,8 +4,8 @@ namespace ProductSale.Business.User
 {
     public interface IUserService
     {
-        Task<string> LoginAsync(LoginDto loginDto);
+        Task<(string, UserResponseDto)> LoginAsync(LoginDto loginDto);
 
-        Task<string> RegisterAsync(RegistrationDto registrationDto);
+        Task<(string, UserResponseDto)> RegisterAsync(RegistrationDto registrationDto);
     }
 }

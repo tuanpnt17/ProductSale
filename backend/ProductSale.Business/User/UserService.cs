@@ -3,7 +3,6 @@ using ProductSale.Business.Enums;
 using ProductSale.Business.Models;
 using ProductSale.Business.Token;
 using ProductSale.Repository.Interfaces;
-using ProductSale.Repository.Repositories;
 
 namespace ProductSale.Business.User
 {
@@ -13,17 +12,20 @@ namespace ProductSale.Business.User
         ITokenService tokenService
     ) : IUserService
     {
-        public async Task<string> LoginAsync(LoginDto loginDto)
+        public async Task<(string, UserResponseDto)> LoginAsync(LoginDto loginDto)
         {
             var user = await userRepository.GetUserByUsernameAsync(loginDto.Username);
             if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
             {
                 throw new Exception("Invalid username or password");
             }
-            return tokenService.GenerateToken(user);
+            return new(
+                tokenService.GenerateToken(user),
+                mapper.Map<Repository.Entities.User, UserResponseDto>(user)
+            );
         }
 
-        public async Task<string> RegisterAsync(RegistrationDto registrationDto)
+        public async Task<(string, UserResponseDto)> RegisterAsync(RegistrationDto registrationDto)
         {
             var existingUserByUsername = await userRepository.GetUserByUsernameAsync(
                 registrationDto.Username
@@ -45,7 +47,10 @@ namespace ProductSale.Business.User
             user.Role = Role.Customer.ToString();
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(registrationDto.Password);
             user = await userRepository.RegisterUserAsync(user);
-            return tokenService.GenerateToken(user);
+            return new(
+                tokenService.GenerateToken(user),
+                mapper.Map<Repository.Entities.User, UserResponseDto>(user)
+            );
         }
     }
 }

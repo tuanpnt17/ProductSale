@@ -13,8 +13,8 @@ namespace ProductSale.API.Controllers
         {
             try
             {
-                var token = await userService.LoginAsync(loginDto);
-                return Ok(new { access_token = token });
+                var (token, user) = await userService.LoginAsync(loginDto);
+                return Ok(new { access_token = token, user });
             }
             catch (Exception ex)
             {
@@ -27,8 +27,8 @@ namespace ProductSale.API.Controllers
         {
             try
             {
-                var token = await userService.RegisterAsync(registrationDto);
-                return Ok(new { access_token = token });
+                var (token, user) = await userService.RegisterAsync(registrationDto);
+                return Ok(new { access_token = token, user });
             }
             catch (Exception ex)
             {
