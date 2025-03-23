@@ -1,6 +1,8 @@
+using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProductSale.API.Helpers;
 using ProductSale.Business.Category;
@@ -10,6 +12,7 @@ using ProductSale.Business.Order;
 using ProductSale.Business.Payment;
 using ProductSale.Business.Product;
 using ProductSale.Business.StoreLocation;
+using ProductSale.Business.Token;
 using ProductSale.Business.User;
 using ProductSale.Bussiness.Cart;
 using ProductSale.Repository.Data;
@@ -47,38 +50,60 @@ namespace ProductSale.API
                 );
             });
 
-			builder.Services.AddSwaggerGen(options =>
-			{
-				options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
-				{
-					Name = "Authorization",
-					In = ParameterLocation.Header,
-					Type = SecuritySchemeType.ApiKey,
-					Scheme = JwtBearerDefaults.AuthenticationScheme
-				});
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition(
+                    JwtBearerDefaults.AuthenticationScheme,
+                    new OpenApiSecurityScheme
+                    {
+                        Name = "Authorization",
+                        In = ParameterLocation.Header,
+                        Type = SecuritySchemeType.ApiKey,
+                        Scheme = JwtBearerDefaults.AuthenticationScheme,
+                    }
+                );
 
-				options.AddSecurityRequirement(new OpenApiSecurityRequirement
-			    {
-				    {
-					    new OpenApiSecurityScheme
-					    {
-						    Reference = new OpenApiReference
-						    {
-							    Type = ReferenceType.SecurityScheme,
-							    Id = JwtBearerDefaults.AuthenticationScheme
-						    },
-						    Scheme = "Oauth2",
-						    Name = JwtBearerDefaults.AuthenticationScheme,
-						    In = ParameterLocation.Header
-					    },
-					    new List<string>()
-				    }
-			    });
-			});
+                options.AddSecurityRequirement(
+                    new OpenApiSecurityRequirement
+                    {
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = JwtBearerDefaults.AuthenticationScheme,
+                                },
+                                Scheme = "Oauth2",
+                                Name = JwtBearerDefaults.AuthenticationScheme,
+                                In = ParameterLocation.Header,
+                            },
+                            new List<string>()
+                        },
+                    }
+                );
+            });
 
+            builder
+                .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
+                        ),
+                    };
+                });
+            builder.Services.AddAuthorization();
 
-
-			builder.Services.AddAutoMapper(
+            builder.Services.AddAutoMapper(
                 opt =>
                 {
                     opt.AddProfile<MappingProfile>();
@@ -105,6 +130,7 @@ namespace ProductSale.API
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IStoreLocationService, StoreLocationService>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<ITokenService, TokenService>();
 
             var app = builder.Build();
             // Swagger

@@ -672,3 +672,4 @@ FodyWeavers.xsd
 # End of https://www.toptal.com/developers/gitignore/api/androidstudio,visualstudio,aspnetcore,groovy
 /certificate.crt
 /certificate.key
+/backend/ProductSale.API/appsettings.Development.json
