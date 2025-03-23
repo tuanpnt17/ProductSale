@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/homepage_nav"
+    app:startDestination="@id/searchFragment">
+
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.prm392.assignment.productsale.view.fragment.main.home.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/action_searchFragment_to_historyFragment"
+            app:destination="@id/historyFragment" />
+        <action
+            android:id="@+id/action_searchFragment_to_favFragment"
+            app:destination="@id/favFragment" />
+        <action
+            android:id="@+id/action_searchFragment_to_onSaleFragment"
+            android:label="OnSale"
+            app:destination="@id/onSaleFragment"
+
+            />
+    </fragment>
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.prm392.assignment.productsale.view.fragment.main.home.HistoryFragment"
+        android:label="fragment_history"
+        tools:layout="@layout/fragment_history" >
+        <action
+            android:id="@+id/action_historyFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/action_historyFragment_to_favFragment"
+            app:destination="@id/favFragment" />
+        <action
+            android:id="@+id/action_historyFragment_to_onSaleFragment"
+            app:destination="@id/onSaleFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/favFragment"
+        android:name="com.prm392.assignment.productsale.view.fragment.main.home.FavFragment"
+        android:label="fragment_fav"
+        tools:layout="@layout/fragment_fav" >
+        <action
+            android:id="@+id/action_favFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/action_favFragment_to_historyFragment"
+            app:destination="@id/historyFragment" />
+        <action
+            android:id="@+id/action_favFragment_to_onSaleFragment"
+            app:destination="@id/onSaleFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/onSaleFragment"
+        android:name="com.prm392.assignment.productsale.view.fragment.main.home.OnSaleFragment"
+        android:label="fragment_on_sale"
+        tools:layout="@layout/fragment_on_sale">
+        <action
+            android:id="@+id/action_onSaleFragment_to_historyFragment"
+            app:destination="@id/historyFragment" />
+        <action
+            android:id="@+id/action_onSaleFragment_to_favFragment"
+            app:destination="@id/favFragment" />
+        <action
+            android:id="@+id/action_onSaleFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+    </fragment>
+</navigation>
