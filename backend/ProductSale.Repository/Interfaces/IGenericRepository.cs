@@ -5,6 +5,7 @@ namespace ProductSale.Repository.Interfaces
 {
     public interface IGenericRepository<T>
     {
+        IQueryable<T> GetAll();
         Task<T?> GetByIdAsync(int id);
         Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter, string? includeProperties);
         Task InsertAsync(T entity);

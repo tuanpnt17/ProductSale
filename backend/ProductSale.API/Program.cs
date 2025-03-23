@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using ProductSale.API.Helpers;
+using ProductSale.Business.Cart;
 using ProductSale.Business.Category;
 using ProductSale.Business.ChatMessage;
 using ProductSale.Business.Notification;
@@ -11,7 +12,6 @@ using ProductSale.Business.Payment;
 using ProductSale.Business.Product;
 using ProductSale.Business.StoreLocation;
 using ProductSale.Business.User;
-using ProductSale.Bussiness.Cart;
 using ProductSale.Repository.Data;
 using ProductSale.Repository.Interfaces;
 using ProductSale.Repository.Repositories;
@@ -47,44 +47,50 @@ namespace ProductSale.API
                 );
             });
 
-			builder.Services.AddSwaggerGen(options =>
-			{
-				options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
-				{
-					Name = "Authorization",
-					In = ParameterLocation.Header,
-					Type = SecuritySchemeType.ApiKey,
-					Scheme = JwtBearerDefaults.AuthenticationScheme
-				});
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition(
+                    JwtBearerDefaults.AuthenticationScheme,
+                    new OpenApiSecurityScheme
+                    {
+                        Name = "Authorization",
+                        In = ParameterLocation.Header,
+                        Type = SecuritySchemeType.ApiKey,
+                        Scheme = JwtBearerDefaults.AuthenticationScheme,
+                    }
+                );
 
-				options.AddSecurityRequirement(new OpenApiSecurityRequirement
-			    {
-				    {
-					    new OpenApiSecurityScheme
-					    {
-						    Reference = new OpenApiReference
-						    {
-							    Type = ReferenceType.SecurityScheme,
-							    Id = JwtBearerDefaults.AuthenticationScheme
-						    },
-						    Scheme = "Oauth2",
-						    Name = JwtBearerDefaults.AuthenticationScheme,
-						    In = ParameterLocation.Header
-					    },
-					    new List<string>()
-				    }
-			    });
-			});
+                options.AddSecurityRequirement(
+                    new OpenApiSecurityRequirement
+                    {
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = JwtBearerDefaults.AuthenticationScheme,
+                                },
+                                Scheme = "Oauth2",
+                                Name = JwtBearerDefaults.AuthenticationScheme,
+                                In = ParameterLocation.Header,
+                            },
+                            new List<string>()
+                        },
+                    }
+                );
+            });
 
-
-
-			builder.Services.AddAutoMapper(
+            builder.Services.AddAutoMapper(
                 opt =>
                 {
                     opt.AddProfile<MappingProfile>();
                 },
                 typeof(AppDomain)
             );
+
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<ICartRepository, CartRepository>();

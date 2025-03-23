@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ProductSale.API.Models.Products;
 
 namespace ProductSale.API.Helpers
 {
@@ -35,8 +36,13 @@ namespace ProductSale.API.Helpers
             #endregion
 
             #region // ======= Product =======
-            //CreateMap<ProductSale.Repository.Entities.Category, ProductSale.Business.Category.CategoryDto>().ReverseMap();
-
+            CreateMap<Repository.Entities.Product, ProductDetailVM>()
+                .ForMember(
+                    dest => dest.CategoryName,
+                    opt =>
+                        opt.MapFrom(src => src.Category == null ? "N/A" : src.Category.CategoryName)
+                )
+                .ReverseMap();
             #endregion
 
             #region // ======= Store Location =======
