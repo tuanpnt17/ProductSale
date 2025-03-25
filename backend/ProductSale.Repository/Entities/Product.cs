@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ProductSale.Repository.Entities;
+﻿namespace ProductSale.Repository.Entities;
 
 public partial class Product
 {

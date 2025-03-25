@@ -31,10 +31,12 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import com.prm392.assignment.productsale.R;
+import com.prm392.assignment.productsale.adapters.ProductSaleCardAdapter;
 import com.prm392.assignment.productsale.adapters.ProductsCardAdapter;
 import com.prm392.assignment.productsale.databinding.FragmentSearchBinding;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
 import com.prm392.assignment.productsale.model.ProductModel;
+import com.prm392.assignment.productsale.model.products.ProductSaleModel;
 import com.prm392.assignment.productsale.util.AppSettingsManager;
 import com.prm392.assignment.productsale.util.DialogsProvider;
 import com.prm392.assignment.productsale.view.activity.MainActivity;
@@ -47,6 +49,7 @@ public class SearchFragment extends Fragment {
     private SearchViewModel viewModel;
 
     private ProductsCardAdapter adapter;
+    private ProductSaleCardAdapter demoAdapter;
 
     private ActivityResultLauncher<Intent> voiceResultLauncher;
     private ActivityResultLauncher<Intent> barcodeResultLauncher;
@@ -110,6 +113,7 @@ public class SearchFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         if (viewModel != null) return;
 
         new Handler().post(() -> {
@@ -149,11 +153,12 @@ public class SearchFragment extends Fragment {
         });
 
         adapter = new ProductsCardAdapter(getContext(), vb.searchProductsRecyclerView);
+        demoAdapter = new ProductSaleCardAdapter(getContext(), vb.searchProductsRecyclerView);
         vb.searchProductsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        vb.searchProductsRecyclerView.setAdapter(adapter);
-        adapter.setHideFavButton(true);
+        vb.searchProductsRecyclerView.setAdapter(demoAdapter);
+        demoAdapter.setHideFavButton(true);
 
-        adapter.setItemInteractionListener(new ProductsCardAdapter.ItemInteractionListener() {
+        demoAdapter.setItemInteractionListener(new ProductSaleCardAdapter.ItemInteractionListener() {
             @Override
             public void onProductClicked(long productId, String storeType) {
                 Bundle bundle = new Bundle();
@@ -167,7 +172,8 @@ public class SearchFragment extends Fragment {
             }
         });
 
-        loadRecommendedProducts();
+//        loadRecommendedProducts();
+        loadDemoProducts();
 
     }
 
@@ -177,6 +183,34 @@ public class SearchFragment extends Fragment {
         Bundle bundle = new Bundle();
         bundle.putString("keyword", keyword);
         navController.navigate(R.id.action_homeFragment_to_searchResultsFragment, bundle);
+    }
+
+    void loadDemoProducts() {
+        vb.searchLoadingRecommended.setVisibility(View.VISIBLE);
+        viewModel.getDemoProducts().observe(getViewLifecycleOwner(), response -> {
+            var x = response.body();
+            switch (response.code()) {
+                case BaseResponseModel.SUCCESSFUL_OPERATION:
+                    vb.searchLoadingRecommended.setVisibility(View.GONE);
+
+                    if (response.body().getProducts() == null || response.body().getProducts().isEmpty())
+                        return;
+
+                    ArrayList<ProductSaleModel> products = response.body().getProducts();
+
+
+                    demoAdapter.addProducts(products);
+
+//                    viewModel.removeObserverDemoProducts(getViewLifecycleOwner());
+                    break;
+
+                case BaseResponseModel.FAILED_REQUEST_FAILURE:
+                    Toast.makeText(getContext(), "Loading Recommendations Failed", Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    DialogsProvider.get(getActivity()).messageDialog(getString(R.string.Server_Error), getString(R.string.Code) + response.code());
+            }
+        });
     }
 
     void loadRecommendedProducts() {
@@ -199,7 +233,7 @@ public class SearchFragment extends Fragment {
                     break;
 
                 case BaseResponseModel.FAILED_REQUEST_FAILURE:
-                    //Toast.makeText(getContext(), "Loading Recommendations Failed", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), "Loading Recommendations Failed", Toast.LENGTH_SHORT).show();
                     break;
 
                 default:

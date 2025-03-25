@@ -158,7 +158,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/search_products_recyclerView"
-            android:layout_width="match_parent"
+            android:layout_width="375dp"
             android:layout_height="match_parent"
             android:layout_marginStart="20dp"
             android:layout_marginTop="0dp"
@@ -177,7 +177,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView9"
             tools:itemCount="10"
-            tools:listitem="@layout/product_card_layout" />
+            tools:listitem="@layout/product_sale_card_layout" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

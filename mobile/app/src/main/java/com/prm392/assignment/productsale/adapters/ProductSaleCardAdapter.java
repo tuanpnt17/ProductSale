@@ -10,42 +10,43 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Locale;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-
-import java.util.ArrayList;
-import java.util.Locale;
-
-
 import com.prm392.assignment.productsale.R;
 import com.prm392.assignment.productsale.model.ProductModel;
+import com.prm392.assignment.productsale.model.products.ProductSaleModel;
 import com.prm392.assignment.productsale.util.AppSettingsManager;
 
 import lombok.Setter;
 
-public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private ArrayList<ProductModel> data;
-    private RecyclerView recyclerView;
+public class ProductSaleCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private ArrayList<ProductSaleModel> data;
+
+    private  RecyclerView recyclerView;
     private Context context;
 
-    private final ProductModel loadingCardObject = new ProductModel();
-    private final ProductModel noResultCardObject = new ProductModel();
+    private final ProductSaleModel loadingCardObject = new ProductSaleModel();
+    private final ProductSaleModel noResultCardObject = new ProductSaleModel();
 
     private final int TYPE_DATA_VIEW_HOLDER = 0;
     private final int TYPE_LOADING_VIEW_HOLDER = 1;
     private final int TYPE_NO_RESULT_VIEW_HOLDER = 2;
 
-    @Setter
-    private LastItemReachedListener lastItemReachedListener;
-    @Setter
-    private ItemInteractionListener itemInteractionListener;
-
     private boolean noResultsFound = false;
     @Setter
     private boolean hideFavButton = false;
+
+    @Setter
+    private ProductSaleCardAdapter.LastItemReachedListener lastItemReachedListener;
+    @Setter
+    private ProductSaleCardAdapter.ItemInteractionListener itemInteractionListener;
 
     public interface LastItemReachedListener {
         void onLastItemReached();
@@ -57,33 +58,10 @@ public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         void onProductAddedToFav(long productId, boolean favChecked);
     }
 
-    public ProductsCardAdapter(Context context, RecyclerView recyclerView) {
+    public ProductSaleCardAdapter(Context context, RecyclerView recyclerView) {
         this.context = context;
         this.recyclerView = recyclerView;
         this.data = new ArrayList<>();
-    }
-
-    //item view inner class
-    public static class DataViewHolder extends RecyclerView.ViewHolder {
-
-        TextView brand, name, price, rate, sale;
-        ImageView image, store;
-        CheckBox favourite;
-        ImageView rateIcon;
-
-        public DataViewHolder(View view) {
-            super(view);
-
-            brand = view.findViewById(R.id.product_card_brand);
-            name = view.findViewById(R.id.product_card_Name);
-            price = view.findViewById(R.id.product_card_price);
-            rate = view.findViewById(R.id.product_card_rate);
-            image = view.findViewById(R.id.product_card_image);
-            store = view.findViewById(R.id.product_card_store);
-            favourite = view.findViewById(R.id.product_card_favourite);
-            rateIcon = view.findViewById(R.id.product_card_rate_icon);
-            sale = view.findViewById(R.id.product_card_salePercent);
-        }
     }
 
     public static class LoadingViewHolder extends RecyclerView.ViewHolder {
@@ -98,6 +76,22 @@ public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
+    public static class DataViewHolder extends RecyclerView.ViewHolder {
+        TextView brand, name, price, rate, sale;
+        ImageView image, store;
+        CheckBox favourite;
+        ImageView rateIcon;
+
+        public DataViewHolder(View view) {
+            super(view);
+            brand = view.findViewById(R.id.product_sale_card_brand);
+            name = view.findViewById(R.id.product_sale_card_Name);
+            price = view.findViewById(R.id.product_sale_card_price);
+            image = view.findViewById(R.id.product_sale_card_image);
+            favourite = view.findViewById(R.id.product_sale_card_favourite);
+        }
+    }
+
     @Override
     public int getItemViewType(int position) {
         if (data.get(position) == loadingCardObject) return TYPE_LOADING_VIEW_HOLDER;
@@ -105,59 +99,40 @@ public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         else return TYPE_DATA_VIEW_HOLDER;
     }
 
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         if (viewType == TYPE_LOADING_VIEW_HOLDER) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_card_loading_layout, parent, false);
-            return new LoadingViewHolder(view);
+            return new ProductSaleCardAdapter.LoadingViewHolder(view);
         } else if (viewType == TYPE_NO_RESULT_VIEW_HOLDER) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_card_no_results_layout, parent, false);
-            return new NoResultViewHolder(view);
+            return new ProductSaleCardAdapter.NoResultViewHolder(view);
         }
 
         //Default ViewHolder
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_card_layout, parent, false);
-        return new DataViewHolder(view);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_sale_card_layout, parent, false);
+        return new ProductSaleCardAdapter.DataViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
-
         if (getItemViewType(position) == TYPE_DATA_VIEW_HOLDER) {
 
-            DataViewHolder holder = (DataViewHolder) viewHolder;
+            ProductSaleCardAdapter.DataViewHolder holder = (ProductSaleCardAdapter.DataViewHolder) viewHolder;
 
-            if (renderDataInLocalLanguage())
-                holder.name.setText(data.get(position).getNameArabic());
-            else holder.name.setText(data.get(position).getName());
-            holder.brand.setText(data.get(position).getBrand());
-//            holder.price.setText(Data.get(position).getPrice() + context.getString(R.string.currency));
-            holder.rate.setText(String.valueOf(data.get(position).getRate()));
-//            holder.favourite.setChecked(Data.get(position).isFavorite());
-            holder.sale.setText(data.get(position).getSalePercent() + context.getString(R.string.sale_percent));
+
+            holder.name.setText(data.get(position).getProductName());
+            holder.brand.setText(data.get(position).getCategoryName());
+            holder.price.setText(data.get(position).getCurrencyPrice());
+            holder.favourite.setChecked(false);
 
             if (hideFavButton) holder.favourite.setVisibility(View.GONE);
-            if (data.get(position).getSalePercent() == 0) holder.sale.setVisibility(View.GONE);
-
-            if (data.get(position).getRate() == 0) {
-                holder.rate.setVisibility(View.INVISIBLE);
-                holder.rateIcon.setVisibility(View.INVISIBLE);
-            }
-
-            //Store
-            //if(isDarkModeEnabled()) holder.store.setImageTintList(ColorStateList.valueOf(Color.WHITE));
-
-            if (data.get(position).getStoreLogo() != null)
-                Glide.with(context)
-                        .load(data.get(position).getStoreLogo())
-                        .transition(DrawableTransitionOptions.withCrossFade(250))
-                        .into(holder.store);
 
             //Image
             Glide.with(context)
-                    .load(data.get(position).getImage())
+                    .load(data.get(position).getImageUrl())
                     .centerCrop()
                     .transition(DrawableTransitionOptions.withCrossFade(250))
                     .into(holder.image);
@@ -166,16 +141,16 @@ public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 @Override
                 public void onClick(View view) {
                     if (itemInteractionListener != null)
-                        itemInteractionListener.onProductClicked(data.get(holder.getAdapterPosition()).getId(), data.get(holder.getAdapterPosition()).getStoreType());
+                        itemInteractionListener.onProductClicked(data.get(holder.getBindingAdapterPosition()).getProductId(), "");
                 }
             });
 
             holder.favourite.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    Data.get(holder.getAdapterPosition()).setFavorite(holder.favourite.isChecked());
+                    //data.get(holder.getAbsoluteAdapterPosition()).setFavorite(holder.favourite.isChecked());
                     if (itemInteractionListener != null)
-                        itemInteractionListener.onProductAddedToFav(data.get(holder.getAdapterPosition()).getId(), holder.favourite.isChecked());
+                        itemInteractionListener.onProductAddedToFav(data.get(holder.getBindingAdapterPosition()).getProductId(), holder.favourite.isChecked());
                 }
             });
 
@@ -187,16 +162,17 @@ public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         super.onViewAttachedToWindow(holder);
 
         if (noResultsFound) return;
-        if (holder.getAdapterPosition() == data.size() - 1 && lastItemReachedListener != null && !isLoading())
+        if (holder.getBindingAdapterPosition() == data.size() - 1 && lastItemReachedListener != null && !isLoading())
             lastItemReachedListener.onLastItemReached();
     }
+
 
     @Override
     public int getItemCount() {
         return data.size();
     }
 
-    public void addProduct(ProductModel product) {
+    public void addProduct(ProductSaleModel product) {
         if (noResultsFound) return;
 
         recyclerView.post(() -> {
@@ -206,14 +182,14 @@ public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     //NoPost for nested recyclerviews adapters
-    public void addProductNoPost(ProductModel product) {
+    public void addProductNoPost(ProductSaleModel product) {
         if (noResultsFound) return;
 
         data.add(product);
         notifyItemInserted(getItemCount());
     }
 
-    public void addProducts(ArrayList<ProductModel> products) {
+    public void addProducts(ArrayList<ProductSaleModel> products) {
         if (noResultsFound) return;
 
         recyclerView.post(() -> {
@@ -223,7 +199,7 @@ public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     //NoPost for nested recyclerviews adapters
-    public void addProductsNoPost(ArrayList<ProductModel> products) {
+    public void addProductsNoPost(ArrayList<ProductSaleModel> products) {
         if (noResultsFound) return;
 
         data.addAll(products);
@@ -293,5 +269,4 @@ public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 else return false;
         }
     }
-
 }

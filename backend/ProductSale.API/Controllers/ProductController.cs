@@ -9,12 +9,13 @@ namespace ProductSale.API.Controllers
     [ApiController]
     public class ProductController(IProductService productService, IMapper mapper) : ControllerBase
     {
-        [HttpGet]
-        public async Task<IActionResult> GetProducts()
+        [HttpGet("demo")]
+        public async Task<IActionResult> GetDemoProducts()
         {
-            var products = await productService.GetAllProducts();
-            var productsVm = mapper.Map<IEnumerable<ProductDetailVM>>(products);
-            return Ok(productsVm);
+            var allProducts = await productService.GetAllProducts();
+            var productsVm = mapper.Map<IEnumerable<ProductDetailVM>>(allProducts);
+            var result = new { results = productsVm.Count(), products = productsVm };
+            return Ok(result);
         }
 
         [HttpGet("{id:int}")]

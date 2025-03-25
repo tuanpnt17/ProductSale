@@ -357,7 +357,6 @@ public class Repository {
                         })
                         .toFlowable(BackpressureStrategy.LATEST)
         );
-
     }
 
     public LiveData<Response<ProductsResponseModel>> getProductsViewsHistory(String token){
