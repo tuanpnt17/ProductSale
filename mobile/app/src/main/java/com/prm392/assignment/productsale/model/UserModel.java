@@ -44,6 +44,7 @@ public class UserModel {
     public static final int SIGNED_IN_WITH_GOOGLE = 1;
     public static final int SIGNED_IN_WITH_FACEBOOK = 2;
 
+
     public UserModel(){
         id = "id";
         fullName = "fullName";
@@ -77,5 +78,45 @@ public class UserModel {
     public String getAccountType(){
         if (hasStore()) return "Seller Account";
         else return "User Account";
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getLastSeen() {
+        return lastSeen;
+    }
+
+    public void setLastSeen(String lastSeen) {
+        this.lastSeen = lastSeen;
     }
 }

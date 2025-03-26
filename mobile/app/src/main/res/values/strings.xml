@@ -260,5 +260,9 @@
     <string name="Camera_Permission_Denied">Camera Permission Denied</string>
     <string name="main_settings">Main Settings</string>
     <string name="theme">Theme</string>
+    <string name="this_is_opponent_message" />
+    <string name="this_is_my_message" />
+    <string name="my_message" />
+    <string name="type_something" />
 
 </resources>
