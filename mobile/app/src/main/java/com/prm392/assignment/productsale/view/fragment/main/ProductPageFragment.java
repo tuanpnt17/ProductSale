@@ -2,8 +2,6 @@ package com.prm392.assignment.productsale.view.fragment.main;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,33 +32,22 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.material.tabs.TabLayoutMediator;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
-
 import com.prm392.assignment.productsale.R;
 import com.prm392.assignment.productsale.adapters.ImagesSliderViewPagerAdapter;
 import com.prm392.assignment.productsale.databinding.FragmentProductPageBinding;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
-import com.prm392.assignment.productsale.model.ProductModel;
-import com.prm392.assignment.productsale.model.ProductPageModel;
+import com.prm392.assignment.productsale.model.products.ProductSaleModel;
+import com.prm392.assignment.productsale.model.products.StoreLocation;
 import com.prm392.assignment.productsale.util.AppSettingsManager;
 import com.prm392.assignment.productsale.util.DialogsProvider;
 import com.prm392.assignment.productsale.view.activity.MainActivity;
 import com.prm392.assignment.productsale.viewmodel.fragment.main.ProductPageViewModel;
-import lecho.lib.hellocharts.gesture.ContainerScrollType;
-import lecho.lib.hellocharts.gesture.ZoomType;
-import lecho.lib.hellocharts.model.Axis;
-import lecho.lib.hellocharts.model.AxisValue;
-import lecho.lib.hellocharts.model.Line;
-import lecho.lib.hellocharts.model.LineChartData;
-import lecho.lib.hellocharts.model.PointValue;
-import lecho.lib.hellocharts.model.ValueShape;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
 import lecho.lib.hellocharts.view.LineChartView;
 
 
@@ -77,21 +64,17 @@ public class ProductPageFragment extends Fragment {
     private GoogleMap googleMap;
 
     public ProductPageFragment() {
-        // Required empty public constructor
-
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        vb = FragmentProductPageBinding.inflate(inflater,container,false);
+        vb = FragmentProductPageBinding.inflate(inflater, container, false);
         return vb.getRoot();
     }
 
@@ -112,106 +95,94 @@ public class ProductPageFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = new ViewModelProvider(this, ViewModelProvider.Factory.from(ProductPageViewModel.initializer)).get(ProductPageViewModel.class);
+        viewModel = new ViewModelProvider(this, ViewModelProvider.Factory.from(ProductPageViewModel.initializer))
+                .get(ProductPageViewModel.class);
         if (getArguments() != null) viewModel.setProductId(getArguments().getLong("productId"));
 
-        new Handler().post(()->{
-            navController = ((MainActivity)getActivity()).getAppNavController();
+        new Handler().post(() -> {
+            navController = ((MainActivity) getActivity()).getAppNavController();
         });
 
-        imageSliderAdapter = new ImagesSliderViewPagerAdapter(getContext());
-        vb.productPageImagesSlider.setAdapter(imageSliderAdapter);
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.product_page_map);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(map -> {
+                this.googleMap = map;
 
-        TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(vb.productPageImagesSliderIndicator, vb.productPageImagesSlider,(tab, position) ->{ });
-        tabLayoutMediator.attach();
-
-        ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.product_page_map)).getMapAsync(map ->{
-            this.googleMap = map;
-
-            googleMap.getUiSettings().setCompassEnabled(true);
-            googleMap.getUiSettings().setMapToolbarEnabled(false);
-            googleMap.getUiSettings().setMyLocationButtonEnabled(false);
-            googleMap.getUiSettings().setZoomControlsEnabled(true);
-            googleMap.getUiSettings().setAllGesturesEnabled(false);
-            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
-        });
-
-        vb.productPageSubmitRate.setVisibility(View.INVISIBLE);
-        userRatingStars = new CheckBox[]{vb.productPageRateStar1, vb.productPageRateStar2, vb.productPageRateStar3, vb.productPageRateStar4, vb.productPageRateStar5};
-        for(int i=0; i<userRatingStars.length; i++){
-            final int index = i;
-            userRatingStars[i].setOnClickListener( (star)->{
-                for (int j = 0; j <= index; j++) userRatingStars[j].setChecked(true);
-                for (int j = index+1; j < userRatingStars.length; j++) userRatingStars[j].setChecked(false);
-                userRatingNewValue = index+1;
-                showRatingSubmit(userRatingNewValue != viewModel.getProductPageModel().getUserRating());
+                googleMap.getUiSettings().setCompassEnabled(true);
+                googleMap.getUiSettings().setMapToolbarEnabled(false);
+                googleMap.getUiSettings().setMyLocationButtonEnabled(false);
+                googleMap.getUiSettings().setZoomControlsEnabled(true);
+                googleMap.getUiSettings().setAllGesturesEnabled(false);
+                googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             });
         }
 
-        vb.productPageFavourite.setOnCheckedChangeListener((button,checked)->{
-            if(checked) vb.productPageFavouriteText.setText(R.string.Remove);
-            else vb.productPageFavouriteText.setText(R.string.Add);
+        vb.increaseBtn.setOnClickListener(button -> {
+            viewModel.setProductQuantity(viewModel.getProductQuantity() + 1);
+            vb.txtQuantity.setText(viewModel.getProductQuantity() + "");
         });
 
-        vb.productPageFavourite.setOnClickListener( button ->{
-           setFavourite(vb.productPageFavourite.isChecked());
+        vb.decreaseBtn.setOnClickListener(button -> {
+            if (viewModel.getProductQuantity() > 1) {
+                viewModel.setProductQuantity(viewModel.getProductQuantity() - 1);
+                vb.txtQuantity.setText(viewModel.getProductQuantity() + "");
+            }
         });
 
-        vb.productPageFavouriteText.setOnClickListener( button ->{
-            vb.productPageFavourite.performClick();
+        vb.txtQuantity.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                try {
+                    int quantity = Integer.parseInt(vb.txtQuantity.getText().toString());
+                    if (quantity < 1) {
+                        viewModel.setProductQuantity(1);
+                        vb.txtQuantity.setText("1");
+                    } else viewModel.setProductQuantity(quantity);
+                } catch (Exception e) {
+                    viewModel.setProductQuantity(1);
+                    vb.txtQuantity.setText("1");
+                }
+            }
         });
 
-        vb.productPageBack.setOnClickListener( button ->{
-            getActivity().onBackPressed();
+        vb.productPageBack.setOnClickListener(button -> {
+            getActivity().getOnBackPressedDispatcher().onBackPressed();
         });
 
-        vb.productPageStore.setOnClickListener( image ->{
-            Bundle bundle = new Bundle();
-            bundle.putLong("storeId",viewModel.getProductPageModel().getStore().getStoreId());
-            navController.navigate(R.id.action_productPageFragment_to_storePageFragment,bundle);
+        //Add to cart
+        vb.addToCartBtn.setOnClickListener(button -> {
+            vb.productPageLoadingPage.setVisibility(View.VISIBLE);
+            viewModel.addProductToCart().observe(getViewLifecycleOwner(), response -> {
+                vb.productPageLoadingPage.setVisibility(View.GONE);
+                viewModel.setProductQuantity(1);
+                vb.txtQuantity.setText("1");
+                DialogsProvider.get(getActivity()).messageDialog("Success","Add to Cart Successful");
+                vb.productPageLoadingPage.setVisibility(View.GONE);
+            });
         });
 
-        vb.productPageOpenSourcePageButton.setOnClickListener( button ->{
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(viewModel.getProductPageModel().getMainInfo().getSourceUrl()));
-            startActivity(intent);
-        });
-
-        vb.productPageShareProductButton.setOnClickListener( button ->{
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_TEXT, viewModel.getProductPageModel().getMainInfo().getShareableUrl());
-            startActivity(Intent.createChooser(intent, viewModel.getProductPageModel().getMainInfo().getName()));
-        });
-
-        vb.productPageNavigateButton.setOnClickListener( button ->{
-            Uri uri = Uri.parse("google.navigation:q="+viewModel.getProductPageModel().getStore().getStoreLatitude()+","+viewModel.getProductPageModel().getStore().getStoreLongitude());
+        vb.productPageNavigateButton.setOnClickListener(button -> {
+            Uri uri = Uri.parse("google.navigation:q=" + viewModel.getStoreLocation().getLatitude() + "," + viewModel.getStoreLocation().getLongitude());
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(uri);
             startActivity(intent);
         });
 
-        vb.productPageSubmitRate.setOnClickListener( button ->{
-            rateProduct(userRatingNewValue);
-            showRatingSubmit(false);
-        });
-
-        loadProductData();
+        loadProductSale();
     }
 
-    void loadProductData(){
+    void loadProductSale() {
         vb.productPageLoadingPage.setVisibility(View.VISIBLE);
 
-        viewModel.getProduct().observe(getViewLifecycleOwner(), response ->{
+        viewModel.getProductSale().observe(getViewLifecycleOwner(), response -> {
 
-            switch (response.code()){
+            switch (response.code()) {
                 case BaseResponseModel.SUCCESSFUL_OPERATION:
-                    if(response.body()!=null){
-                        viewModel.setProductPageModel(response.body().getProduct());
-                        renderProductData();
+                    if (response.body() != null) {
+                        viewModel.setProductSaleModel(response.body().getProduct());
+                        viewModel.setStoreLocation(response.body().getStoreLocation());
+                        renderProductSaleData();
                         vb.productPageLoadingPage.setVisibility(View.GONE);
-                        vb.getRoot().startAnimation(AnimationUtils.loadAnimation(getContext(),R.anim.lay_on));
+                        vb.getRoot().startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.lay_on));
                     }
                     break;
 
@@ -222,205 +193,99 @@ public class ProductPageFragment extends Fragment {
                 case BaseResponseModel.FAILED_REQUEST_FAILURE:
                     Toast.makeText(getContext(), "Loading Failed", Toast.LENGTH_SHORT).show();
                     break;
-
                 default:
-                    Toast.makeText(getContext(), "Server Error | Code: "+ response.code(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Server Error | Code: " + response.code(), Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
-    boolean renderDataInLocalLanguage(){
-        switch (AppSettingsManager.getLanguageKey(getContext())){
+
+    boolean renderDataInLocalLanguage() {
+        switch (AppSettingsManager.getLanguageKey(getContext())) {
             case AppSettingsManager.LANGUAGE_ENGLISH:
                 return false;
             case AppSettingsManager.LANGUAGE_ARABIC:
                 return true;
             default:
                 String systemLanguage = Locale.getDefault().getLanguage();
-                if(systemLanguage.equals(AppSettingsManager.LANGUAGE_ARABIC)) return true;
+                if (systemLanguage.equals(AppSettingsManager.LANGUAGE_ARABIC)) return true;
                 else return false;
         }
     }
 
-    void renderProductData(){
-        ProductPageModel productPageModel = viewModel.getProductPageModel();
-
-        if(renderDataInLocalLanguage()) vb.productPageTitle.setText(productPageModel.getMainInfo().getNameArabic());
-        else vb.productPageTitle.setText(productPageModel.getMainInfo().getName());
-
-        vb.productPageBrand.setText(productPageModel.getMainInfo().getBrand());
-        Double productPrice = Double.parseDouble(String.format("%.2f",productPageModel.getPrices().get(0).getPrice()-(productPageModel.getPrices().get(0).getPrice()*productPageModel.getMainInfo().getSalePercent()/100)));
-        vb.productPagePrice.setText(productPrice+getString(R.string.currency));
-        vb.productPageSalePercent.setText(productPageModel.getMainInfo().getSalePercent()+getString(R.string.sale_percent));
-        vb.productPageRate.setText(productPageModel.getProductRating().getRating().substring(0,3));
-        vb.productPageViews.setText(productPageModel.getViews().getCount()+"");
-        vb.productPageFavourite.setChecked(productPageModel.isFavorite());
-        renderUserRating(productPageModel.getUserRating());
+    void renderProductSaleData() {
+        ProductSaleModel productSaleModel = viewModel.getProductSaleModel();
+        StoreLocation storeLocation = viewModel.getStoreLocation();
+        vb.productPageBrand.setText(productSaleModel.getCategoryName());
+        Double productPrice = Double.parseDouble(String.format("%.2f", productSaleModel.getPrice()));
+        vb.productPagePrice.setText(productPrice + "$");
+        vb.txtQuantity.setText(viewModel.getProductQuantity() + "");
 
         Glide.with(this)
-                .load(productPageModel.getStore().getStoreLogo())
+                .load("https://plus.unsplash.com/premium_photo-1676973464513-7489d4ca4802?q=80&w=1963&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")
                 .transition(DrawableTransitionOptions.withCrossFade(100))
-                .into(vb.productPageStore);
+                .into(vb.productPageImage);
 
-        ArrayList<String> productImagesLinks = new ArrayList<>();
-        for(ProductPageModel.ProductImage i : productPageModel.getImages())
-            productImagesLinks.add(i.getImageUrl().replace("http://","https://"));
-        imageSliderAdapter.addImages(productImagesLinks);
-        if(productImagesLinks.size() == 1) vb.productPageImagesSliderIndicator.setVisibility(View.INVISIBLE);
+        vb.productPageBrand.setText(productSaleModel.getCategoryName());
+        vb.productPageTitle.setText(productSaleModel.getProductName());
+        vb.productPageDescription.setText(productSaleModel.getBriefDescription());
+        vb.productSaleFullDescription.setText(productSaleModel.getFullDescription());
+        vb.productSaleTechSpecsText.setText(productSaleModel.getTechnicalSpecifications());
+        addProductOnMap(storeLocation.getLatitude(), storeLocation.getLongitude(), storeLocation.getAddress());
 
-        drawPriceTrackerChart(productPageModel.getPrices());
+        String fullDescription = productSaleModel.getFullDescription();
 
-        if(productPageModel.getStore().getStoreType().equals(ProductModel.ONLINE_STORE)){
-            vb.productPageMapSection.setVisibility(View.GONE);
-            vb.productPageNavigateButton.setVisibility(View.GONE);
-            vb.productPageDescription.setVisibility(View.GONE);
-        }
-        else {
-            ProductPageModel.Store store = productPageModel.getStore();
-            addProductOnMap(store.getStoreLatitude(),store.getStoreLongitude(),store.getStoreName());
-            vb.productPageOpenSourcePageButton.setVisibility(View.GONE);
+        if (fullDescription.length() > 120) {
+            String shortDescription = fullDescription.substring(0, 110) + "... ";
 
-            String fullDescription;
-            if(renderDataInLocalLanguage()) fullDescription = productPageModel.getMainInfo().getDescriptionArabic();
-            else fullDescription = productPageModel.getMainInfo().getDescription();
+            SpannableString readMore = new SpannableString(getString(R.string.Read_More));
+            ClickableSpan clickableSpan = new ClickableSpan() {
+                @Override
+                public void onClick(@NonNull View widget) {
 
-            if(fullDescription.length()>120){
-                String shortDescription = fullDescription.substring(0,110)+"... ";
+                    vb.productSaleFullDescription.animate().alpha(0).setDuration(250).withEndAction(() -> {
+                        vb.productSaleFullDescription.setText(fullDescription);
+                        vb.productSaleFullDescription.animate().alpha(1f).setDuration(250).start();
+                    }).start();
 
-                SpannableString readMore = new SpannableString(getString(R.string.Read_More));
-                ClickableSpan clickableSpan = new ClickableSpan() {
-                    @Override
-                    public void onClick(@NonNull View widget) {
+                }
 
-                        vb.productPageDescription.animate().alpha(0).setDuration(250).withEndAction(()->{
-                            vb.productPageDescription.setText(fullDescription);
-                            vb.productPageDescription.animate().alpha(1f).setDuration(250).start();
-                        }).start();
+                @Override
+                public void updateDrawState(@NonNull TextPaint ds) {
+                    super.updateDrawState(ds);
+                    ds.setUnderlineText(false);
+                }
+            };
 
-                    }
+            readMore.setSpan(clickableSpan, 0, readMore.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+            vb.productSaleFullDescription.setText(shortDescription);
+            vb.productSaleFullDescription.append(readMore);
+            vb.productSaleFullDescription.setMovementMethod(LinkMovementMethod.getInstance());
 
-                    @Override
-                    public void updateDrawState(@NonNull TextPaint ds) {
-                        super.updateDrawState(ds);
-                        ds.setUnderlineText(false);
-                    }
-                };
+        } else vb.productSaleFullDescription.setText(fullDescription);
 
-                readMore.setSpan(clickableSpan,0,readMore.length(),Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-                vb.productPageDescription.setText(shortDescription);
-                vb.productPageDescription.append(readMore);
-                vb.productPageDescription.setMovementMethod(LinkMovementMethod.getInstance());
-
-            }
-            else vb.productPageDescription.setText(fullDescription);
-
-        }
-
-        if(productPageModel.getMainInfo().getSalePercent() == 0) vb.productPageSalePercent.setVisibility(View.INVISIBLE);
-
-    }
-
-    void renderUserRating(int stars){
-        if(stars>0) userRatingStars[stars-1].performClick();
-    }
-
-    void showRatingSubmit(boolean show){
-        if(show == (vb.productPageSubmitRate.getVisibility()==View.VISIBLE)) return;
-
-        if(show){
-            vb.productPageSubmitRate.setVisibility(View.VISIBLE);
-            vb.productPageSubmitRate.startAnimation(AnimationUtils.loadAnimation(getContext(),R.anim.zoom_in));
-        } else {
-            vb.productPageSubmitRate.setVisibility(View.INVISIBLE);
-            vb.productPageSubmitRate.startAnimation(AnimationUtils.loadAnimation(getContext(),R.anim.zoom_out));
-        }
     }
 
     private void addProductOnMap(double lat, double lng, String storeName) {
         try {
             LatLng productLocation = new LatLng(lat, lng);
-            googleMap.addMarker(new MarkerOptions().position(productLocation).title(storeName).icon(BitmapDescriptorFactory.fromResource(R.drawable.gps_store_mark))).showInfoWindow();
+            googleMap.addMarker(new MarkerOptions().position(productLocation)
+                    .title(storeName)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
 
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(productLocation)
-                    .zoom(googleMap.getCameraPosition().zoom < 8 ? 8:googleMap.getCameraPosition().zoom)
+                    .zoom(googleMap.getCameraPosition().zoom < 8 ? 8 : googleMap.getCameraPosition().zoom)
                     .build();
 
-            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),2000,null);
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 2000, null);
 
-        } catch (Exception e){
+        } catch (Exception e) {
             Toast.makeText(getContext(), "Map Marker Error", Toast.LENGTH_SHORT).show();
         }
-
     }
 
-    void drawPriceTrackerChart(ArrayList<ProductPageModel.ProductPrice> prices){
-        lineChartView = vb.productPageChart;
-
-        List<AxisValue> xValues = new ArrayList<>();
-        List<PointValue> points = new ArrayList<>();
-
-        xValues.add(new AxisValue(0).setLabel("untracked"));
-        points.add(new PointValue(0,0));
-
-        for (int i=1; i<=prices.size(); i++){
-            xValues.add(new AxisValue(i).setLabel(dateTimeConvert(prices.get(i-1).getCreationDate())));
-            points.add(new PointValue(i, (float) prices.get(i-1).getPrice()));
-        }
-
-        Line line = new Line();
-        line.setValues(points);
-        line.setColor(getResources().getColor(R.color.lightModeprimary));
-        line.setStrokeWidth(3);
-        line.setHasPoints(true);
-        line.setShape(ValueShape.CIRCLE);
-        line.setPointColor(getResources().getColor(R.color.lightModeprimary));
-        line.setPointRadius(5);
-        line.setHasLabels(true);
-        line.setHasLines(true);
-        line.setCubic(true);
-        line.setFilled(true);
-        line.setAreaTransparency(50);
-
-        Axis axisX = new Axis();
-        axisX.setValues(xValues);
-        axisX.setName("Date");
-        axisX.setLineColor(Color.GRAY);
-        axisX.setTextColor(Color.GRAY);
-        axisX.setTextSize(14);
-        axisX.setTypeface(Typeface.DEFAULT);
-        axisX.setHasLines(true);
-        axisX.setMaxLabelChars(10);
-        axisX.setHasTiltedLabels(true);
-
-        Axis axisY = new Axis();
-        axisY.setLineColor(Color.GRAY);
-        axisY.setTextColor(Color.GRAY);
-        axisY.setTextSize(10);
-        axisY.setHasLines(true);
-
-        //setting chart data
-        List<Line> lines = new ArrayList<>();
-        lines.add(line);
-
-        LineChartData chartData = new LineChartData();
-        chartData.setLines(lines);
-        chartData.setAxisXBottom(axisX);
-        chartData.setAxisYLeft(axisY);
-        chartData.finish();
-
-        //send chart data to view
-        lineChartView.setLineChartData(chartData);
-        //set chart view settings
-        lineChartView.setInteractive(true);
-        lineChartView.setZoomType(ZoomType.HORIZONTAL_AND_VERTICAL);
-        lineChartView.setMaxZoom(5);
-        lineChartView.setContainerScrollEnabled(true, ContainerScrollType.HORIZONTAL);
-
-    }
-
-    public String dateTimeConvert(String dateTime){
+    public String dateTimeConvert(String dateTime) {
         String inputPattern = "yyyy-MM-dd'T'HH:mm:ss";
         String outputPattern = "dd/MM/yyyy";
 
@@ -440,30 +305,6 @@ public class ProductPageFragment extends Fragment {
         }
 
         return "-";
-    }
-
-    void setFavourite(boolean favourite){
-        if(favourite){
-            viewModel.addFavourite().observe(getViewLifecycleOwner(), response ->{
-                if (response.code() != BaseResponseModel.SUCCESSFUL_CREATION)
-                    Toast.makeText(getContext(), "Error " + response.code(), Toast.LENGTH_SHORT).show();
-            });
-        }
-        else {
-            viewModel.removeFavourite().observe(getViewLifecycleOwner(), response ->{
-                if (response.code() != BaseResponseModel.SUCCESSFUL_DELETED)
-                    Toast.makeText(getContext(), "Error " + response.code(), Toast.LENGTH_SHORT).show();
-            });
-        }
-
-    }
-
-    void rateProduct(int rating){
-        viewModel.rateProduct(rating).observe(getViewLifecycleOwner(), response ->{
-            if (response.code() != BaseResponseModel.SUCCESSFUL_OPERATION)
-                Toast.makeText(getContext(), "Error " + response.code(), Toast.LENGTH_SHORT).show();
-            else viewModel.getProductPageModel().setUserRating(userRatingNewValue);
-        });
     }
 
 }
