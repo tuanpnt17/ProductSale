@@ -12,7 +12,7 @@ namespace ProductSale.Business.Cart
                 .GenericRepository<Repository.Entities.Cart>()
                 .GetAll()
                 .Include(c => c.User)
-                .Include(c => c.CartItems)
+                .Include(c => c.CartItems).ThenInclude(x => x.Product)
                 .FirstOrDefaultAsync(x => x.UserId == userId);
             return cart;
         }
@@ -25,7 +25,7 @@ namespace ProductSale.Business.Cart
                 cart = new Repository.Entities.Cart
                 {
                     UserId = userId,
-                    Status = "Active",
+                    Status = "Pending",
                     TotalPrice = 0,
                     CartItems = new List<CartItem>(),
                 };
@@ -54,5 +54,99 @@ namespace ProductSale.Business.Cart
             unitOfWork.GenericRepository<Repository.Entities.Cart>().Update(cart);
             await unitOfWork.SaveChangesAsync();
         }
-    }
+
+		public async Task RemoveItemFromCart(int userId, int productId)
+		{
+			var cart = await GetCart(userId);
+			if (cart == null) return;
+
+			var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
+			if (cartItem != null)
+			{
+				cart.TotalPrice -= cartItem.Price * cartItem.Quantity;
+				cart.CartItems.Remove(cartItem);
+				unitOfWork.GenericRepository<Repository.Entities.Cart>().Update(cart);
+				await unitOfWork.SaveChangesAsync();
+			}
+		}
+
+		public async Task UpdateCartItemQuantity(int userId, int productId, int quantity)
+		{
+			var cart = await GetCart(userId);
+			if (cart == null) return;
+
+			var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
+			if (cartItem != null)
+			{
+				// Update total price
+				cart.TotalPrice -= cartItem.Price * cartItem.Quantity;
+				cartItem.Quantity = quantity;
+				cart.TotalPrice += cartItem.Price * cartItem.Quantity;
+
+				unitOfWork.GenericRepository<Repository.Entities.Cart>().Update(cart);
+				await unitOfWork.SaveChangesAsync();
+			}
+		}
+
+		public async Task ClearCart(int userId)
+		{
+			var cart = await GetCart(userId);
+			if (cart == null) return;
+
+			cart.CartItems.Clear(); 
+			cart.TotalPrice = 0; 
+			unitOfWork.GenericRepository<Repository.Entities.Cart>().Update(cart);
+			await unitOfWork.SaveChangesAsync();
+		}
+
+		public async Task<decimal> GetCartTotal(int userId)
+		{
+			var cart = await GetCart(userId);
+			if (cart == null) return 0;
+
+			decimal total = 0;
+			foreach (var cartItem in cart.CartItems)
+			{
+				total += cartItem.Price * cartItem.Quantity;
+			}
+
+			return total;
+		}
+
+		public async Task CompletePaymentAndConvertCartToOrder(int userId, string PaymentMethod, string BillingAddress)
+		{
+			var cart = await unitOfWork.GenericRepository<Repository.Entities.Cart>()
+				.GetAll()
+				.Include(c => c.CartItems)
+				.FirstOrDefaultAsync(x => x.UserId == userId && x.Status == "Pending");
+
+			if (cart == null || cart.CartItems.Count == 0) return;
+			cart.Status = "Completed";
+
+			var order = new Repository.Entities.Order
+			{
+				UserId = userId,
+				CartId = cart.CartId,
+				OrderStatus = "Processing",
+				OrderDate = DateTime.Now,
+				PaymentMethod = PaymentMethod,
+				BillingAddress = BillingAddress,
+			};
+			await unitOfWork.GenericRepository<Repository.Entities.Order>().InsertAsync(order);
+
+			var payment = new Repository.Entities.Payment
+			{
+				OrderId = order.OrderId,
+				Amount = cart.TotalPrice,
+				PaymentStatus = "Completed",
+				PaymentDate = DateTime.Now,
+			};
+			await unitOfWork.GenericRepository<Repository.Entities.Payment>().InsertAsync(payment);
+
+			await unitOfWork.SaveChangesAsync();
+
+			unitOfWork.GenericRepository<Repository.Entities.Cart>().Update(cart);
+			await unitOfWork.SaveChangesAsync();
+		}
+	}
 }
