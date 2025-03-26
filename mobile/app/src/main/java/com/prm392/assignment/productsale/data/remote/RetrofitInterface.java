@@ -32,11 +32,11 @@ public interface RetrofitInterface {
 
     //Account Sign in/up
     @Headers({"client: mobile"})
-    @POST("api/Auth/login")
+    @POST("Auth/login")
     Observable<Response<UserResponseModel>> signIn(@Body SignInModel signInModel);
 
     @Headers({"client: mobile"})
-    @POST("api/Auth/register")
+    @POST("Auth/register")
     Observable<Response<UserResponseModel>> signUp(@Body SignUpModel signUpModel);
 
     //User Data Calls

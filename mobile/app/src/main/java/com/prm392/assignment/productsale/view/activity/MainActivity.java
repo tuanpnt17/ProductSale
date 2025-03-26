@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RadioButton;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,7 +27,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.prm392.assignment.productsale.R;
 import com.prm392.assignment.productsale.databinding.ActivityMainBinding;
-import com.prm392.assignment.productsale.model.BaseResponseModel;
 import com.prm392.assignment.productsale.model.UserModel;
 import com.prm392.assignment.productsale.util.AppSettingsManager;
 import com.prm392.assignment.productsale.util.NetworkBroadcastReceiver;
@@ -117,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
             firstLaunch = SharedPrefManager.get(this).isFirstLaunch();
             rememberMe = SharedPrefManager.get(this).isRememberMeChecked();
             signedIn = SharedPrefManager.get(this).isSignedIn();
-            token = UserAccountManager.getToken(this, UserAccountManager.TOKEN_TYPE_BEARER);
+//            token = UserAccountManager.getToken(this, UserAccountManager.TOKEN_TYPE_BEARER);
             user = UserAccountManager.getUser(this);
 
             justSignedIn = getIntent().getBooleanExtra(JUST_SIGNED_IN, false);
@@ -133,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
 
                 // Comment these two lines to skip sign in
-//                loadUserData(null); //From Local Storage
+                loadUserData(user);
 //                if (!justSignedIn) syncUserData(); //From Server
 
                 //Side Menu
@@ -253,25 +251,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void syncUserData() {
-        viewModel.getUser(token).observe(this, response -> {
-            switch (response.code()) {
-                case BaseResponseModel.SUCCESSFUL_OPERATION:
-                    UserModel user = response.body().getUser();
-                    UserAccountManager.updateUser(getApplicationContext(), user);
-                    loadUserData(user);
-                    break;
-
-                case BaseResponseModel.FAILED_AUTH:
-                    UserAccountManager.signOut(MainActivity.this, true);
-                    break;
-
-                case BaseResponseModel.FAILED_REQUEST_FAILURE:
-                    Toast.makeText(this, "Data Sync Failed !", Toast.LENGTH_SHORT).show();
-                    break;
-            }
-        });
-    }
+//    public void syncUserData() {
+//        viewModel.getUser(token).observe(this, response -> {
+//            switch (response.code()) {
+//                case BaseResponseModel.SUCCESSFUL_OPERATION:
+//                    UserModel user = response.body().getUser();
+//                    UserAccountManager.updateUser(getApplicationContext(), user);
+//                    loadUserData(user);
+//                    break;
+//
+//                case BaseResponseModel.FAILED_AUTH:
+//                    UserAccountManager.signOut(MainActivity.this, true);
+//                    break;
+//
+//                case BaseResponseModel.FAILED_REQUEST_FAILURE:
+//                    Toast.makeText(this, "Data Sync Failed !", Toast.LENGTH_SHORT).show();
+//                    break;
+//            }
+//        });
+//    }
 
     public void loadUserData(UserModel userModel) {
         if (userModel != null) user = userModel;

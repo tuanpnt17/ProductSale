@@ -9,51 +9,43 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.viewmodel.ViewModelInitializer;
 
-import com.prm392.assignment.productsale.data.Repository;
 import com.prm392.assignment.productsale.data.repository.ProductsSaleRepository;
-import com.prm392.assignment.productsale.model.BaseResponseModel;
-import com.prm392.assignment.productsale.model.ProductsResponseModel;
 import com.prm392.assignment.productsale.model.products.ProductsSaleResponseModel;
 import com.prm392.assignment.productsale.util.UserAccountManager;
-
 
 import org.jetbrains.annotations.NotNull;
 
 import retrofit2.Response;
 
 public class SearchViewModel extends ViewModel {
-    private Repository repository;
-    private ProductsSaleRepository productsRepository;
-    private LiveData<Response<ProductsResponseModel>> recommendedProducts;
-    private LiveData<Response<ProductsSaleResponseModel>> demoProducts;
-    private String token;
+    public static final ViewModelInitializer<SearchViewModel> initializer = new ViewModelInitializer<>(
+            SearchViewModel.class,
+            creationExtras -> {
+                Application app = creationExtras.get(APPLICATION_KEY);
+                assert app != null;
+                return new SearchViewModel(app);
+            }
+    );
+    private final ProductsSaleRepository productsRepository;
+    private final String token;
+    //    private LiveData<Response<ProductsSaleResponseModel>> demoProducts;
+    private LiveData<Response<ProductsSaleResponseModel>> recommendedProducts;
 
     public SearchViewModel(@NotNull Application application) {
         super();
 
-        repository = new Repository();
         productsRepository = new ProductsSaleRepository();
 
         token = UserAccountManager.getToken(application, UserAccountManager.TOKEN_TYPE_BEARER);
     }
 
-    public static final ViewModelInitializer<SearchViewModel> initializer = new ViewModelInitializer<>(
-            SearchViewModel.class,
-            creationExtras -> {
-                Application app = (Application) creationExtras.get(APPLICATION_KEY);
-                assert app != null;
-                return new SearchViewModel(app);
-            }
-    );
+//    public LiveData<Response<ProductsSaleResponseModel>> getDemoProducts() {
+//        demoProducts = productsRepository.getDemoProducts(token);
+//        return demoProducts;
+//    }
 
-    public LiveData<Response<ProductsSaleResponseModel>> getDemoProducts() {
-        demoProducts = productsRepository.getDemoProducts(token);
-        return demoProducts;
-    }
-
-
-    public LiveData<Response<ProductsResponseModel>> getRecommendedProducts() {
-        recommendedProducts = repository.getRecommendedProducts(token);
+    public LiveData<Response<ProductsSaleResponseModel>> getRecommendedProducts() {
+        recommendedProducts = productsRepository.getProducts(token);
         return recommendedProducts;
     }
 
@@ -61,11 +53,11 @@ public class SearchViewModel extends ViewModel {
         recommendedProducts.removeObservers(lifecycleOwner);
     }
 
-    public LiveData<Response<BaseResponseModel>> addFavourite(long productId) {
-        return repository.addFavourite(token, productId);
-    }
-
-    public LiveData<Response<BaseResponseModel>> removeFavourite(long productId) {
-        return repository.removeFavourite(token, productId);
-    }
+//    public LiveData<Response<BaseResponseModel>> addFavourite(long productId) {
+//        return repository.addFavourite(token, productId);
+//    }
+//
+//    public LiveData<Response<BaseResponseModel>> removeFavourite(long productId) {
+//        return repository.removeFavourite(token, productId);
+//    }
 }

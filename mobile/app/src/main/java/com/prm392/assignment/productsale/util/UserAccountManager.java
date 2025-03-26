@@ -32,10 +32,10 @@ public final class UserAccountManager {
         return user;
     }
 
-    public static void updateUser(Context context, UserModel userModel) {
-        user = userModel;
-        SharedPrefManager.get(context).setUser(user);
-    }
+//    public static void updateUser(Context context, UserModel userModel) {
+//        user = userModel;
+//        SharedPrefManager.get(context).setUser(user);
+//    }
 
     public static String getToken(Context context, int type) {
         String output = "";

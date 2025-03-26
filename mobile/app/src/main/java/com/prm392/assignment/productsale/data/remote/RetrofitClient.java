@@ -6,13 +6,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
     //    private static String mainClientUrl = "https://sale-hunter.herokuapp.com/api/v1/";
-    private static final String mainClientUrl = "http://10.0.2.2:5120/";
+//    private static final String mainClientUrl = "http://10.0.2.2:5120/";
     private static final String upcItemDbClientUrl = "https://api.upcitemdb.com/";
     private static final String barcodeMonsterClientUrl = "https://barcode.monster/";
+    private static final String mainClientUrl = "http://10.0.2.2:5120/api/";
     private static Retrofit mainClient;
-
-    private static String mainClientUrl = "http://10.0.2.2:5120/api/";
-
     // Khi muốn gọi đến các api khác nhau thì thêm các RetrofitClient khác nhau
     private static Retrofit upcItemDbClient;
     private static Retrofit barcodeMonsterClient;

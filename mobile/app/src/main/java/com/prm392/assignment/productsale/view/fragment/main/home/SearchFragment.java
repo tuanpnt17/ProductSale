@@ -1,59 +1,36 @@
 package com.prm392.assignment.productsale.view.fragment.main.home;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.recyclerview.widget.GridLayoutManager;
-
 import android.os.Handler;
-import android.speech.RecognizerIntent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Locale;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.prm392.assignment.productsale.R;
 import com.prm392.assignment.productsale.adapters.ProductSaleCardAdapter;
-import com.prm392.assignment.productsale.adapters.ProductsCardAdapter;
 import com.prm392.assignment.productsale.databinding.FragmentSearchBinding;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
-import com.prm392.assignment.productsale.model.ProductModel;
 import com.prm392.assignment.productsale.model.products.ProductSaleModel;
-import com.prm392.assignment.productsale.util.AppSettingsManager;
 import com.prm392.assignment.productsale.util.DialogsProvider;
 import com.prm392.assignment.productsale.view.activity.MainActivity;
-import com.prm392.assignment.productsale.view.activity.Scanner;
 import com.prm392.assignment.productsale.viewmodel.fragment.main.home.SearchViewModel;
+
+import java.util.ArrayList;
 
 public class SearchFragment extends Fragment {
     private FragmentSearchBinding vb;
     private NavController navController;
     private SearchViewModel viewModel;
-
-    private ProductsCardAdapter adapter;
     private ProductSaleCardAdapter demoAdapter;
-
-    private ActivityResultLauncher<Intent> voiceResultLauncher;
-    private ActivityResultLauncher<Intent> barcodeResultLauncher;
-    private ActivityResultLauncher<String> cameraPermission;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -62,39 +39,6 @@ public class SearchFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        voiceResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == Scanner.RESULT_OK) {
-                            Intent data = result.getData();
-                            searchRequest(data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS).get(0));
-                        }
-                    }
-                });
-
-        barcodeResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if (result.getResultCode() == Activity.RESULT_OK) {
-                            Intent data = result.getData();
-                            searchRequest(data.getStringExtra("result"));
-                        } else if (result.getResultCode() == Scanner.RESULT_TRY_AGAIN)
-                            barcodeResultLauncher.launch(new Intent(getContext(), Scanner.class));
-                    }
-                });
-
-        cameraPermission = registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
-            @Override
-            public void onActivityResult(Boolean result) {
-                if (result) barcodeResultLauncher.launch(new Intent(getContext(), Scanner.class));
-                else
-                    Toast.makeText(getContext(), getString(R.string.Camera_Permission_Denied), Toast.LENGTH_SHORT).show();
-            }
-        });
 
     }
 
@@ -127,32 +71,6 @@ public class SearchFragment extends Fragment {
             return false;
         });
 
-        vb.searchVoice.setOnClickListener(button -> {
-
-            String language;
-            if (AppSettingsManager.isLanguageSystemDefault(getContext()))
-                language = Locale.getDefault().getLanguage();
-            else language = AppSettingsManager.getLanguageKey(getContext());
-
-            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.Say_Product_Name));
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, language);
-
-            voiceResultLauncher.launch(intent);
-
-        });
-
-        vb.searchBarcodeScan.setOnClickListener(button -> {
-            int checker = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA);
-
-            if (checker == PackageManager.PERMISSION_GRANTED)
-                barcodeResultLauncher.launch(new Intent(getActivity(), Scanner.class));
-            else cameraPermission.launch(Manifest.permission.CAMERA);
-
-        });
-
-        adapter = new ProductsCardAdapter(getContext(), vb.searchProductsRecyclerView);
         demoAdapter = new ProductSaleCardAdapter(getContext(), vb.searchProductsRecyclerView);
         vb.searchProductsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
         vb.searchProductsRecyclerView.setAdapter(demoAdapter);
@@ -168,12 +86,11 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void onProductAddedToFav(long productId, boolean favChecked) {
-                setFavourite(productId, favChecked);
+//                setFavourite(productId, favChecked);
             }
         });
 
-//        loadRecommendedProducts();
-        loadDemoProducts();
+        loadRecommendedProducts();
 
     }
 
@@ -185,10 +102,10 @@ public class SearchFragment extends Fragment {
         navController.navigate(R.id.action_homeFragment_to_searchResultsFragment, bundle);
     }
 
-    void loadDemoProducts() {
+    void loadRecommendedProducts() {
         vb.searchLoadingRecommended.setVisibility(View.VISIBLE);
-        viewModel.getDemoProducts().observe(getViewLifecycleOwner(), response -> {
-            var x = response.body();
+        viewModel.getRecommendedProducts().observe(getViewLifecycleOwner(), response -> {
+//            var x = response.body();
             switch (response.code()) {
                 case BaseResponseModel.SUCCESSFUL_OPERATION:
                     vb.searchLoadingRecommended.setVisibility(View.GONE);
@@ -201,7 +118,8 @@ public class SearchFragment extends Fragment {
 
                     demoAdapter.addProducts(products);
 
-//                    viewModel.removeObserverDemoProducts(getViewLifecycleOwner());
+
+                    viewModel.removeObserverRecommendedProducts(getViewLifecycleOwner());
                     break;
 
                 case BaseResponseModel.FAILED_REQUEST_FAILURE:
@@ -213,49 +131,20 @@ public class SearchFragment extends Fragment {
         });
     }
 
-    void loadRecommendedProducts() {
-        vb.searchLoadingRecommended.setVisibility(View.VISIBLE);
 
-        viewModel.getRecommendedProducts().observe(getViewLifecycleOwner(), response -> {
-
-            switch (response.code()) {
-                case BaseResponseModel.SUCCESSFUL_OPERATION:
-                    vb.searchLoadingRecommended.setVisibility(View.GONE);
-
-                    if (response.body().getProducts() == null || response.body().getProducts().isEmpty())
-                        return;
-
-                    ArrayList<ProductModel> products = response.body().getProducts();
-
-                    adapter.addProducts(products);
-
-                    viewModel.removeObserverRecommendedProducts(getViewLifecycleOwner());
-                    break;
-
-                case BaseResponseModel.FAILED_REQUEST_FAILURE:
-//                    Toast.makeText(getContext(), "Loading Recommendations Failed", Toast.LENGTH_SHORT).show();
-                    break;
-
-                default:
-                    DialogsProvider.get(getActivity()).messageDialog(getString(R.string.Server_Error), getString(R.string.Code) + response.code());
-            }
-        });
-
-    }
-
-    void setFavourite(long productId, boolean favourite) {
-        if (favourite) {
-            viewModel.addFavourite(productId).observe(getViewLifecycleOwner(), response -> {
-                if (response.code() != BaseResponseModel.SUCCESSFUL_CREATION)
-                    Toast.makeText(getContext(), "Error" + response.code(), Toast.LENGTH_SHORT).show();
-            });
-        } else {
-            viewModel.removeFavourite(productId).observe(getViewLifecycleOwner(), response -> {
-                if (response.code() != BaseResponseModel.SUCCESSFUL_DELETED)
-                    Toast.makeText(getContext(), "Error" + response.code(), Toast.LENGTH_SHORT).show();
-            });
-        }
-
-    }
+//    void setFavourite(long productId, boolean favourite) {
+//        if (favourite) {
+//            viewModel.addFavourite(productId).observe(getViewLifecycleOwner(), response -> {
+//                if (response.code() != BaseResponseModel.SUCCESSFUL_CREATION)
+//                    Toast.makeText(getContext(), "Error" + response.code(), Toast.LENGTH_SHORT).show();
+//            });
+//        } else {
+//            viewModel.removeFavourite(productId).observe(getViewLifecycleOwner(), response -> {
+//                if (response.code() != BaseResponseModel.SUCCESSFUL_DELETED)
+//                    Toast.makeText(getContext(), "Error" + response.code(), Toast.LENGTH_SHORT).show();
+//            });
+//        }
+//
+//    }
 
 }

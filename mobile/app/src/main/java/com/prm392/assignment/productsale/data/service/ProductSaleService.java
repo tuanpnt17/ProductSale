@@ -10,9 +10,13 @@ import retrofit2.http.Headers;
 
 public interface ProductSaleService {
 
+//    @Headers({"client: mobile"})
+//    @GET("product/demo")
+//    Observable<Response<ProductsSaleResponseModel>> getDemoProducts(@Header("Authorization") String token);
+
     @Headers({"client: mobile"})
-    @GET("product/demo")
-    Observable<Response<ProductsSaleResponseModel>> getDemoProducts(@Header("Authorization") String token);
+    @GET("product")
+    Observable<Response<ProductsSaleResponseModel>> getProducts(@Header("Authorization") String token);
 
 
 }

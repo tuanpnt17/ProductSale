@@ -19,19 +19,43 @@ import retrofit2.Retrofit;
 
 public class ProductsSaleRepository {
 
-    private Retrofit mainClient;
-
     // Headers
     private static final String AUTHORIZATION = "Authorization";
+    private final Retrofit mainClient;
 
     public ProductsSaleRepository() {
         mainClient = RetrofitClient.getMainInstance();
     }
 
-    public LiveData<Response<ProductsSaleResponseModel>> getDemoProducts(String token) {
+//    public LiveData<Response<ProductsSaleResponseModel>> getDemoProducts(String token) {
+//        return LiveDataReactiveStreams.fromPublisher(
+//                mainClient.create(ProductSaleService.class)
+//                        .getDemoProducts(token)
+//                        .subscribeOn(Schedulers.io())
+//                        .doOnComplete(() -> Log.d("ProductsSaleRepository", "Complete"))
+//                        .doOnNext(response -> {
+//                            if (response.code() == 200) {
+//                                Log.d("ProductsSaleRepository", "Success");
+//                            } else {
+//                                Log.d("ProductsSaleRepository", "Failed");
+//                            }
+//                        })
+//                        .onErrorReturn(exception -> {
+//                            exception.printStackTrace();
+//
+//                            if (exception.getClass() == HttpException.class)
+//                                return Response.error(((HttpException) exception).code(), ResponseBody.create(null, ""));
+//
+//                            return Response.error(BaseResponseModel.FAILED_REQUEST_FAILURE, ResponseBody.create(null, ""));
+//                        })
+//                        .toFlowable(BackpressureStrategy.LATEST)
+//        );
+//    }
+
+    public LiveData<Response<ProductsSaleResponseModel>> getProducts(String token) {
         return LiveDataReactiveStreams.fromPublisher(
                 mainClient.create(ProductSaleService.class)
-                        .getDemoProducts(token)
+                        .getProducts(token)
                         .subscribeOn(Schedulers.io())
                         .doOnComplete(() -> Log.d("ProductsSaleRepository", "Complete"))
                         .doOnNext(response -> {

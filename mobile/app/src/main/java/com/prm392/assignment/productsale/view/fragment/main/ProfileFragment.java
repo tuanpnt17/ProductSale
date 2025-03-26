@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -26,11 +25,8 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.prm392.assignment.productsale.R;
 import com.prm392.assignment.productsale.databinding.FragmentProfileBinding;
-import com.prm392.assignment.productsale.model.BaseResponseModel;
 import com.prm392.assignment.productsale.model.UserModel;
-import com.prm392.assignment.productsale.util.DialogsProvider;
 import com.prm392.assignment.productsale.util.UserAccountManager;
-import com.prm392.assignment.productsale.view.activity.MainActivity;
 import com.prm392.assignment.productsale.viewmodel.fragment.main.ProfileViewModel;
 
 
@@ -246,36 +242,36 @@ public class ProfileFragment extends Fragment {
 //        } else publishProfileData();
 //    }
 
-    void publishProfileData() {
-        DialogsProvider.get(getActivity()).setLoading(true);
-
-        viewModel.updateUser(token, user).observe(getViewLifecycleOwner(), response -> {
-            DialogsProvider.get(getActivity()).setLoading(false);
-
-            switch (response.code()) {
-                case BaseResponseModel.SUCCESSFUL_OPERATION:
-                    user = response.body().getUser();
-                    UserAccountManager.updateUser(getContext(), user);
-
-                    renderProfileData();
-                    ((MainActivity) getActivity()).loadUserData(user);
-
-                    Toast.makeText(getContext(), R.string.Profile_Updated, Toast.LENGTH_SHORT).show();
-                    break;
-
-                case BaseResponseModel.FAILED_AUTH:
-                    UserAccountManager.signOut(getActivity(), true);
-                    break;
-
-                case BaseResponseModel.FAILED_REQUEST_FAILURE:
-                    DialogsProvider.get(getActivity()).messageDialog(getString(R.string.Saving_Failed), getString(R.string.please_check_your_internet_connection));
-                    break;
-
-                default:
-                    DialogsProvider.get(getActivity()).messageDialog(getString(R.string.Server_Error), getString(R.string.Code) + response.code());
-            }
-        });
-
-    }
+//    void publishProfileData() {
+//        DialogsProvider.get(getActivity()).setLoading(true);
+//
+//        viewModel.updateUser(token, user).observe(getViewLifecycleOwner(), response -> {
+//            DialogsProvider.get(getActivity()).setLoading(false);
+//
+//            switch (response.code()) {
+//                case BaseResponseModel.SUCCESSFUL_OPERATION:
+//                    user = response.body().getUser();
+//                    UserAccountManager.updateUser(getContext(), user);
+//
+//                    renderProfileData();
+//                    ((MainActivity) getActivity()).loadUserData(user);
+//
+//                    Toast.makeText(getContext(), R.string.Profile_Updated, Toast.LENGTH_SHORT).show();
+//                    break;
+//
+//                case BaseResponseModel.FAILED_AUTH:
+//                    UserAccountManager.signOut(getActivity(), true);
+//                    break;
+//
+//                case BaseResponseModel.FAILED_REQUEST_FAILURE:
+//                    DialogsProvider.get(getActivity()).messageDialog(getString(R.string.Saving_Failed), getString(R.string.please_check_your_internet_connection));
+//                    break;
+//
+//                default:
+//                    DialogsProvider.get(getActivity()).messageDialog(getString(R.string.Server_Error), getString(R.string.Code) + response.code());
+//            }
+//        });
+//
+//    }
 
 }
