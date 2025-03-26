@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveDataReactiveStreams;
 import com.prm392.assignment.productsale.data.remote.RetrofitClient;
 import com.prm392.assignment.productsale.data.service.ProductSaleService;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
+import com.prm392.assignment.productsale.model.products.ProductSalePageResponseModel;
 import com.prm392.assignment.productsale.model.products.ProductsSaleResponseModel;
 
 import io.reactivex.rxjava3.core.BackpressureStrategy;
@@ -33,14 +34,6 @@ public class ProductsSaleRepository {
                 mainClient.create(ProductSaleService.class)
                         .getDemoProducts(token)
                         .subscribeOn(Schedulers.io())
-                        .doOnComplete(() -> Log.d("ProductsSaleRepository", "Complete"))
-                        .doOnNext(response -> {
-                            if (response.code() == 200) {
-                                Log.d("ProductsSaleRepository", "Success");
-                            } else {
-                                Log.d("ProductsSaleRepository", "Failed");
-                            }
-                        })
                         .onErrorReturn(exception -> {
                             exception.printStackTrace();
 
@@ -52,5 +45,19 @@ public class ProductsSaleRepository {
                         .toFlowable(BackpressureStrategy.LATEST)
         );
     }
+    public LiveData<Response<ProductSalePageResponseModel>> getDemoProduct(String token, long productId) {
+        return LiveDataReactiveStreams.fromPublisher(
+                mainClient.create(ProductSaleService.class)
+                        .getProductSale(token, productId)
+                        .subscribeOn(Schedulers.io())
+                        .onErrorReturn(exception -> {
+                            exception.printStackTrace();
+                            if (exception.getClass() == HttpException.class)
+                                return Response.error(((HttpException) exception).code(), ResponseBody.create(null, ""));
 
+                            return Response.error(BaseResponseModel.FAILED_REQUEST_FAILURE, ResponseBody.create(null, ""));
+                        })
+                        .toFlowable(BackpressureStrategy.LATEST)
+        );
+    }
 }

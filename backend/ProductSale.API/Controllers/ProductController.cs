@@ -2,12 +2,17 @@
 using Microsoft.AspNetCore.Mvc;
 using ProductSale.API.Models.Products;
 using ProductSale.Business.Product;
+using ProductSale.Business.StoreLocation;
 
 namespace ProductSale.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController(IProductService productService, IMapper mapper) : ControllerBase
+    public class ProductController(
+        IProductService productService,
+        IStoreLocationService storeLocationService,
+        IMapper mapper
+    ) : ControllerBase
     {
         [HttpGet("demo")]
         public async Task<IActionResult> GetDemoProducts()
@@ -26,8 +31,11 @@ namespace ProductSale.API.Controllers
                 return NotFound();
 
             var productVm = mapper.Map<ProductDetailVM>(product);
+            var storeLocation = await storeLocationService.GetStoreLocations();
 
-            return Ok(productVm);
+            var result = new { product = productVm, storeLocation };
+
+            return Ok(result);
         }
     }
 }
