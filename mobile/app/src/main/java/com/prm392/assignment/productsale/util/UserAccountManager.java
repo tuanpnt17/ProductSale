@@ -70,6 +70,4 @@ public final class UserAccountManager {
         activity.startActivity(intent);
         activity.finish();
     }
-
-
 }

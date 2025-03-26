@@ -5,6 +5,9 @@ namespace ProductSale.Business.Product
 {
     public interface IProductService
     {
-        Task<Pagination<ProductSummaryDto>> GetProductsAsync(ProductQueryDto query);
+        Task<Pagination<Repository.Entities.Product>> GetProductsAsync(ProductQueryDto query);
+        public Task<IEnumerable<Repository.Entities.Product>> GetAllProducts();
+
+        public Task<Repository.Entities.Product?> GetProductById(int productId);
     }
 }

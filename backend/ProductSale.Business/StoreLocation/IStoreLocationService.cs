@@ -2,6 +2,6 @@
 {
     public interface IStoreLocationService
     {
-
+        public Task<Repository.Entities.StoreLocation?> GetStoreLocations();
     }
 }

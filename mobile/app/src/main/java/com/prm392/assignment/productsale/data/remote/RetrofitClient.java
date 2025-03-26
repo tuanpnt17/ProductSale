@@ -10,6 +10,9 @@ public class RetrofitClient {
     private static final String upcItemDbClientUrl = "https://api.upcitemdb.com/";
     private static final String barcodeMonsterClientUrl = "https://barcode.monster/";
     private static Retrofit mainClient;
+
+    private static String mainClientUrl = "http://10.0.2.2:5120/api/";
+
     // Khi muốn gọi đến các api khác nhau thì thêm các RetrofitClient khác nhau
     private static Retrofit upcItemDbClient;
     private static Retrofit barcodeMonsterClient;

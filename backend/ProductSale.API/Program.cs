@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProductSale.API.Helpers;
+using ProductSale.Business.Cart;
 using ProductSale.Business.Category;
 using ProductSale.Business.ChatMessage;
 using ProductSale.Business.Notification;
@@ -14,7 +15,6 @@ using ProductSale.Business.Product;
 using ProductSale.Business.StoreLocation;
 using ProductSale.Business.Token;
 using ProductSale.Business.User;
-using ProductSale.Bussiness.Cart;
 using ProductSale.Repository.Data;
 using ProductSale.Repository.Interfaces;
 using ProductSale.Repository.Repositories;
@@ -110,6 +110,9 @@ namespace ProductSale.API
                 },
                 typeof(AppDomain)
             );
+
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<ICartRepository, CartRepository>();

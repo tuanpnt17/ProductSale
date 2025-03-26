@@ -8,26 +8,25 @@ namespace ProductSale.Repository.Repositories
     {
         private readonly ApplicationDbContext _context;
         private IDbContextTransaction? _transaction;
-		private readonly Dictionary<Type, object> _repositories = new Dictionary<Type, object>();
+        private readonly Dictionary<Type, object> _repositories = new Dictionary<Type, object>();
 
-		public UnitOfWork(ApplicationDbContext context, IDbContextTransaction transaction)
+        public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
-            _transaction = transaction;
         }
 
         public IGenericRepository<T> GenericRepository<T>()
             where T : class
         {
-			if (_repositories.TryGetValue(typeof(T), out var repository))
-			{
-				return (IGenericRepository<T>)repository;
-			}
+            if (_repositories.TryGetValue(typeof(T), out var repository))
+            {
+                return (IGenericRepository<T>)repository;
+            }
 
-			var newRepository = new GenericRepository<T>(_context);
-			_repositories.Add(typeof(T), newRepository);
-			return newRepository;
-		}
+            var newRepository = new GenericRepository<T>(_context);
+            _repositories.Add(typeof(T), newRepository);
+            return newRepository;
+        }
 
         public async Task<int> SaveChangesAsync()
         {
@@ -44,8 +43,8 @@ namespace ProductSale.Repository.Repositories
             if (_transaction != null)
             {
                 await _transaction.CommitAsync();
-			    Dispose();
-			}
+                Dispose();
+            }
         }
 
         public async Task RollbackTransactionAsync()

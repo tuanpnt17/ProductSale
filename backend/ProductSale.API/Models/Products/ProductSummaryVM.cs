@@ -1,6 +1,6 @@
-﻿namespace ProductSale.Business.Models
+﻿namespace ProductSale.API.Models.Products
 {
-    public class ProductSummaryDto
+    public class ProductSummaryVM
     {
         public int ProductId { get; set; }
         public required string ProductName { get; set; }

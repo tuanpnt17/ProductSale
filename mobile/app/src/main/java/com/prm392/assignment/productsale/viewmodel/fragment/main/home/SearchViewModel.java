@@ -1,22 +1,21 @@
 package com.prm392.assignment.productsale.viewmodel.fragment.main.home;
 
-import static androidx.lifecycle.SavedStateHandleSupport.createSavedStateHandle;
 import static androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY;
 
 import android.app.Application;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.viewmodel.ViewModelInitializer;
 
 import com.prm392.assignment.productsale.data.Repository;
+import com.prm392.assignment.productsale.data.repository.ProductsSaleRepository;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
 import com.prm392.assignment.productsale.model.ProductsResponseModel;
+import com.prm392.assignment.productsale.model.products.ProductsSaleResponseModel;
 import com.prm392.assignment.productsale.util.UserAccountManager;
+
 
 import org.jetbrains.annotations.NotNull;
 
@@ -24,13 +23,16 @@ import retrofit2.Response;
 
 public class SearchViewModel extends ViewModel {
     private Repository repository;
+    private ProductsSaleRepository productsRepository;
     private LiveData<Response<ProductsResponseModel>> recommendedProducts;
+    private LiveData<Response<ProductsSaleResponseModel>> demoProducts;
     private String token;
 
     public SearchViewModel(@NotNull Application application) {
         super();
 
         repository = new Repository();
+        productsRepository = new ProductsSaleRepository();
 
         token = UserAccountManager.getToken(application, UserAccountManager.TOKEN_TYPE_BEARER);
     }
@@ -43,6 +45,11 @@ public class SearchViewModel extends ViewModel {
                 return new SearchViewModel(app);
             }
     );
+
+    public LiveData<Response<ProductsSaleResponseModel>> getDemoProducts() {
+        demoProducts = productsRepository.getDemoProducts(token);
+        return demoProducts;
+    }
 
 
     public LiveData<Response<ProductsResponseModel>> getRecommendedProducts() {
