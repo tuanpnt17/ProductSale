@@ -1,13 +1,17 @@
 package com.prm392.assignment.productsale.data.service;
 
+import com.prm392.assignment.productsale.model.BaseResponseModel;
+import com.prm392.assignment.productsale.model.cart.AddProductCartModel;
 import com.prm392.assignment.productsale.model.products.ProductSalePageResponseModel;
 import com.prm392.assignment.productsale.model.products.ProductsSaleResponseModel;
 
 import io.reactivex.rxjava3.core.Observable;
 import retrofit2.Response;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface ProductSaleService {
@@ -20,4 +24,7 @@ public interface ProductSaleService {
     @GET("product/{productId}")
     Observable<Response<ProductSalePageResponseModel>> getProductSale(@Header("Authorization") String token, @Path("productId") long productId);
 
+    @Headers({"client: mobile"})
+    @POST("cart")
+    Observable<Response<BaseResponseModel>> addToCart(@Header("Authorization") String token, @Body AddProductCartModel addProductCartModel);
 }

@@ -1,13 +1,12 @@
 package com.prm392.assignment.productsale.data.repository;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.LiveDataReactiveStreams;
 
 import com.prm392.assignment.productsale.data.remote.RetrofitClient;
 import com.prm392.assignment.productsale.data.service.ProductSaleService;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
+import com.prm392.assignment.productsale.model.cart.AddProductCartModel;
 import com.prm392.assignment.productsale.model.products.ProductSalePageResponseModel;
 import com.prm392.assignment.productsale.model.products.ProductsSaleResponseModel;
 
@@ -45,10 +44,26 @@ public class ProductsSaleRepository {
                         .toFlowable(BackpressureStrategy.LATEST)
         );
     }
-    public LiveData<Response<ProductSalePageResponseModel>> getDemoProduct(String token, long productId) {
+    public LiveData<Response<ProductSalePageResponseModel>> getProductSale(String token, long productId) {
         return LiveDataReactiveStreams.fromPublisher(
                 mainClient.create(ProductSaleService.class)
                         .getProductSale(token, productId)
+                        .subscribeOn(Schedulers.io())
+                        .onErrorReturn(exception -> {
+                            exception.printStackTrace();
+                            if (exception.getClass() == HttpException.class)
+                                return Response.error(((HttpException) exception).code(), ResponseBody.create(null, ""));
+
+                            return Response.error(BaseResponseModel.FAILED_REQUEST_FAILURE, ResponseBody.create(null, ""));
+                        })
+                        .toFlowable(BackpressureStrategy.LATEST)
+        );
+    }
+
+    public LiveData<Response<BaseResponseModel>> addProductToCart(String token, AddProductCartModel addProductCartModel) {
+        return LiveDataReactiveStreams.fromPublisher(
+                mainClient.create(ProductSaleService.class)
+                        .addToCart(token, addProductCartModel)
                         .subscribeOn(Schedulers.io())
                         .onErrorReturn(exception -> {
                             exception.printStackTrace();

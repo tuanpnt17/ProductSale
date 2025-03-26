@@ -17,14 +17,11 @@ namespace ProductSale.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddToCart(AddToCartVM addToCartVM)
+        public async Task<IActionResult> AddToCart(AddToCartVM addToCartVm)
         {
-            await cartService.AddToCart(
-                addToCartVM.UserId,
-                addToCartVM.ProductId,
-                addToCartVM.Quantity
-            );
-            return Ok();
+            await cartService.AddToCart(1, addToCartVm.ProductId, addToCartVm.Quantity);
+            var result = new { status = 200, message = "Add to cart successfully" };
+            return Ok(result);
         }
     }
 }

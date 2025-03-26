@@ -162,7 +162,7 @@
                         app:layout_constraintVertical_bias="0.0">
 
                         <ImageButton
-                            android:id="@+id/imageButton"
+                            android:id="@+id/decreaseBtn"
                             android:layout_width="40dp"
                             android:layout_height="match_parent"
                             android:background="@drawable/button_round"
@@ -172,21 +172,22 @@
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <EditText
-                            android:id="@+id/editTextNumber"
+                            android:id="@+id/txtQuantity"
                             android:layout_width="wrap_content"
                             android:layout_height="43dp"
                             android:layout_marginStart="8dp"
-                            android:layout_weight="1"
+                            android:layout_weight="5"
                             android:background="@drawable/clickable_text"
                             android:inputType="number"
                             android:text="13"
                             android:textAlignment="center"
+                            android:textSize="20sp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/imageButton"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <ImageButton
-                            android:id="@+id/imageButton2"
+                            android:id="@+id/increaseBtn"
                             android:layout_width="40dp"
                             android:layout_height="match_parent"
                             android:background="@drawable/button_round"
@@ -226,7 +227,7 @@
                     android:layout_marginBottom="16dp">
 
                     <android.widget.Button
-                        android:id="@+id/product_page_open_source_page_button"
+                        android:id="@+id/addToCartBtn"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="0dp"
@@ -236,7 +237,7 @@
                         android:gravity="center|start"
                         android:includeFontPadding="false"
                         android:paddingStart="20dp"
-                        android:text="Add to card"
+                        android:text="Add to cart"
                         android:textAlignment="gravity"
                         android:textAllCaps="false"
                         android:textColor="#FFFFFF"
@@ -247,9 +248,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
                 <TextView
                     android:id="@+id/product_page_description"
                     android:layout_width="match_parent"
@@ -261,8 +260,7 @@
                     android:includeFontPadding="false"
                     android:text="text test preview of store description text test preview of store description text test preview of store description text test preview of store description"
                     android:textColor="?attr/textFillColor"
-                    android:textSize="20sp" />
-
+                    android:textSize="20sp"/>
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/product_sale_tech_specs"
                     android:layout_width="match_parent"
@@ -271,7 +269,7 @@
 
                     <TextView
                         android:id="@+id/txtSaleTechSpecsTitle"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:text="Technical Specifications"
@@ -310,7 +308,7 @@
 
                     <TextView
                         android:id="@+id/txtFullDescTitle"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:text="Full Description"
@@ -349,7 +347,7 @@
 
                     <TextView
                         android:id="@+id/textView18"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:text="@string/store_location"
@@ -371,126 +369,28 @@
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView18" />
+
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <!--                <androidx.constraintlayout.widget.ConstraintLayout-->
-                <!--                    android:id="@+id/product_page_price_tracker_section"-->
-                <!--                    android:layout_width="match_parent"-->
-                <!--                    android:layout_height="wrap_content">-->
-
-                <!--                    <TextView-->
-                <!--                        android:id="@+id/textView19"-->
-                <!--                        android:layout_width="wrap_content"-->
-                <!--                        android:layout_height="wrap_content"-->
-                <!--                        android:layout_marginTop="16dp"-->
-                <!--                        android:text="@string/price_tracker"-->
-                <!--                        android:textSize="24sp"-->
-                <!--                        android:textStyle="bold"-->
-                <!--                        app:layout_constraintEnd_toEndOf="parent"-->
-                <!--                        app:layout_constraintStart_toStartOf="parent"-->
-                <!--                        app:layout_constraintTop_toTopOf="parent" />-->
-
-                <!--                    <lecho.lib.hellocharts.view.LineChartView-->
-                <!--                        android:id="@+id/product_page_chart"-->
-                <!--                        android:layout_width="match_parent"-->
-                <!--                        android:layout_height="350dp"-->
-                <!--                        android:layout_marginTop="16dp"-->
-                <!--                        android:layout_marginBottom="16dp"-->
-                <!--                        app:layout_constraintBottom_toBottomOf="parent"-->
-                <!--                        app:layout_constraintEnd_toEndOf="parent"-->
-                <!--                        app:layout_constraintStart_toStartOf="parent"-->
-                <!--                        app:layout_constraintTop_toBottomOf="@+id/textView19" />-->
-
-                <!--                </androidx.constraintlayout.widget.ConstraintLayout>-->
-
-                <!--                <androidx.constraintlayout.widget.ConstraintLayout-->
-                <!--                    android:id="@+id/product_page_rate_section"-->
-                <!--                    android:layout_width="match_parent"-->
-                <!--                    android:layout_height="match_parent">-->
-
-                <!--                    <TextView-->
-                <!--                        android:id="@+id/textView15"-->
-                <!--                        android:layout_width="wrap_content"-->
-                <!--                        android:layout_height="wrap_content"-->
-                <!--                        android:layout_marginTop="16dp"-->
-                <!--                        android:text="@string/rate_product"-->
-                <!--                        android:textSize="24sp"-->
-                <!--                        android:textStyle="bold"-->
-                <!--                        app:layout_constraintEnd_toEndOf="parent"-->
-                <!--                        app:layout_constraintStart_toStartOf="parent"-->
-                <!--                        app:layout_constraintTop_toTopOf="parent" />-->
-
-                <!--                    <LinearLayout-->
-                <!--                        android:id="@+id/linearLayout4"-->
-                <!--                        android:layout_width="wrap_content"-->
-                <!--                        android:layout_height="match_parent"-->
-                <!--                        android:layout_marginTop="8dp"-->
-                <!--                        android:orientation="horizontal"-->
-                <!--                        app:layout_constraintEnd_toEndOf="parent"-->
-                <!--                        app:layout_constraintStart_toStartOf="parent"-->
-                <!--                        app:layout_constraintTop_toBottomOf="@+id/textView15">-->
-
-                <!--                        <CheckBox-->
-                <!--                            android:id="@+id/product_page_rate_star1"-->
-                <!--                            android:layout_width="50dp"-->
-                <!--                            android:layout_height="50dp"-->
-                <!--                            android:layout_weight="0"-->
-                <!--                            android:background="@drawable/rate_product_selector"-->
-                <!--                            android:button="@null"-->
-                <!--                            android:checked="false" />-->
-
-                <!--                        <CheckBox-->
-                <!--                            android:id="@+id/product_page_rate_star2"-->
-                <!--                            android:layout_width="50dp"-->
-                <!--                            android:layout_height="50dp"-->
-                <!--                            android:layout_weight="0"-->
-                <!--                            android:background="@drawable/rate_product_selector"-->
-                <!--                            android:button="@null"-->
-                <!--                            android:checked="false" />-->
-
-                <!--                        <CheckBox-->
-                <!--                            android:id="@+id/product_page_rate_star3"-->
-                <!--                            android:layout_width="50dp"-->
-                <!--                            android:layout_height="50dp"-->
-                <!--                            android:layout_weight="0"-->
-                <!--                            android:background="@drawable/rate_product_selector"-->
-                <!--                            android:button="@null"-->
-                <!--                            android:checked="false" />-->
-
-                <!--                        <CheckBox-->
-                <!--                            android:id="@+id/product_page_rate_star4"-->
-                <!--                            android:layout_width="50dp"-->
-                <!--                            android:layout_height="50dp"-->
-                <!--                            android:layout_weight="0"-->
-                <!--                            android:background="@drawable/rate_product_selector"-->
-                <!--                            android:button="@null"-->
-                <!--                            android:checked="false" />-->
-
-                <!--                        <CheckBox-->
-                <!--                            android:id="@+id/product_page_rate_star5"-->
-                <!--                            android:layout_width="50dp"-->
-                <!--                            android:layout_height="50dp"-->
-                <!--                            android:layout_weight="0"-->
-                <!--                            android:background="@drawable/rate_product_selector"-->
-                <!--                            android:button="@null"-->
-                <!--                            android:checked="false" />-->
-                <!--                    </LinearLayout>-->
-
-                <!--                    <android.widget.Button-->
-                <!--                        android:id="@+id/product_page_submit_rate"-->
-                <!--                        android:layout_width="120dp"-->
-                <!--                        android:layout_height="40dp"-->
-                <!--                        android:layout_marginTop="8dp"-->
-                <!--                        android:layout_marginBottom="16dp"-->
-                <!--                        android:background="@drawable/button_simple"-->
-                <!--                        android:text="@string/submit"-->
-                <!--                        android:textSize="15sp"-->
-                <!--                        app:layout_constraintBottom_toBottomOf="parent"-->
-                <!--                        app:layout_constraintEnd_toEndOf="parent"-->
-                <!--                        app:layout_constraintStart_toStartOf="parent"-->
-                <!--                        app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />-->
-
-                <!--                </androidx.constraintlayout.widget.ConstraintLayout>-->
+                <android.widget.Button
+                    android:id="@+id/product_page_navigate_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/button"
+                    android:drawableStart="@drawable/ic_outline_navigation_24"
+                    android:drawablePadding="10dp"
+                    android:gravity="center|start"
+                    android:includeFontPadding="false"
+                    android:paddingStart="20dp"
+                    android:text="@string/get_directions_to_store"
+                    android:textAlignment="gravity"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:layout_marginBottom="50dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
