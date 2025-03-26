@@ -27,7 +27,7 @@ import com.prm392.assignment.productsale.util.AppSettingsManager;
 import lombok.Setter;
 
 public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private ArrayList<ProductModel> Data;
+    private ArrayList<ProductModel> data;
     private RecyclerView recyclerView;
     private Context context;
 
@@ -60,7 +60,7 @@ public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public ProductsCardAdapter(Context context, RecyclerView recyclerView) {
         this.context = context;
         this.recyclerView = recyclerView;
-        this.Data = new ArrayList<>();
+        this.data = new ArrayList<>();
     }
 
     //item view inner class
@@ -84,7 +84,6 @@ public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             rateIcon = view.findViewById(R.id.product_card_rate_icon);
             sale = view.findViewById(R.id.product_card_salePercent);
         }
-
     }
 
     public static class LoadingViewHolder extends RecyclerView.ViewHolder {
@@ -101,8 +100,8 @@ public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemViewType(int position) {
-        if (Data.get(position) == loadingCardObject) return TYPE_LOADING_VIEW_HOLDER;
-        else if (Data.get(position) == noResultCardObject) return TYPE_NO_RESULT_VIEW_HOLDER;
+        if (data.get(position) == loadingCardObject) return TYPE_LOADING_VIEW_HOLDER;
+        else if (data.get(position) == noResultCardObject) return TYPE_NO_RESULT_VIEW_HOLDER;
         else return TYPE_DATA_VIEW_HOLDER;
     }
 
@@ -131,18 +130,18 @@ public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             DataViewHolder holder = (DataViewHolder) viewHolder;
 
             if (renderDataInLocalLanguage())
-                holder.name.setText(Data.get(position).getNameArabic());
-            else holder.name.setText(Data.get(position).getName());
-            holder.brand.setText(Data.get(position).getBrand());
+                holder.name.setText(data.get(position).getNameArabic());
+            else holder.name.setText(data.get(position).getName());
+            holder.brand.setText(data.get(position).getBrand());
 //            holder.price.setText(Data.get(position).getPrice() + context.getString(R.string.currency));
-            holder.rate.setText(String.valueOf(Data.get(position).getRate()));
+            holder.rate.setText(String.valueOf(data.get(position).getRate()));
 //            holder.favourite.setChecked(Data.get(position).isFavorite());
-            holder.sale.setText(Data.get(position).getSalePercent() + context.getString(R.string.sale_percent));
+            holder.sale.setText(data.get(position).getSalePercent() + context.getString(R.string.sale_percent));
 
             if (hideFavButton) holder.favourite.setVisibility(View.GONE);
-            if (Data.get(position).getSalePercent() == 0) holder.sale.setVisibility(View.GONE);
+            if (data.get(position).getSalePercent() == 0) holder.sale.setVisibility(View.GONE);
 
-            if (Data.get(position).getRate() == 0) {
+            if (data.get(position).getRate() == 0) {
                 holder.rate.setVisibility(View.INVISIBLE);
                 holder.rateIcon.setVisibility(View.INVISIBLE);
             }
@@ -150,15 +149,15 @@ public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             //Store
             //if(isDarkModeEnabled()) holder.store.setImageTintList(ColorStateList.valueOf(Color.WHITE));
 
-            if (Data.get(position).getStoreLogo() != null)
+            if (data.get(position).getStoreLogo() != null)
                 Glide.with(context)
-                        .load(Data.get(position).getStoreLogo())
+                        .load(data.get(position).getStoreLogo())
                         .transition(DrawableTransitionOptions.withCrossFade(250))
                         .into(holder.store);
 
             //Image
             Glide.with(context)
-                    .load(Data.get(position).getImage())
+                    .load(data.get(position).getImage())
                     .centerCrop()
                     .transition(DrawableTransitionOptions.withCrossFade(250))
                     .into(holder.image);
@@ -167,7 +166,7 @@ public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 @Override
                 public void onClick(View view) {
                     if (itemInteractionListener != null)
-                        itemInteractionListener.onProductClicked(Data.get(holder.getAdapterPosition()).getId(), Data.get(holder.getAdapterPosition()).getStoreType());
+                        itemInteractionListener.onProductClicked(data.get(holder.getAdapterPosition()).getId(), data.get(holder.getAdapterPosition()).getStoreType());
                 }
             });
 
@@ -176,7 +175,7 @@ public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 public void onClick(View view) {
 //                    Data.get(holder.getAdapterPosition()).setFavorite(holder.favourite.isChecked());
                     if (itemInteractionListener != null)
-                        itemInteractionListener.onProductAddedToFav(Data.get(holder.getAdapterPosition()).getId(), holder.favourite.isChecked());
+                        itemInteractionListener.onProductAddedToFav(data.get(holder.getAdapterPosition()).getId(), holder.favourite.isChecked());
                 }
             });
 
@@ -188,20 +187,20 @@ public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         super.onViewAttachedToWindow(holder);
 
         if (noResultsFound) return;
-        if (holder.getAdapterPosition() == Data.size() - 1 && lastItemReachedListener != null && !isLoading())
+        if (holder.getAdapterPosition() == data.size() - 1 && lastItemReachedListener != null && !isLoading())
             lastItemReachedListener.onLastItemReached();
     }
 
     @Override
     public int getItemCount() {
-        return Data.size();
+        return data.size();
     }
 
     public void addProduct(ProductModel product) {
         if (noResultsFound) return;
 
         recyclerView.post(() -> {
-            Data.add(product);
+            data.add(product);
             notifyItemInserted(getItemCount());
         });
     }
@@ -210,7 +209,7 @@ public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void addProductNoPost(ProductModel product) {
         if (noResultsFound) return;
 
-        Data.add(product);
+        data.add(product);
         notifyItemInserted(getItemCount());
     }
 
@@ -218,7 +217,7 @@ public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (noResultsFound) return;
 
         recyclerView.post(() -> {
-            Data.addAll(products);
+            data.addAll(products);
             notifyItemRangeInserted(getItemCount(), products.size());
         });
     }
@@ -227,18 +226,18 @@ public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void addProductsNoPost(ArrayList<ProductModel> products) {
         if (noResultsFound) return;
 
-        Data.addAll(products);
+        data.addAll(products);
         notifyItemRangeInserted(getItemCount(), products.size());
     }
 
     @SuppressLint("NotifyDataSetChanged")
     public void clearProducts() {
-        Data.clear();
+        data.clear();
         notifyDataSetChanged();
     }
 
     public boolean isLoading() {
-        return Data.contains(loadingCardObject);
+        return data.contains(loadingCardObject);
     }
 
     public void setLoading(boolean loading) {
@@ -246,10 +245,10 @@ public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if (isLoading() == loading) return;
 
             if (loading) {
-                Data.add(loadingCardObject);
+                data.add(loadingCardObject);
                 notifyItemInserted(getItemCount());
             } else {
-                Data.remove(loadingCardObject);
+                data.remove(loadingCardObject);
                 notifyItemChanged(getItemCount());
             }
         });
@@ -261,18 +260,18 @@ public class ProductsCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (isLoading() == loading) return;
 
         if (loading) {
-            Data.add(loadingCardObject);
+            data.add(loadingCardObject);
             notifyItemInserted(getItemCount());
         } else {
-            Data.remove(loadingCardObject);
+            data.remove(loadingCardObject);
             notifyItemChanged(getItemCount());
         }
     }
 
     public void showNoResultsFound() {
-        if (Data.contains(noResultCardObject)) return;
+        if (data.contains(noResultCardObject)) return;
 
-        Data.add(noResultCardObject);
+        data.add(noResultCardObject);
         notifyItemInserted(0);
         noResultsFound = true;
     }

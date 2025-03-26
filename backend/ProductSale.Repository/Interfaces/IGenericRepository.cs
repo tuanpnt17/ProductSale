@@ -21,7 +21,9 @@ namespace ProductSale.Repository.Interfaces
             Expression<Func<T, bool>>? predicate = null,
             string? includeProperties = null,
             int pageIndex = 1,
-            int pageSize = 10
+            int pageSize = 10,
+            Expression<Func<T, object>>? orderBy = null,
+            bool isDescending = false
         );
     }
 }

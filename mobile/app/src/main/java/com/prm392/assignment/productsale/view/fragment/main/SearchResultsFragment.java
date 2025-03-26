@@ -10,21 +10,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.IntentSenderRequest;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import android.os.Handler;
 import android.provider.Settings;
 import android.view.LayoutInflater;
@@ -35,6 +20,19 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.CompoundButton;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.IntentSenderRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -54,10 +52,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-
-import java.util.ArrayList;
-import java.util.Map;
-
 import com.prm392.assignment.productsale.R;
 import com.prm392.assignment.productsale.adapters.ProductsSearchResultsAdapter;
 import com.prm392.assignment.productsale.databinding.FragmentSearchResultsBinding;
@@ -70,7 +64,10 @@ import com.prm392.assignment.productsale.view.activity.MainActivity;
 import com.prm392.assignment.productsale.view.fragment.dialogs.SortAndFilterDialog;
 import com.prm392.assignment.productsale.viewmodel.fragment.main.SearchResultsViewModel;
 
-public class SearchResultsFragment extends Fragment{
+import java.util.ArrayList;
+import java.util.Map;
+
+public class SearchResultsFragment extends Fragment {
     private FragmentSearchResultsBinding vb;
     private NavController navController;
     private SearchResultsViewModel viewModel;
@@ -99,7 +96,7 @@ public class SearchResultsFragment extends Fragment{
             @Override
             public void onActivityResult(ActivityResult result) {
                 if (result.getResultCode() == Activity.RESULT_OK) registerLocationListener();
-                else if(viewModel.getSortAndFilterModel().getSortBy().equals(SortAndFilterModel.SORT_NEAREST_STORE)){
+                else if (viewModel.getSortAndFilterModel().getSortBy().equals(SortAndFilterModel.SORT_NEAREST_STORE)) {
                     viewModel.getSortAndFilterModel().setSortBy(SortAndFilterModel.SORT_POPULARITY);
                     adapter.clearProducts();
                     loadResults();
@@ -111,8 +108,9 @@ public class SearchResultsFragment extends Fragment{
         locationPermission = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
             @Override
             public void onActivityResult(Map<String, Boolean> result) {
-                if(result.get(Manifest.permission.ACCESS_FINE_LOCATION) && result.get(Manifest.permission.ACCESS_COARSE_LOCATION)) registerLocationListener();
-                else if(viewModel.getSortAndFilterModel().getSortBy().equals(SortAndFilterModel.SORT_NEAREST_STORE)){
+                if (result.get(Manifest.permission.ACCESS_FINE_LOCATION) && result.get(Manifest.permission.ACCESS_COARSE_LOCATION))
+                    registerLocationListener();
+                else if (viewModel.getSortAndFilterModel().getSortBy().equals(SortAndFilterModel.SORT_NEAREST_STORE)) {
                     viewModel.getSortAndFilterModel().setSortBy(SortAndFilterModel.SORT_POPULARITY);
                     adapter.clearProducts();
                     loadResults();
@@ -126,7 +124,7 @@ public class SearchResultsFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if(vb==null) vb = FragmentSearchResultsBinding.inflate(inflater, container, false);
+        if (vb == null) vb = FragmentSearchResultsBinding.inflate(inflater, container, false);
         return vb.getRoot();
     }
 
@@ -134,7 +132,7 @@ public class SearchResultsFragment extends Fragment{
     public void onDestroy() {
         super.onDestroy();
         vb = null;
-        if(locationListener!=null) locationManager.removeUpdates(locationListener);
+        if (locationListener != null) locationManager.removeUpdates(locationListener);
     }
 
     @Override
@@ -147,11 +145,11 @@ public class SearchResultsFragment extends Fragment{
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if(viewModel!=null) return;
+        if (viewModel != null) return;
 
         ((MainActivity) getActivity()).setTitle(getString(R.string.Search));
-        new Handler().post(()->{
-            navController = ((MainActivity)getActivity()).getAppNavController();
+        new Handler().post(() -> {
+            navController = ((MainActivity) getActivity()).getAppNavController();
         });
         viewModel = new ViewModelProvider(this, ViewModelProvider.Factory.from(SearchResultsViewModel.initializer)).get(SearchResultsViewModel.class);
         if (getArguments() != null) viewModel.setKeyword(getArguments().getString("keyword"));
@@ -160,7 +158,7 @@ public class SearchResultsFragment extends Fragment{
 
         mapBottomSheet = BottomSheetBehavior.from(view.findViewById(R.id.result_map_bottomSheet));
 
-        ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.result_map)).getMapAsync(map ->{
+        ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.result_map)).getMapAsync(map -> {
             this.googleMap = map;
 
             googleMap.getUiSettings().setCompassEnabled(true);
@@ -199,7 +197,7 @@ public class SearchResultsFragment extends Fragment{
         setLocating(false);
 
         mapBottomSheet.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            int defaultTextColor = vb.resultProductMapTitle.getCurrentTextColor();
+            final int defaultTextColor = vb.resultProductMapTitle.getCurrentTextColor();
 
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -211,7 +209,8 @@ public class SearchResultsFragment extends Fragment{
                         expandColoring.setDuration(500);
                         expandColoring.start();
 
-                        if(googleMap!=null && locationListener==null) registerLocationListener();
+                        if (googleMap != null && locationListener == null)
+                            registerLocationListener();
                         break;
 
                     case BottomSheetBehavior.STATE_COLLAPSED:
@@ -221,7 +220,8 @@ public class SearchResultsFragment extends Fragment{
                         collapseColoring.setDuration(500);
                         collapseColoring.start();
 
-                        if(locationListener!=null) locationManager.removeUpdates(locationListener);
+                        if (locationListener != null)
+                            locationManager.removeUpdates(locationListener);
                         break;
                 }
             }
@@ -241,8 +241,9 @@ public class SearchResultsFragment extends Fragment{
                 @Override
                 public void onApply(SortAndFilterModel sortAndFilterModel) {
                     viewModel.setSortAndFilterModel(sortAndFilterModel);
-                    if(viewModel.getSortAndFilterModel().getSortBy().equals(SortAndFilterModel.SORT_NEAREST_STORE)) registerLocationListener();
-                    else{
+                    if (viewModel.getSortAndFilterModel().getSortBy().equals(SortAndFilterModel.SORT_NEAREST_STORE))
+                        registerLocationListener();
+                    else {
                         adapter.clearProducts();
                         loadResults();
                     }
@@ -269,53 +270,52 @@ public class SearchResultsFragment extends Fragment{
             @Override
             public void onProductClicked(long productId, String storeType) {
                 Bundle bundle = new Bundle();
-                bundle.putLong("productId",productId);
+                bundle.putLong("productId", productId);
 
-                navController.navigate(R.id.action_searchResultsFragment_to_productPageFragment,bundle);
+                navController.navigate(R.id.action_searchResultsFragment_to_productPageFragment, bundle);
             }
 
             @Override
             public void onProductAddedToFav(long productId, boolean favChecked) {
-                setFavourite(productId,favChecked);
+                setFavourite(productId, favChecked);
             }
         });
 
         loadResults();
     }
 
-    void setSearching(boolean b){
-        if(b == (vb.resultLoadingPage.getVisibility() == View.VISIBLE)) return;
+    void setSearching(boolean b) {
+        if (b == (vb.resultLoadingPage.getVisibility() == View.VISIBLE)) return;
 
-        if(b) vb.resultLoadingPage.setVisibility(View.VISIBLE);
+        if (b) vb.resultLoadingPage.setVisibility(View.VISIBLE);
         else {
             vb.resultLoadingPage.setVisibility(View.GONE);
-            vb.resultLoadingPage.startAnimation(AnimationUtils.loadAnimation(getContext(),R.anim.lay_off));
+            vb.resultLoadingPage.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.lay_off));
         }
     }
 
-    void setLocating(boolean b){
-        if(b){
+    void setLocating(boolean b) {
+        if (b) {
             vb.resultMapProgress.setVisibility(View.VISIBLE);
-            vb.resultMapProgress.startAnimation(AnimationUtils.loadAnimation(getContext(),R.anim.fragment_in));
-        }
-        else {
+            vb.resultMapProgress.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fragment_in));
+        } else {
             vb.resultMapProgress.setVisibility(View.GONE);
-            vb.resultMapProgress.startAnimation(AnimationUtils.loadAnimation(getContext(),R.anim.fragment_out));
+            vb.resultMapProgress.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fragment_out));
         }
     }
 
     //ERROR BACKEND CURSOR NAV BY LAST ID MAKES DUPLICATED DATA (Backend Problem)
-    void loadResults(){
+    void loadResults() {
         setSearching(true);
 
-        viewModel.loadResults().observe(getViewLifecycleOwner(),  response ->{
+        viewModel.loadResults().observe(getViewLifecycleOwner(), response -> {
             setSearching(false);
 
-            switch (response.code()){
+            switch (response.code()) {
                 case BaseResponseModel.SUCCESSFUL_OPERATION:
                     viewModel.removeObserverInitialLoadedProducts(getViewLifecycleOwner());
 
-                    if(response.body().getProducts() == null || response.body().getProducts().isEmpty()) {
+                    if (response.body().getProducts() == null || response.body().getProducts().isEmpty()) {
                         adapter.showNoOnlineResultsFound();
                         adapter.showNoLocalResultsFound();
                         return;
@@ -325,9 +325,10 @@ public class SearchResultsFragment extends Fragment{
                     ArrayList<ProductModel> onlineProducts = new ArrayList<>();
                     ArrayList<ProductModel> localProducts = new ArrayList<>();
 
-                    for(ProductModel product : products){
-                        if(product.getStoreType().equals(ProductModel.ONLINE_STORE)) onlineProducts.add(product);
-                        else{
+                    for (ProductModel product : products) {
+                        if (product.getStoreType().equals(ProductModel.ONLINE_STORE))
+                            onlineProducts.add(product);
+                        else {
                             localProducts.add(product);
                             addProductOnMap(product.getStoreLatitude(), product.getStoreLongitude(), product.getStoreName());
                         }
@@ -336,13 +337,12 @@ public class SearchResultsFragment extends Fragment{
                         viewModel.addBrand(product.getBrand());
                     }
 
-                    if(onlineProducts.size()>0){
-                        viewModel.setCursorLastOnlineItem(onlineProducts.get(onlineProducts.size()-1).getId());
+                    if (onlineProducts.size() > 0) {
+                        viewModel.setCursorLastOnlineItem(onlineProducts.get(onlineProducts.size() - 1).getId());
                         adapter.addOnlineProducts(onlineProducts);
-                    }
-                    else adapter.showNoOnlineResultsFound();
+                    } else adapter.showNoOnlineResultsFound();
 
-                    if(localProducts.size()>0){
+                    if (localProducts.size() > 0) {
 //                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 //                            localProducts.sort(new Comparator<ProductModel>() {
 //                                @Override
@@ -351,15 +351,14 @@ public class SearchResultsFragment extends Fragment{
 //                                }
 //                            });
 //                        }
-                        viewModel.setCursorLastLocalItem(localProducts.get(localProducts.size()-1).getId());
+                        viewModel.setCursorLastLocalItem(localProducts.get(localProducts.size() - 1).getId());
                         adapter.addLocalProducts(localProducts);
-                    }
-                    else adapter.showNoLocalResultsFound();
+                    } else adapter.showNoLocalResultsFound();
 
                     break;
 
                 case BaseResponseModel.FAILED_INVALID_DATA:
-                    DialogsProvider.get(getActivity()).messageDialog("Query Error", "Invalid Search Query Request\n"+response.toString());
+                    DialogsProvider.get(getActivity()).messageDialog("Query Error", "Invalid Search Query Request\n" + response);
                     break;
 
                 case BaseResponseModel.FAILED_REQUEST_FAILURE:
@@ -367,26 +366,26 @@ public class SearchResultsFragment extends Fragment{
                     break;
 
                 default:
-                    DialogsProvider.get(getActivity()).messageDialog(getString(R.string.Server_Error),getString(R.string.Code)+ response.code());
+                    DialogsProvider.get(getActivity()).messageDialog(getString(R.string.Server_Error), getString(R.string.Code) + response.code());
             }
         });
 
     }
 
     //ERROR BACKEND CURSOR NAV BY LAST ID MAKES DUPLICATED DATA (Backend Problem)
-    void loadMoreOnlineProducts(){
-        if(endOfOnlineProducts) return;
+    void loadMoreOnlineProducts() {
+        if (endOfOnlineProducts) return;
 
         adapter.setOnlineProductsLoading(true);
 
-        viewModel.loadMoreOnlineResults().observe(getViewLifecycleOwner(),  response ->{
+        viewModel.loadMoreOnlineResults().observe(getViewLifecycleOwner(), response -> {
 
-            switch (response.code()){
+            switch (response.code()) {
                 case BaseResponseModel.SUCCESSFUL_OPERATION:
                     adapter.setOnlineProductsLoading(false);
                     viewModel.removeObserverOnlineLoadedProducts(getViewLifecycleOwner());
 
-                    if(response.body().getProducts() == null || response.body().getProducts().isEmpty()){
+                    if (response.body().getProducts() == null || response.body().getProducts().isEmpty()) {
                         endOfOnlineProducts = true;
                         return;
                     }
@@ -403,9 +402,9 @@ public class SearchResultsFragment extends Fragment{
 //                    }
 
                     adapter.addOnlineProducts(products);
-                    viewModel.setCursorLastOnlineItem(products.get(products.size()-1).getId());
+                    viewModel.setCursorLastOnlineItem(products.get(products.size() - 1).getId());
 
-                    for(ProductModel product : products){
+                    for (ProductModel product : products) {
                         viewModel.addCategory(product.getCategory());
                         viewModel.addBrand(product.getBrand());
                     }
@@ -413,7 +412,7 @@ public class SearchResultsFragment extends Fragment{
                     break;
 
                 case BaseResponseModel.FAILED_INVALID_DATA:
-                    DialogsProvider.get(getActivity()).messageDialog("Query Error", "Invalid Search Query Request\n"+response.toString());
+                    DialogsProvider.get(getActivity()).messageDialog("Query Error", "Invalid Search Query Request\n" + response);
                     break;
 
                 case BaseResponseModel.FAILED_REQUEST_FAILURE:
@@ -421,26 +420,26 @@ public class SearchResultsFragment extends Fragment{
                     break;
 
                 default:
-                    Toast.makeText(getContext(), "Server Error | Code: "+ response.code(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Server Error | Code: " + response.code(), Toast.LENGTH_SHORT).show();
             }
         });
 
     }
 
     //ERROR BACKEND CURSOR NAV BY LAST ID MAKES DUPLICATED DATA (Backend Problem)
-    void loadMoreLocalProducts(){
-        if(endOfLocalProducts) return;
+    void loadMoreLocalProducts() {
+        if (endOfLocalProducts) return;
 
         adapter.setLocalProductsLoading(true);
 
-        viewModel.loadMoreLocalResults().observe(getViewLifecycleOwner(),  response ->{
+        viewModel.loadMoreLocalResults().observe(getViewLifecycleOwner(), response -> {
 
-            switch (response.code()){
+            switch (response.code()) {
                 case BaseResponseModel.SUCCESSFUL_OPERATION:
                     adapter.setLocalProductsLoading(false);
                     viewModel.removeObserverLocalLoadedProducts(getViewLifecycleOwner());
 
-                    if(response.body().getProducts() == null || response.body().getProducts().isEmpty()){
+                    if (response.body().getProducts() == null || response.body().getProducts().isEmpty()) {
                         endOfLocalProducts = true;
                         return;
                     }
@@ -457,9 +456,9 @@ public class SearchResultsFragment extends Fragment{
 //                    }
 
                     adapter.addLocalProducts(products);
-                    viewModel.setCursorLastLocalItem(products.get(products.size()-1).getId());
+                    viewModel.setCursorLastLocalItem(products.get(products.size() - 1).getId());
 
-                    for(ProductModel product : products){
+                    for (ProductModel product : products) {
                         viewModel.addCategory(product.getCategory());
                         viewModel.addBrand(product.getBrand());
 
@@ -469,7 +468,7 @@ public class SearchResultsFragment extends Fragment{
                     break;
 
                 case BaseResponseModel.FAILED_INVALID_DATA:
-                    DialogsProvider.get(getActivity()).messageDialog("Query Error", "Invalid Search Query Request\n"+response.toString());
+                    DialogsProvider.get(getActivity()).messageDialog("Query Error", "Invalid Search Query Request\n" + response);
                     break;
 
                 case BaseResponseModel.FAILED_REQUEST_FAILURE:
@@ -477,21 +476,20 @@ public class SearchResultsFragment extends Fragment{
                     break;
 
                 default:
-                    Toast.makeText(getContext(), "Server Error | Code: "+ response.code(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Server Error | Code: " + response.code(), Toast.LENGTH_SHORT).show();
             }
         });
 
     }
 
-    void setFavourite(long productId, boolean favourite){
-        if(favourite){
-            viewModel.addFavourite(productId).observe(getViewLifecycleOwner(), response ->{
+    void setFavourite(long productId, boolean favourite) {
+        if (favourite) {
+            viewModel.addFavourite(productId).observe(getViewLifecycleOwner(), response -> {
                 if (response.code() != BaseResponseModel.SUCCESSFUL_CREATION)
                     Toast.makeText(getContext(), "Error" + response.code(), Toast.LENGTH_SHORT).show();
             });
-        }
-        else {
-            viewModel.removeFavourite(productId).observe(getViewLifecycleOwner(), response ->{
+        } else {
+            viewModel.removeFavourite(productId).observe(getViewLifecycleOwner(), response -> {
                 if (response.code() != BaseResponseModel.SUCCESSFUL_DELETED)
                     Toast.makeText(getContext(), "Error" + response.code(), Toast.LENGTH_SHORT).show();
             });
@@ -501,29 +499,30 @@ public class SearchResultsFragment extends Fragment{
 
     private void addProductOnMap(double lat, double lng, String storeName) {
         try {
-        LatLng productLocation = new LatLng(lat, lng);
-        googleMap.addMarker(new MarkerOptions().position(productLocation).title(storeName).snippet("Store").icon(BitmapDescriptorFactory.fromResource(R.drawable.gps_store_mark)));
-        } catch (Exception e){
+            LatLng productLocation = new LatLng(lat, lng);
+            googleMap.addMarker(new MarkerOptions().position(productLocation).title(storeName).snippet("Store").icon(BitmapDescriptorFactory.fromResource(R.drawable.gps_store_mark)));
+        } catch (Exception e) {
             Toast.makeText(getContext(), "Map Marker Error", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void setUserOnMap(Location location) {
         try {
-        viewModel.setUserLocation(new LatLng(location.getLatitude(), location.getLongitude()));
+            viewModel.setUserLocation(new LatLng(location.getLatitude(), location.getLongitude()));
 
-        if(userMark == null) userMark = googleMap.addMarker(new MarkerOptions().position(viewModel.getUserLocation()).title(UserAccountManager.getUser(getContext()).getFullName()).snippet(getString(R.string.Your_Location)).icon(BitmapDescriptorFactory.fromResource(R.drawable.gps_user_mark)));
-        else userMark.setPosition(viewModel.getUserLocation());
+            if (userMark == null)
+                userMark = googleMap.addMarker(new MarkerOptions().position(viewModel.getUserLocation()).title(UserAccountManager.getUser(getContext()).getUserName()).snippet(getString(R.string.Your_Location)).icon(BitmapDescriptorFactory.fromResource(R.drawable.gps_user_mark)));
+            else userMark.setPosition(viewModel.getUserLocation());
 
-        userMark.showInfoWindow();
+            userMark.showInfoWindow();
 
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(viewModel.getUserLocation())
-                .zoom(googleMap.getCameraPosition().zoom < 8 ? 8:googleMap.getCameraPosition().zoom)
-                .build();
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(viewModel.getUserLocation())
+                    .zoom(googleMap.getCameraPosition().zoom < 8 ? 8 : googleMap.getCameraPosition().zoom)
+                    .build();
 
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),2000,null);
-        } catch (Exception e){
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), 2000, null);
+        } catch (Exception e) {
             Toast.makeText(getContext(), "Map Marker Error", Toast.LENGTH_SHORT).show();
         }
     }
@@ -539,7 +538,7 @@ public class SearchResultsFragment extends Fragment{
     void registerLocationListener() {
 
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            locationPermission.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION});
+            locationPermission.launch(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION});
             return;
         }
 
@@ -547,13 +546,13 @@ public class SearchResultsFragment extends Fragment{
 
             Location lastLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-            if(lastLocation!=null){
+            if (lastLocation != null) {
                 setUserOnMap(lastLocation);
-                if(viewModel.getSortAndFilterModel().getSortBy().equals(SortAndFilterModel.SORT_NEAREST_STORE)){
+                if (viewModel.getSortAndFilterModel().getSortBy().equals(SortAndFilterModel.SORT_NEAREST_STORE)) {
                     adapter.clearProducts();
                     loadResults();
                 }
-            } else if(viewModel.getSortAndFilterModel().getSortBy().equals(SortAndFilterModel.SORT_NEAREST_STORE)){
+            } else if (viewModel.getSortAndFilterModel().getSortBy().equals(SortAndFilterModel.SORT_NEAREST_STORE)) {
                 DialogsProvider.get(getActivity()).setLoading(true);
             }
 
@@ -564,9 +563,9 @@ public class SearchResultsFragment extends Fragment{
                 public void onLocationChanged(@NonNull Location location) {
                     setLocating(false);
                     setUserOnMap(location);
-                    viewModel.setUserLocation(new LatLng(location.getLatitude(),location.getLongitude()));
+                    viewModel.setUserLocation(new LatLng(location.getLatitude(), location.getLongitude()));
 
-                    if(viewModel.getSortAndFilterModel().getSortBy().equals(SortAndFilterModel.SORT_NEAREST_STORE)){
+                    if (viewModel.getSortAndFilterModel().getSortBy().equals(SortAndFilterModel.SORT_NEAREST_STORE)) {
                         DialogsProvider.get(getActivity()).setLoading(false);
                         adapter.clearProducts();
                         loadResults();
@@ -582,11 +581,10 @@ public class SearchResultsFragment extends Fragment{
 
             locationManager.requestLocationUpdates(locationProvider, 60000, 10, locationListener);
 
-        }
-        else enableLocation();
+        } else enableLocation();
     }
 
-    public void enableLocation(){
+    public void enableLocation() {
         LocationRequest mLocationRequest = LocationRequest.create();
 
         LocationSettingsRequest.Builder settingsBuilder = new LocationSettingsRequest.Builder()
@@ -600,8 +598,7 @@ public class SearchResultsFragment extends Fragment{
             public void onComplete(@NonNull Task<LocationSettingsResponse> task) {
                 try {
                     LocationSettingsResponse response = task.getResult(ApiException.class);
-                }
-                catch (ApiException ex) {
+                } catch (ApiException ex) {
                     switch (ex.getStatusCode()) {
 
                         case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:

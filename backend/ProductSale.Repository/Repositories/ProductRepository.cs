@@ -4,9 +4,6 @@ using ProductSale.Repository.Interfaces;
 
 namespace ProductSale.Repository.Repositories;
 
-public class ProductRepository : GenericRepository<Product>, IProductRepository
-{
-	public ProductRepository(ApplicationDbContext context) : base(context)
-	{
-	}
-}
+public class ProductRepository(ApplicationDbContext context)
+    : GenericRepository<Product>(context),
+        IProductRepository { }

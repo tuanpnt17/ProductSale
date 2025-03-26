@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/background"
-            android:fitsSystemWindows="true"
+            android:fitsSystemWindows="false"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
@@ -96,41 +96,34 @@
                             android:paddingEnd="35dp"
                             android:paddingBottom="10dp"
                             android:requiresFadingEdge="horizontal"
+                            android:textColor="?attr/textFillColor"
                             android:textColorHint="?attr/textFillColor"
                             android:textSize="17sp"
-                            android:textColor="?attr/textFillColor"
-                            app:layout_constraintEnd_toStartOf="@+id/search_barcodeScan"
+                            app:layout_constraintEnd_toStartOf="@+id/sort_spinner"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
-                        <ImageButton
-                            android:id="@+id/search_barcodeScan"
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
-                            android:adjustViewBounds="true"
-                            android:background="@drawable/button_round"
-                            android:cropToPadding="false"
-                            android:foregroundGravity="center"
-                            android:scaleType="centerInside"
-                            android:src="@drawable/barcode_scan"
+                        <Spinner
+                            android:id="@+id/sort_spinner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="48dp"
+                            android:layout_marginEnd="3dp"
+                            android:background="@drawable/spinner_background"
+                            android:entries="@array/sort_options"
+                            android:paddingStart="10dp"
+                            android:paddingEnd="10dp"
                             app:layout_constraintBottom_toBottomOf="@+id/search_searchbar"
-                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/filter_button"
                             app:layout_constraintTop_toTopOf="@+id/search_searchbar" />
 
                         <ImageButton
-                            android:id="@+id/search_voice"
-                            android:layout_width="21dp"
-                            android:layout_height="21dp"
-                            android:layout_marginEnd="5dp"
-                            android:background="@drawable/borderless_ripple"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="10dp"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/voice_search"
+                            android:id="@+id/filter_button"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:background="@drawable/button_round"
+                            android:src="@android:drawable/ic_menu_sort_by_size"
                             app:layout_constraintBottom_toBottomOf="@+id/search_searchbar"
-                            app:layout_constraintEnd_toEndOf="@+id/search_searchbar"
-                            app:layout_constraintHorizontal_bias="0.98"
-                            app:layout_constraintStart_toStartOf="@+id/search_searchbar"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="@+id/search_searchbar" />
 
                         <TextView
@@ -139,10 +132,10 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
                             android:layout_marginBottom="20dp"
-                            android:textStyle="bold"
                             android:text="@string/recommended"
                             android:textColor="?attr/textFillColor"
                             android:textSize="20sp"
+                            android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -158,7 +151,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/search_products_recyclerView"
-            android:layout_width="match_parent"
+            android:layout_width="375dp"
             android:layout_height="match_parent"
             android:layout_marginStart="20dp"
             android:layout_marginTop="0dp"
@@ -177,7 +170,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView9"
             tools:itemCount="10"
-            tools:listitem="@layout/product_card_layout" />
+            tools:listitem="@layout/product_sale_card_layout" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

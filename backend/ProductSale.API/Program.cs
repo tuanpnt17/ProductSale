@@ -1,6 +1,8 @@
+using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProductSale.API.Helpers;
 using ProductSale.Business.Cart;
@@ -11,6 +13,7 @@ using ProductSale.Business.Order;
 using ProductSale.Business.Payment;
 using ProductSale.Business.Product;
 using ProductSale.Business.StoreLocation;
+using ProductSale.Business.Token;
 using ProductSale.Business.User;
 using ProductSale.Repository.Data;
 using ProductSale.Repository.Interfaces;
@@ -81,6 +84,25 @@ namespace ProductSale.API
                 );
             });
 
+            builder
+                .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
+                        ),
+                    };
+                });
+            builder.Services.AddAuthorization();
+
             builder.Services.AddAutoMapper(
                 opt =>
                 {
@@ -111,6 +133,7 @@ namespace ProductSale.API
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IStoreLocationService, StoreLocationService>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<ITokenService, TokenService>();
 
             var app = builder.Build();
             // Swagger
