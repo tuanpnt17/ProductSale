@@ -31,4 +31,9 @@ public class UserRepository : GenericRepository<User>, IUserRepository
         await _context.SaveChangesAsync();
         return user;
     }
+
+    public Task<bool> IsPhoneNumberExist(string phoneNumber)
+    {
+        return _context.Users.AnyAsync(u => u.PhoneNumber == phoneNumber);
+    }
 }

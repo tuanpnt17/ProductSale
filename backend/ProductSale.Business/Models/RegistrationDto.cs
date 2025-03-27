@@ -14,8 +14,9 @@ namespace ProductSale.Business.Models
         [EmailAddress]
         public required string Email { get; set; }
 
+        [Required]
         [Phone]
-        public string? PhoneNumber { get; set; }
+        public required string PhoneNumber { get; set; }
 
         public string? Address { get; set; }
     }

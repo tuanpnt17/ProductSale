@@ -105,7 +105,7 @@
             android:background="@drawable/input"
             android:fadingEdge="horizontal"
             android:fadingEdgeLength="10dp"
-            android:hint="@string/phone_optional"
+            android:hint="@string/phone_number"
             android:inputType="textEmailAddress"
             android:paddingLeft="15dp"
             android:paddingTop="15dp"

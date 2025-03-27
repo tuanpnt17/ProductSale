@@ -43,6 +43,11 @@ namespace ProductSale.Business.User
                 throw new Exception("Email already exists");
             }
 
+            if (await userRepository.IsPhoneNumberExist(registrationDto.PhoneNumber))
+            {
+                throw new Exception("Phone number already exists");
+            }
+
             var user = mapper.Map<RegistrationDto, Repository.Entities.User>(registrationDto);
             user.Role = Role.Customer.ToString();
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(registrationDto.Password);

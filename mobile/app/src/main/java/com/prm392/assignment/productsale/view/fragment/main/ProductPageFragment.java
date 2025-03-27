@@ -33,7 +33,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.prm392.assignment.productsale.R;
-import com.prm392.assignment.productsale.adapters.ImagesSliderViewPagerAdapter;
 import com.prm392.assignment.productsale.databinding.FragmentProductPageBinding;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
 import com.prm392.assignment.productsale.model.products.ProductSaleModel;
@@ -55,11 +54,6 @@ public class ProductPageFragment extends Fragment {
     private FragmentProductPageBinding vb;
     private ProductPageViewModel viewModel;
     private NavController navController;
-
-    private ImagesSliderViewPagerAdapter imageSliderAdapter;
-    private LineChartView lineChartView;
-    private CheckBox[] userRatingStars;
-    private int userRatingNewValue;
 
     private GoogleMap googleMap;
 
@@ -199,20 +193,6 @@ public class ProductPageFragment extends Fragment {
         });
     }
 
-
-    boolean renderDataInLocalLanguage() {
-        switch (AppSettingsManager.getLanguageKey(getContext())) {
-            case AppSettingsManager.LANGUAGE_ENGLISH:
-                return false;
-            case AppSettingsManager.LANGUAGE_ARABIC:
-                return true;
-            default:
-                String systemLanguage = Locale.getDefault().getLanguage();
-                if (systemLanguage.equals(AppSettingsManager.LANGUAGE_ARABIC)) return true;
-                else return false;
-        }
-    }
-
     void renderProductSaleData() {
         ProductSaleModel productSaleModel = viewModel.getProductSaleModel();
         StoreLocation storeLocation = viewModel.getStoreLocation();
@@ -222,7 +202,7 @@ public class ProductPageFragment extends Fragment {
         vb.txtQuantity.setText(viewModel.getProductQuantity() + "");
 
         Glide.with(this)
-                .load("https://plus.unsplash.com/premium_photo-1676973464513-7489d4ca4802?q=80&w=1963&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")
+                .load(Uri.parse(productSaleModel.getProductImage()))
                 .transition(DrawableTransitionOptions.withCrossFade(100))
                 .into(vb.productPageImage);
 

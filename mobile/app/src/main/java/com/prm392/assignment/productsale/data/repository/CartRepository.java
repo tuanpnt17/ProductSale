@@ -6,12 +6,8 @@ import androidx.lifecycle.LiveDataReactiveStreams;
 import com.prm392.assignment.productsale.data.remote.RetrofitClient;
 import com.prm392.assignment.productsale.data.service.ProductSaleService;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
-import com.prm392.assignment.productsale.model.cart.AddProductCartModel;
+import com.prm392.assignment.productsale.model.cart.CartModel;
 import com.prm392.assignment.productsale.model.cart.CartTotalResponse;
-import com.prm392.assignment.productsale.model.products.ProductSalePageResponseModel;
-import com.prm392.assignment.productsale.model.products.ProductsSaleResponseModel;
-
-import java.util.List;
 
 import io.reactivex.rxjava3.core.BackpressureStrategy;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -20,20 +16,21 @@ import retrofit2.HttpException;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class ProductsSaleRepository {
+public class CartRepository {
+
+    private final Retrofit mainClient;
 
     // Headers
     private static final String AUTHORIZATION = "Authorization";
-    private final Retrofit mainClient;
 
-    public ProductsSaleRepository() {
+    public CartRepository() {
         mainClient = RetrofitClient.getMainInstance();
     }
 
-    public LiveData<Response<ProductsSaleResponseModel>> getProducts(String token, Integer pageIndex, Integer pageSize, String search, String sortBy, Boolean sortDescending, Double minPrice, Double maxPrice, List<Integer> categoryIds) {
+    public LiveData<Response<CartModel>> getCart(String token, int userId) {
         return LiveDataReactiveStreams.fromPublisher(
                 mainClient.create(ProductSaleService.class)
-                        .getProducts(token, pageIndex, pageSize, search, sortBy, sortDescending, minPrice, maxPrice, categoryIds)
+                        .getCart(token, userId)
                         .subscribeOn(Schedulers.io())
                         .onErrorReturn(exception -> {
                             exception.printStackTrace();
@@ -46,13 +43,15 @@ public class ProductsSaleRepository {
                         .toFlowable(BackpressureStrategy.LATEST)
         );
     }
-    public LiveData<Response<ProductSalePageResponseModel>> getProductSale(String token, long productId) {
+
+    public LiveData<Response<BaseResponseModel>> removeItemFromCart(String token, int userId, int productId) {
         return LiveDataReactiveStreams.fromPublisher(
                 mainClient.create(ProductSaleService.class)
-                        .getProductSale(token, productId)
+                        .removeItemFromCart(token, userId, productId)
                         .subscribeOn(Schedulers.io())
                         .onErrorReturn(exception -> {
                             exception.printStackTrace();
+
                             if (exception.getClass() == HttpException.class)
                                 return Response.error(((HttpException) exception).code(), ResponseBody.create(null, ""));
 
@@ -62,13 +61,14 @@ public class ProductsSaleRepository {
         );
     }
 
-    public LiveData<Response<BaseResponseModel>> addProductToCart(String token, AddProductCartModel addProductCartModel) {
+    public LiveData<Response<BaseResponseModel>> updateCartItemQuantity(String token, int userId, int productId, int quantity) {
         return LiveDataReactiveStreams.fromPublisher(
                 mainClient.create(ProductSaleService.class)
-                        .addToCart(token, addProductCartModel)
+                        .updateCartItemQuantity(token, userId, productId, quantity) // Call the service method
                         .subscribeOn(Schedulers.io())
                         .onErrorReturn(exception -> {
                             exception.printStackTrace();
+
                             if (exception.getClass() == HttpException.class)
                                 return Response.error(((HttpException) exception).code(), ResponseBody.create(null, ""));
 
@@ -78,5 +78,37 @@ public class ProductsSaleRepository {
         );
     }
 
+    public LiveData<Response<BaseResponseModel>> clearCart(String token, int userId) {
+        return LiveDataReactiveStreams.fromPublisher(
+                mainClient.create(ProductSaleService.class)
+                        .clearCart(token, userId) // Gọi API clearCart
+                        .subscribeOn(Schedulers.io())
+                        .onErrorReturn(exception -> {
+                            exception.printStackTrace();
 
+                            if (exception.getClass() == HttpException.class)
+                                return Response.error(((HttpException) exception).code(), ResponseBody.create(null, ""));
+
+                            return Response.error(BaseResponseModel.FAILED_REQUEST_FAILURE, ResponseBody.create(null, ""));
+                        })
+                        .toFlowable(BackpressureStrategy.LATEST)
+        );
+    }
+
+    public LiveData<Response<CartTotalResponse>> getCartTotal(String token, int userId) {
+        return LiveDataReactiveStreams.fromPublisher(
+                mainClient.create(ProductSaleService.class)
+                        .getCartTotal(token, userId)
+                        .subscribeOn(Schedulers.io())
+                        .onErrorReturn(exception -> {
+                            exception.printStackTrace();
+
+                            if (exception.getClass() == HttpException.class)
+                                return Response.error(((HttpException) exception).code(), ResponseBody.create(null, ""));
+
+                            return Response.error(BaseResponseModel.FAILED_REQUEST_FAILURE, ResponseBody.create(null, ""));
+                        })
+                        .toFlowable(BackpressureStrategy.LATEST)
+        );
+    }
 }

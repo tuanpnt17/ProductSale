@@ -34,6 +34,10 @@ public class ProductSaleModel {
     private String categoryName;
 
     public String getCurrencyPrice() {
-        return String.valueOf(price) + "$";
+        return price + "$";
     }
+
+    public String getProductName() { return productName; }
+
+    public String getProductImage() { return imageUrl; }
 }
