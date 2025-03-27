@@ -2,6 +2,7 @@ package com.prm392.assignment.productsale.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,11 +33,11 @@ import com.prm392.assignment.productsale.viewmodel.fragment.main.home.OnSaleView
 import lombok.Setter;
 
 public class CartListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private ArrayList<CartItemModel> data;
-    private RecyclerView recyclerView;
-    private Context context;
-    private LifecycleOwner lifecycleOwner;
-    private OnSaleViewModel viewModel;
+    private final ArrayList<CartItemModel> data;
+    private final RecyclerView recyclerView;
+    private final Context context;
+    private final LifecycleOwner lifecycleOwner;
+    private final OnSaleViewModel viewModel;
 
     private final CartItemModel loadingCardObject = new CartItemModel();
 
@@ -124,6 +125,11 @@ public class CartListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //            holder.brand.setText((data.get(position).getProduct().getCategory().getCategoryName()));
             holder.productPrice.setText(String.format("%s %s", data.get(position).getPrice(), context.getString(R.string.currency)));
             holder.productQuantity.setText(String.valueOf(data.get(position).getQuantity()));
+            Glide.with(context)
+                    .load(Uri.parse(data.get(position).getProduct().getProductImage()))
+                    .centerCrop()
+                    .transition(DrawableTransitionOptions.withCrossFade(250))
+                    .into(holder.productImage);
 
             holder.increaseButton.setOnClickListener(v -> {
                 int updatedQuantity = cartItem.getQuantity() + 1;
@@ -288,38 +294,5 @@ public class CartListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         });
     }
-
-
-//    @Override
-//    public void onBindViewHolder(@NonNull DataViewHolder holder, int position) {
-//        CartItemModel cartItem = data.get(position);
-//
-//        holder.productName.setText(cartItem.getProductName());
-//        holder.productPrice.setText(String.format("%s %s", cartItem.getPrice(), context.getString(R.string.currency)));
-//        holder.productQuantity.setText(String.valueOf(cartItem.getQuantity()));
-//
-//        // Load product image using Glide
-//        Glide.with(context)
-//                .load(cartItem.getProductImage())
-//                .centerCrop()
-//                .transition(DrawableTransitionOptions.withCrossFade(250))
-//                .into(holder.productImage);
-//
-//
-//        holder.itemView.setOnClickListener(v -> {
-//            if (itemInteractionListener != null) {
-//                itemInteractionListener.onCartItemClicked(cartItem);
-//            }
-//        });
-//
-//        holder.favCheckBox.setOnClickListener(v -> {
-//            boolean isFav = holder.favCheckBox.isChecked();
-//            if (itemInteractionListener != null) {
-//                itemInteractionListener.onProductAddedToFav(cartItem.getProductId(), isFav);
-//            }
-//        });
-//    }
-
-
 
 }

@@ -17,23 +17,23 @@ import java.util.Locale;
 import com.prm392.assignment.productsale.R;
 
 public class UnderlayNavigationDrawer {
-    private View overLayView;
-    private View overLayInnerView;
-    private View menuView;
-    private GradientDrawable overLayViewBackground;
-    private ImageButton menuButton;
+    private final View overLayView;
+    private final View overLayInnerView;
+    private final View menuView;
+    private final GradientDrawable overLayViewBackground;
+    private final ImageButton menuButton;
     private boolean active = false;
     private boolean inTouchRange = false;
-    private Activity activity;
+    private final Activity activity;
     private int screenWidth;
 
-    private int menuHandleWidth;
-    private float scaleFactor;
-    private float cornersRadiusRatio;
-    private float threshHold;
-    private int animationSpeed;
+    private final int menuHandleWidth;
+    private final float scaleFactor;
+    private final float cornersRadiusRatio;
+    private final float threshHold;
+    private final int animationSpeed;
 
-    private boolean rtl;
+    private final boolean rtl;
 
     private MenuOpenCloseListener menuOpenCloseListener = null;
 

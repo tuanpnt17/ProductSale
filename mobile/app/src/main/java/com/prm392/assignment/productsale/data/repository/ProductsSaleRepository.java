@@ -30,31 +30,6 @@ public class ProductsSaleRepository {
         mainClient = RetrofitClient.getMainInstance();
     }
 
-//    public LiveData<Response<ProductsSaleResponseModel>> getDemoProducts(String token) {
-//        return LiveDataReactiveStreams.fromPublisher(
-//                mainClient.create(ProductSaleService.class)
-//                        .getDemoProducts(token)
-//                        .subscribeOn(Schedulers.io())
-//                        .doOnComplete(() -> Log.d("ProductsSaleRepository", "Complete"))
-//                        .doOnNext(response -> {
-//                            if (response.code() == 200) {
-//                                Log.d("ProductsSaleRepository", "Success");
-//                            } else {
-//                                Log.d("ProductsSaleRepository", "Failed");
-//                            }
-//                        })
-//                        .onErrorReturn(exception -> {
-//                            exception.printStackTrace();
-//
-//                            if (exception.getClass() == HttpException.class)
-//                                return Response.error(((HttpException) exception).code(), ResponseBody.create(null, ""));
-//
-//                            return Response.error(BaseResponseModel.FAILED_REQUEST_FAILURE, ResponseBody.create(null, ""));
-//                        })
-//                        .toFlowable(BackpressureStrategy.LATEST)
-//        );
-//    }
-
     public LiveData<Response<ProductsSaleResponseModel>> getProducts(String token, Integer pageIndex, Integer pageSize, String search, String sortBy, Boolean sortDescending, Double minPrice, Double maxPrice, List<Integer> categoryIds) {
         return LiveDataReactiveStreams.fromPublisher(
                 mainClient.create(ProductSaleService.class)

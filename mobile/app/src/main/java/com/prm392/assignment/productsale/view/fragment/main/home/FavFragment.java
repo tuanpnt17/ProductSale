@@ -4,6 +4,10 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,21 +19,10 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-
 import com.prm392.assignment.productsale.R;
 import com.prm392.assignment.productsale.adapters.ProductsListAdapter;
 import com.prm392.assignment.productsale.databinding.FragmentFavBinding;
-import com.prm392.assignment.productsale.databinding.FragmentHistoryBinding;
-import com.prm392.assignment.productsale.model.BaseResponseModel;
 import com.prm392.assignment.productsale.model.ProductModel;
-import com.prm392.assignment.productsale.util.DialogsProvider;
 import com.prm392.assignment.productsale.view.activity.MainActivity;
 import com.prm392.assignment.productsale.viewmodel.fragment.main.home.FavViewModel;
 
@@ -88,7 +81,7 @@ public class FavFragment extends Fragment {
             @Override
             public void onProductAddedToFav(long productId, boolean favChecked) {
                 if(!favChecked){
-                    removeFavourite(productId);
+//                    removeFavourite(productId);
                     adapter.removeProductById(productId);
                 }
             }
@@ -103,7 +96,7 @@ public class FavFragment extends Fragment {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                removeFavourite(adapter.getData().get(viewHolder.getAdapterPosition()).getId());
+//                removeFavourite(adapter.getData().get(viewHolder.getAdapterPosition()).getId());
                 adapter.removeProductByIndex(viewHolder.getAdapterPosition());
             }
 
@@ -154,49 +147,7 @@ public class FavFragment extends Fragment {
 
         vb.favEmptyList.setVisibility(View.GONE);
         if(adapter.getItemCount()>0) adapter.clearProducts();
-        loadProducts();
+//        loadProducts();
     }
 
-    void loadProducts(){
-        vb.favLoading.setVisibility(View.VISIBLE);
-
-        viewModel.getFavoriteProducts().observe(getViewLifecycleOwner(),  response ->{
-
-            switch (response.code()){
-                case BaseResponseModel.SUCCESSFUL_OPERATION:
-                    vb.favLoading.setVisibility(View.GONE);
-
-                    if(response.body().getProducts() == null || response.body().getProducts().isEmpty()){
-                        vb.favEmptyList.setVisibility(View.VISIBLE);
-                        return;
-                    }
-
-                    ArrayList<ProductModel> products = response.body().getProducts();
-
-                    for(ProductModel product : products) product.setFavorite(true);
-
-                    adapter.addProducts(products);
-
-                    viewModel.removeObserverOfProducts(getViewLifecycleOwner());
-                    break;
-
-                case BaseResponseModel.FAILED_REQUEST_FAILURE:
-                    DialogsProvider.get(getActivity()).messageDialog(getString(R.string.Loading_Failed),getString(R.string.please_check_your_internet_connection)+ response.code());
-                    break;
-
-                default:
-                    DialogsProvider.get(getActivity()).messageDialog(getString(R.string.Server_Error),getString(R.string.Code)+ response.code());
-            }
-        });
-
-    }
-
-    void removeFavourite(long productId){
-        viewModel.removeFavourite(productId).observe(getViewLifecycleOwner(), response ->{
-            if(adapter.getItemCount()==0) vb.favEmptyList.setVisibility(View.VISIBLE);
-
-            if (response.code() != BaseResponseModel.SUCCESSFUL_DELETED)
-                Toast.makeText(getContext(), "Error" + response.code(), Toast.LENGTH_SHORT).show();
-        });
-    }
 }

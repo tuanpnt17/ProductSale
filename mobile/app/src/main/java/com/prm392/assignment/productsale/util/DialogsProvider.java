@@ -5,19 +5,15 @@ import android.app.Activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
-import com.prm392.assignment.productsale.model.SortAndFilterModel;
 import com.prm392.assignment.productsale.model.categories.CategoryModel;
 import com.prm392.assignment.productsale.model.products.ProductSortAndFilterModel;
 import com.prm392.assignment.productsale.view.fragment.dialogs.DisconnectedDialog;
 import com.prm392.assignment.productsale.view.fragment.dialogs.EmailVerificationDialog;
 import com.prm392.assignment.productsale.view.fragment.dialogs.LoadingDialog;
 import com.prm392.assignment.productsale.view.fragment.dialogs.MessageDialog;
-import com.prm392.assignment.productsale.view.fragment.dialogs.PasswordChangeDialog;
 import com.prm392.assignment.productsale.view.fragment.dialogs.ProductSortAndFilterDialog;
-import com.prm392.assignment.productsale.view.fragment.dialogs.SortAndFilterDialog;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 public class DialogsProvider {
     private static DialogsProvider instance;
@@ -28,8 +24,6 @@ public class DialogsProvider {
     private final DisconnectedDialog disconnectedDialog;
     private final MessageDialog messageDialog;
     private final EmailVerificationDialog emailVerificationDialog;
-    private final PasswordChangeDialog passwordChangeDialog;
-    private final SortAndFilterDialog sortAndFilterDialog;
     private final ProductSortAndFilterDialog productSortAndFilterDialog;
 
     public DialogsProvider() {
@@ -37,8 +31,6 @@ public class DialogsProvider {
         disconnectedDialog = new DisconnectedDialog();
         messageDialog = new MessageDialog();
         emailVerificationDialog = new EmailVerificationDialog();
-        passwordChangeDialog = new PasswordChangeDialog();
-        sortAndFilterDialog = new SortAndFilterDialog();
         productSortAndFilterDialog = new ProductSortAndFilterDialog();
     }
 
@@ -65,33 +57,6 @@ public class DialogsProvider {
         else {
             messageDialog.setMessage(title, subTitle);
             messageDialog.show(fragmentManager, messageDialog.getTag());
-        }
-    }
-
-//    public void emailVerificationDialog(String email, String title, String subTitle, EmailVerificationDialog.DialogResultListener dialogResultListener){
-//        if (emailVerificationDialog.isVisible()) emailVerificationDialog.dismiss();
-//        else {
-//            emailVerificationDialog.setEmail(email);
-//            emailVerificationDialog.setMessage(title,subTitle);
-//            emailVerificationDialog.setDialogResultListener(dialogResultListener);
-//
-//            emailVerificationDialog.show(fragmentManager, emailVerificationDialog.getTag());
-//        }
-//    }
-//
-//    public void passwordChangeDialog(){
-//        if (passwordChangeDialog.isVisible()) passwordChangeDialog.dismiss();
-//        else passwordChangeDialog.show(fragmentManager, passwordChangeDialog.getTag());
-//    }
-
-    public void sortAndFilterDialog(SortAndFilterModel sortAndFilterModel, HashSet<String> categories, HashSet<String> brands, SortAndFilterDialog.DialogResultListener dialogResultListener) {
-        if (sortAndFilterDialog.isVisible()) sortAndFilterDialog.dismiss();
-        else {
-            sortAndFilterDialog.setSortAndFilterModel(sortAndFilterModel);
-            sortAndFilterDialog.setDialogResultListener(dialogResultListener);
-            sortAndFilterDialog.setCategories(categories);
-            sortAndFilterDialog.setBrands(brands);
-            sortAndFilterDialog.show(fragmentManager, sortAndFilterDialog.getTag());
         }
     }
 

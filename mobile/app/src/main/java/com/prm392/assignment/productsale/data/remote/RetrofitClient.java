@@ -5,15 +5,8 @@ import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
-    //    private static String mainClientUrl = "https://sale-hunter.herokuapp.com/api/v1/";
-//    private static final String mainClientUrl = "http://10.0.2.2:5120/";
-    private static final String upcItemDbClientUrl = "https://api.upcitemdb.com/";
-    private static final String barcodeMonsterClientUrl = "https://barcode.monster/";
     private static final String mainClientUrl = "http://10.0.2.2:5120/api/";
     private static Retrofit mainClient;
-    // Khi muốn gọi đến các api khác nhau thì thêm các RetrofitClient khác nhau
-    private static Retrofit upcItemDbClient;
-    private static Retrofit barcodeMonsterClient;
 
     private RetrofitClient() { // apply singleton pattern
     }
@@ -30,27 +23,4 @@ public class RetrofitClient {
         return mainClient;
     }
 
-    public static Retrofit getUpcItemDbInstance() {
-        if (upcItemDbClient == null) {
-            upcItemDbClient = new Retrofit.Builder()
-                    .baseUrl(upcItemDbClientUrl)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-                    .build();
-        }
-
-        return upcItemDbClient;
-    }
-
-    public static Retrofit getBarcodeMonsterInstance() {
-        if (barcodeMonsterClient == null) {
-            barcodeMonsterClient = new Retrofit.Builder()
-                    .baseUrl(barcodeMonsterClientUrl)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-                    .build();
-        }
-
-        return barcodeMonsterClient;
-    }
 }

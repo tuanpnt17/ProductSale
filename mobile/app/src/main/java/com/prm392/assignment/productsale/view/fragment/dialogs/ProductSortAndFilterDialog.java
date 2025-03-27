@@ -71,9 +71,9 @@ public class ProductSortAndFilterDialog extends BottomSheetDialogFragment {
         if (orderBy == null || sortDescending == null) {
             vb.productSortAndFilterDialogSortGroup.clearCheck();
         } else if (orderBy.equals(ProductSortAndFilterModel.ORDER_BY_PRICE) && !sortDescending) {
-            vb.productSortAndFilterDialogSortGroup.check(R.id.sortAndFilterDialog_sort_priceAsc);
+            vb.productSortAndFilterDialogSortGroup.check(R.id.productSortAndFilterDialog_sort_priceAsc);
         } else if (orderBy.equals(ProductSortAndFilterModel.ORDER_BY_PRICE)) {
-            vb.productSortAndFilterDialogSortGroup.check(R.id.sortAndFilterDialog_sort_priceDsc);
+            vb.productSortAndFilterDialogSortGroup.check(R.id.productSortAndFilterDialog_sort_priceAsc);
         }
 
         //Price Section

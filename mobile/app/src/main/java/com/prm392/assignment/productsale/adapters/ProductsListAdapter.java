@@ -32,7 +32,7 @@ import lombok.Setter;
 public class ProductsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Getter
     ArrayList<ProductModel> Data;
-    private RecyclerView recyclerView;
+    private final RecyclerView recyclerView;
     Context context;
 
     private final ProductModel loadingCardObject = new ProductModel();
@@ -290,8 +290,7 @@ public class ProductsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 return true;
             default:
                 String systemLanguage = Locale.getDefault().getLanguage();
-                if (systemLanguage.equals(AppSettingsManager.LANGUAGE_ARABIC)) return true;
-                else return false;
+                return systemLanguage.equals(AppSettingsManager.LANGUAGE_ARABIC);
         }
     }
 }
