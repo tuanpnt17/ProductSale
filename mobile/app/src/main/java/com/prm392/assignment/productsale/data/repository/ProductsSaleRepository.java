@@ -10,6 +10,8 @@ import com.prm392.assignment.productsale.data.service.ProductSaleService;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
 import com.prm392.assignment.productsale.model.products.ProductsSaleResponseModel;
 
+import java.util.List;
+
 import io.reactivex.rxjava3.core.BackpressureStrategy;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.ResponseBody;
@@ -52,10 +54,10 @@ public class ProductsSaleRepository {
 //        );
 //    }
 
-    public LiveData<Response<ProductsSaleResponseModel>> getProducts(String token) {
+    public LiveData<Response<ProductsSaleResponseModel>> getProducts(String token, Integer pageIndex, Integer pageSize, String search, String sortBy, Boolean sortDescending, Double minPrice, Double maxPrice, List<Integer> categoryIds) {
         return LiveDataReactiveStreams.fromPublisher(
                 mainClient.create(ProductSaleService.class)
-                        .getProducts(token)
+                        .getProducts(token, pageIndex, pageSize, search, sortBy, sortDescending, minPrice, maxPrice, categoryIds)
                         .subscribeOn(Schedulers.io())
                         .doOnComplete(() -> Log.d("ProductsSaleRepository", "Complete"))
                         .doOnNext(response -> {

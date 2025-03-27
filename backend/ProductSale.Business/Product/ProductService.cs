@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using ProductSale.Business.Models;
 using ProductSale.Repository.Helpers;
@@ -19,12 +20,25 @@ namespace ProductSale.Business.Product
 
             // Build the predicate for filtering
             Expression<Func<Repository.Entities.Product, bool>> predicate = p => true; // Default: no filter
-            if (query.MinPrice.HasValue || query.MaxPrice.HasValue || query.CategoryId.HasValue)
+            if (
+                !string.IsNullOrEmpty(query.Search)
+                || query.MinPrice.HasValue
+                || query.MaxPrice.HasValue
+                || (query.CategoryIds != null && query.CategoryIds.Any())
+            )
             {
                 predicate = p =>
-                    (!query.MinPrice.HasValue || p.Price >= query.MinPrice.Value)
+                    (
+                        string.IsNullOrEmpty(query.Search)
+                        || p.ProductName.ToLower().Contains(query.Search.ToLower())
+                    )
+                    && (!query.MinPrice.HasValue || p.Price >= query.MinPrice.Value)
                     && (!query.MaxPrice.HasValue || p.Price <= query.MaxPrice.Value)
-                    && (!query.CategoryId.HasValue || p.CategoryId == query.CategoryId.Value);
+                    && (
+                        query.CategoryIds == null
+                        || !query.CategoryIds.Any()
+                        || query.CategoryIds.Contains(p.CategoryId ?? -1)
+                    );
             }
 
             // Determine sorting
@@ -35,9 +49,6 @@ namespace ProductSale.Business.Product
                 {
                     case "price":
                         orderBy = p => p.Price;
-                        break;
-                    case "category":
-                        orderBy = p => p.Category.CategoryName;
                         break;
                     default:
                         orderBy = p => p.ProductId;

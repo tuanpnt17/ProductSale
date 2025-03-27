@@ -20,8 +20,10 @@ import com.prm392.assignment.productsale.adapters.ProductSaleCardAdapter;
 import com.prm392.assignment.productsale.databinding.FragmentSearchBinding;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
 import com.prm392.assignment.productsale.model.products.ProductSaleModel;
+import com.prm392.assignment.productsale.model.products.ProductSortAndFilterModel;
 import com.prm392.assignment.productsale.util.DialogsProvider;
 import com.prm392.assignment.productsale.view.activity.MainActivity;
+import com.prm392.assignment.productsale.view.fragment.dialogs.ProductSortAndFilterDialog;
 import com.prm392.assignment.productsale.viewmodel.fragment.main.home.SearchViewModel;
 
 import java.util.ArrayList;
@@ -30,7 +32,7 @@ public class SearchFragment extends Fragment {
     private FragmentSearchBinding vb;
     private NavController navController;
     private SearchViewModel viewModel;
-    private ProductSaleCardAdapter demoAdapter;
+    private ProductSaleCardAdapter adapter;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -71,12 +73,31 @@ public class SearchFragment extends Fragment {
             return false;
         });
 
-        demoAdapter = new ProductSaleCardAdapter(getContext(), vb.searchProductsRecyclerView);
+        adapter = new ProductSaleCardAdapter(getContext(), vb.searchProductsRecyclerView);
         vb.searchProductsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        vb.searchProductsRecyclerView.setAdapter(demoAdapter);
-        demoAdapter.setHideFavButton(true);
+        vb.searchProductsRecyclerView.setAdapter(adapter);
+        adapter.setHideFavButton(true);
 
-        demoAdapter.setItemInteractionListener(new ProductSaleCardAdapter.ItemInteractionListener() {
+        vb.filterButton.setOnClickListener(button -> {
+            viewModel.getCategories().observe(getViewLifecycleOwner(), response -> {
+                DialogsProvider.get(getActivity()).productSortAndFilterDialog(viewModel.getProductSortAndFilterModel(), response.body().getCategories(), new ProductSortAndFilterDialog.DialogResultListener() {
+                    @Override
+                    public void onApply(ProductSortAndFilterModel sortAndFilterModel) {
+                        viewModel.setProductSortAndFilterModel(sortAndFilterModel);
+                        loadProducts(true);
+                    }
+                });
+            });
+        });
+
+        vb.loadMoreButton.setOnClickListener(button -> {
+            ProductSortAndFilterModel model = viewModel.getProductSortAndFilterModel();
+            model.setPageIndex(model.getPageIndex() + 1);
+//            viewModel.setProductSortAndFilterModel(model);
+            loadProducts(false);
+        });
+
+        adapter.setItemInteractionListener(new ProductSaleCardAdapter.ItemInteractionListener() {
             @Override
             public void onProductClicked(long productId, String storeType) {
                 Bundle bundle = new Bundle();
@@ -90,40 +111,40 @@ public class SearchFragment extends Fragment {
             }
         });
 
-        loadRecommendedProducts();
+        loadProducts(true);
 
     }
 
     void searchRequest(String keyword) {
-        if (keyword.isEmpty()) return;
-
-        Bundle bundle = new Bundle();
-        bundle.putString("keyword", keyword);
-        navController.navigate(R.id.action_homeFragment_to_searchResultsFragment, bundle);
+        viewModel.setSearchStr(keyword);
+        loadProducts(true);
     }
 
-    void loadRecommendedProducts() {
-        vb.searchLoadingRecommended.setVisibility(View.VISIBLE);
-        viewModel.getRecommendedProducts().observe(getViewLifecycleOwner(), response -> {
-//            var x = response.body();
+    void loadProducts(boolean replace) {
+        vb.searchLoading.setVisibility(View.VISIBLE);
+        viewModel.getProducts().observe(getViewLifecycleOwner(), response -> {
             switch (response.code()) {
                 case BaseResponseModel.SUCCESSFUL_OPERATION:
-                    vb.searchLoadingRecommended.setVisibility(View.GONE);
-
-                    if (response.body().getProducts() == null || response.body().getProducts().isEmpty())
+                    vb.searchLoading.setVisibility(View.GONE);
+                    if (replace) adapter.clearProducts();
+                    if (response.body().getProducts() == null || response.body().getProducts().isEmpty()) {
+                        vb.noResultsView.setVisibility(View.VISIBLE);
+                        vb.loadMoreButton.setVisibility(View.GONE);
                         return;
-
-                    ArrayList<ProductSaleModel> products = response.body().getProducts();
-
-
-                    demoAdapter.addProducts(products);
-
-
-                    viewModel.removeObserverRecommendedProducts(getViewLifecycleOwner());
+                    } else {
+                        vb.noResultsView.setVisibility(View.GONE);
+                        ArrayList<ProductSaleModel> products = response.body().getProducts();
+                        adapter.addProducts(products);
+                        if (response.body().isNext()) {
+                            vb.loadMoreButton.setVisibility(View.VISIBLE);
+                        } else {
+                            vb.loadMoreButton.setVisibility(View.GONE);
+                        }
+//                        viewModel.removeObserverProducts(getViewLifecycleOwner());
+                    }
                     break;
-
                 case BaseResponseModel.FAILED_REQUEST_FAILURE:
-                    Toast.makeText(getContext(), "Loading Recommendations Failed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Loading Products Failed", Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     DialogsProvider.get(getActivity()).messageDialog(getString(R.string.Server_Error), getString(R.string.Code) + response.code());

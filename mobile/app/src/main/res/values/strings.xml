@@ -269,5 +269,7 @@
     <string name="Address_not_valid" translatable="false">Address: 10-100 chars (letters, digits, , - . /)</string>
     <string name="Password_not_valid" translatable="false">Password: 8+ chars, 1 lowercase, 1 digit, 1 special</string>
     <string name="Register_failed" translatable="false">Registration Failed</string>
+    <string name="No_products_found" translatable="false">No Products Found</string>
+    <string name="load_more">Load More</string>
 
 </resources>

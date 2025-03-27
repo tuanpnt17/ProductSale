@@ -6,13 +6,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
 import com.prm392.assignment.productsale.model.SortAndFilterModel;
+import com.prm392.assignment.productsale.model.categories.CategoryModel;
+import com.prm392.assignment.productsale.model.products.ProductSortAndFilterModel;
 import com.prm392.assignment.productsale.view.fragment.dialogs.DisconnectedDialog;
 import com.prm392.assignment.productsale.view.fragment.dialogs.EmailVerificationDialog;
 import com.prm392.assignment.productsale.view.fragment.dialogs.LoadingDialog;
 import com.prm392.assignment.productsale.view.fragment.dialogs.MessageDialog;
 import com.prm392.assignment.productsale.view.fragment.dialogs.PasswordChangeDialog;
+import com.prm392.assignment.productsale.view.fragment.dialogs.ProductSortAndFilterDialog;
 import com.prm392.assignment.productsale.view.fragment.dialogs.SortAndFilterDialog;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class DialogsProvider {
@@ -26,6 +30,7 @@ public class DialogsProvider {
     private final EmailVerificationDialog emailVerificationDialog;
     private final PasswordChangeDialog passwordChangeDialog;
     private final SortAndFilterDialog sortAndFilterDialog;
+    private final ProductSortAndFilterDialog productSortAndFilterDialog;
 
     public DialogsProvider() {
         loadingDialog = new LoadingDialog();
@@ -34,6 +39,7 @@ public class DialogsProvider {
         emailVerificationDialog = new EmailVerificationDialog();
         passwordChangeDialog = new PasswordChangeDialog();
         sortAndFilterDialog = new SortAndFilterDialog();
+        productSortAndFilterDialog = new ProductSortAndFilterDialog();
     }
 
     public static DialogsProvider get(Activity activity) {
@@ -86,6 +92,16 @@ public class DialogsProvider {
             sortAndFilterDialog.setCategories(categories);
             sortAndFilterDialog.setBrands(brands);
             sortAndFilterDialog.show(fragmentManager, sortAndFilterDialog.getTag());
+        }
+    }
+
+    public void productSortAndFilterDialog(ProductSortAndFilterModel productSortAndFilterModel, ArrayList<CategoryModel> categories, ProductSortAndFilterDialog.DialogResultListener dialogResultListener) {
+        if (productSortAndFilterDialog.isVisible()) productSortAndFilterDialog.dismiss();
+        else {
+            productSortAndFilterDialog.setSortAndFilterModel(productSortAndFilterModel);
+            productSortAndFilterDialog.setDialogResultListener(dialogResultListener);
+            productSortAndFilterDialog.setCategories(categories);
+            productSortAndFilterDialog.show(fragmentManager, productSortAndFilterDialog.getTag());
         }
     }
 
