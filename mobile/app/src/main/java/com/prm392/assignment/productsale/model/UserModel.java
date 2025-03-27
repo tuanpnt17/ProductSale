@@ -16,6 +16,7 @@ public class UserModel {
     @Getter
     @SerializedName("username")
     private String userName;
+
     @Setter
     @Getter
     @SerializedName("email")
@@ -32,6 +33,11 @@ public class UserModel {
     @Getter
     @SerializedName("role")
     private String role;
+
+    @Setter
+    @Getter
+    @SerializedName("lastSeen")
+    private String lastSeen;
 
     public UserModel() {
         image = "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg";

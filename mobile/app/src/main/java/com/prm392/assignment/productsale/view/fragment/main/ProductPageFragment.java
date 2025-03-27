@@ -1,8 +1,14 @@
 package com.prm392.assignment.productsale.view.fragment.main;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.SpannableString;
@@ -19,6 +25,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -33,7 +43,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.prm392.assignment.productsale.R;
-import com.prm392.assignment.productsale.adapters.ImagesSliderViewPagerAdapter;
 import com.prm392.assignment.productsale.databinding.FragmentProductPageBinding;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
 import com.prm392.assignment.productsale.model.products.ProductSaleModel;
@@ -55,19 +64,17 @@ public class ProductPageFragment extends Fragment {
     private FragmentProductPageBinding vb;
     private ProductPageViewModel viewModel;
     private NavController navController;
-
-    private ImagesSliderViewPagerAdapter imageSliderAdapter;
-    private LineChartView lineChartView;
-    private CheckBox[] userRatingStars;
-    private int userRatingNewValue;
+    private static final int REQUEST_NOTIFICATION_PERMISSION = 1;
 
     private GoogleMap googleMap;
+
 
     public ProductPageFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        requestNotificationPermission();
         super.onCreate(savedInstanceState);
     }
 
@@ -89,6 +96,17 @@ public class ProductPageFragment extends Fragment {
         super.onResume();
         ((MainActivity) getActivity()).setTitle(getString(R.string.Product));
     }
+
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        REQUEST_NOTIFICATION_PERMISSION);
+            }
+        }
+    }
+
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -156,6 +174,7 @@ public class ProductPageFragment extends Fragment {
                 viewModel.setProductQuantity(1);
                 vb.txtQuantity.setText("1");
                 DialogsProvider.get(getActivity()).messageDialog("Success","Add to Cart Successful");
+                sendCartNotification(requireContext());
                 vb.productPageLoadingPage.setVisibility(View.GONE);
             });
         });
@@ -169,6 +188,43 @@ public class ProductPageFragment extends Fragment {
 
         loadProductSale();
     }
+    // Hàm gửi thông báo
+    private void sendCartNotification(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+        }
+
+        String channelId = "cart_notifications";
+        String channelName = "Cart Notifications";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    channelId,
+                    channelName,
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            NotificationManager manager = context.getSystemService(NotificationManager.class);
+            if (manager != null) {
+                manager.createNotificationChannel(channel);
+            }
+        }
+
+        // Tạo thông báo
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(R.drawable.ic_cart)
+                .setContentTitle("Giỏ hàng")
+                .setContentText("Bạn vừa thêm một sản phẩm vào giỏ hàng!")
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+        // Hiển thị thông báo
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(1001, builder.build());
+    }
+
 
     void loadProductSale() {
         vb.productPageLoadingPage.setVisibility(View.VISIBLE);
@@ -199,20 +255,6 @@ public class ProductPageFragment extends Fragment {
         });
     }
 
-
-    boolean renderDataInLocalLanguage() {
-        switch (AppSettingsManager.getLanguageKey(getContext())) {
-            case AppSettingsManager.LANGUAGE_ENGLISH:
-                return false;
-            case AppSettingsManager.LANGUAGE_ARABIC:
-                return true;
-            default:
-                String systemLanguage = Locale.getDefault().getLanguage();
-                if (systemLanguage.equals(AppSettingsManager.LANGUAGE_ARABIC)) return true;
-                else return false;
-        }
-    }
-
     void renderProductSaleData() {
         ProductSaleModel productSaleModel = viewModel.getProductSaleModel();
         StoreLocation storeLocation = viewModel.getStoreLocation();
@@ -222,7 +264,7 @@ public class ProductPageFragment extends Fragment {
         vb.txtQuantity.setText(viewModel.getProductQuantity() + "");
 
         Glide.with(this)
-                .load("https://plus.unsplash.com/premium_photo-1676973464513-7489d4ca4802?q=80&w=1963&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")
+                .load(Uri.parse(productSaleModel.getProductImage()))
                 .transition(DrawableTransitionOptions.withCrossFade(100))
                 .into(vb.productPageImage);
 

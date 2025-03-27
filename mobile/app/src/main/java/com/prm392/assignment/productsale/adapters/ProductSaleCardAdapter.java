@@ -30,7 +30,7 @@ public class ProductSaleCardAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private final RecyclerView recyclerView;
     private final Context context;
     @Getter
-    private boolean hasMore = true; // Flag to show/hide the "Load More" button
+    private boolean hasMore = false; // Flag to show/hide the "Load More" button
     //    private final boolean noResultsFound = false;
     @Setter
     private boolean hideFavButton = false;

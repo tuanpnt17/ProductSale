@@ -18,7 +18,7 @@ import retrofit2.Retrofit;
 
 public class CartRepository {
 
-    private Retrofit mainClient;
+    private final Retrofit mainClient;
 
     // Headers
     private static final String AUTHORIZATION = "Authorization";

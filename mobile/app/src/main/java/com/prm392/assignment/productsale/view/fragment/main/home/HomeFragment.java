@@ -69,36 +69,32 @@ public class HomeFragment extends Fragment {
                 vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.navbar_icon_search, getActivity().getTheme()));
                 break;
             case 1:
-                animateFab(vb.homeBarOnsale, true);
-                vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.navbar_icon_onsale, getActivity().getTheme()));
+                animateFab(vb.homeBarCart, true);
+                vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.menu_icon_star, getActivity().getTheme()));
                 break;
             case 2:
                 animateFab(vb.homeBarFavourite, true);
                 vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.navbar_icon_favourite, getActivity().getTheme()));
                 break;
-//            case 3:
-//                animateFab(vb.homeBarHistory, true);
-//                vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.menu_icon_history, getActivity().getTheme()));
-//                break;
         }
-
 
         viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         navController = Navigation.findNavController(view.findViewById(R.id.home_framgmentContainer));
         vb.homeBarSearch.setOnClickListener(button -> {
             index = 0;
             animateFab(button, false);
+            navController = Navigation.findNavController(view.findViewById(R.id.home_framgmentContainer));
             navController.navigate(R.id.searchFragment, null, new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
             vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.navbar_icon_search, getActivity().getTheme()));
         });
 
-        vb.homeBarOnsale.setOnClickListener(button -> {
+        vb.homeBarCart.setOnClickListener(button -> {
             index = 1;
             animateFab(button, false);
 
             navController = Navigation.findNavController(view.findViewById(R.id.home_framgmentContainer));
 
-            navController.navigate(R.id.action_searchFragment_to_onSaleFragment, null, new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
+            navController.navigate(R.id.action_searchFragment_to_cartFragment, null, new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
 
 
             vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.navbar_icon_onsale, getActivity().getTheme()));
@@ -107,20 +103,10 @@ public class HomeFragment extends Fragment {
         vb.homeBarFavourite.setOnClickListener(button -> {
             index = 2;
             animateFab(button, false);
-            navController.navigate(R.id.favFragment, null, new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
+            navController = Navigation.findNavController(view.findViewById(R.id.home_framgmentContainer));
+            navController.navigate(R.id.chatFragment, null, new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
             vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.navbar_icon_favourite, getActivity().getTheme()));
         });
-
-//        vb.homeBarHistory.setOnClickListener(button -> {
-//            index = 3;
-//            animateFab(button, false);
-//            navController.navigate(R.id.historyFragment, null, new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
-//            vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.menu_icon_history, getActivity().getTheme()));
-//        });
-
-    }
-
-    public void setFabSelector(int i) {
 
     }
 

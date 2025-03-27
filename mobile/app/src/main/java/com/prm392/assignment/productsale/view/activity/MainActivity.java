@@ -145,24 +145,6 @@ public class MainActivity extends AppCompatActivity {
                         navigateToFragment(R.id.homeFragment);
                     } else if (i == R.id.menu_profile) {
                         navigateToFragment(R.id.profileFragment);
-                    } else if (i == R.id.menu_dashboard) {
-                        underlayNavigationDrawer.closeMenu();
-                        new Handler().postDelayed(() -> {
-                            navController.popBackStack(R.id.dashboardFragment, true);
-                            navController.navigate(R.id.dashboardFragment, new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
-                        }, underlayNavigationDrawer.getAnimationDuration());
-                    } else if (i == R.id.menu_mystore) {
-                        if (user.hasStore()) {
-                            underlayNavigationDrawer.closeMenu();
-                            new Handler().postDelayed(() -> {
-                                navController.popBackStack(R.id.storePageFragment, true);
-                                navController.navigate(R.id.storePageFragment, new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
-                            }, underlayNavigationDrawer.getAnimationDuration());
-                        } //else navigateToFragment(R.id.createStoreFragment);
-                    } else if (i == R.id.menu_settings) {
-                        navigateToFragment(R.id.settingsFragment);
-                    } else if (i == R.id.menu_about) {
-                        navigateToFragment(R.id.aboutFragment);
                     } else if (i == R.id.menu_signout) {
                         UserAccountManager.signOut(MainActivity.this, false);
                     } else {
@@ -190,15 +172,8 @@ public class MainActivity extends AppCompatActivity {
                         Bundle bundle = new Bundle();
                         bundle.putLong("productId", Long.parseLong(productId));
                         navController.navigate(R.id.productPageFragment, bundle);
-                    } else if (appLinkData.getPath().contains("store-profile=")) {
-                        String storeId = url.substring(url.indexOf("=") + 1);
-
-                        Bundle bundle = new Bundle();
-                        bundle.putLong("storeId", Long.parseLong(storeId));
-                        navController.navigate(R.id.storePageFragment, bundle);
                     } else if (appLinkData.getPath().equals("/profile"))
                         vb.menuProfile.performClick();
-                    else if (appLinkData.getPath().equals("/about-us")) vb.menuAbout.performClick();
                 }
             }
         } catch (Exception e) {
@@ -292,9 +267,6 @@ public class MainActivity extends AppCompatActivity {
                 .placeholder(R.drawable.profile_placeholder)
                 .circleCrop()
                 .into(vb.menuProfilePic);
-
-        if (user.hasStore()) vb.menuDashboard.setVisibility(View.VISIBLE);
-        else vb.menuDashboard.setVisibility(View.GONE);
     }
 
     public NavController getAppNavController() {

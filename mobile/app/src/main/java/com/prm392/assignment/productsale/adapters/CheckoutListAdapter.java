@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import lombok.Setter;
 
 public class CheckoutListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private ArrayList<CartItemModel> data;
-    private RecyclerView recyclerView;
-    private Context context;
+    private final ArrayList<CartItemModel> data;
+    private final RecyclerView recyclerView;
+    private final Context context;
 
     private final CartItemModel loadingCardObject = new CartItemModel();
 
@@ -91,7 +91,7 @@ public class CheckoutListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.productCategory.setText(data.get(position).getProduct().getCategoryName());
 
             Glide.with(context)
-                    .load(Uri.parse("https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"))
+                    .load(Uri.parse(data.get(position).getProduct().getProductImage()))
                     .centerCrop()
                     .transition(DrawableTransitionOptions.withCrossFade(250))
                     .into(holder.productImage);
@@ -103,52 +103,11 @@ public class CheckoutListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return data.size();
     }
 
-    public void addCartItem(CartItemModel cartItem) {
-        recyclerView.post(() -> {
-            data.add(cartItem);
-            notifyItemInserted(getItemCount());
-        });
-    }
-
-    public  void removeCartItem(CartItemModel cartItem) {
-        recyclerView.post(() -> {
-            int index = data.indexOf(cartItem);
-            data.remove(index);
-            notifyItemRemoved(index);
-        });
-    }
-
-    public void removeCartItemByIndex(int index) {
-        recyclerView.post(() -> {
-            data.remove(index);
-            notifyItemRemoved(index);
-        });
-    }
-
-    public void removeCartItemById(long cartId) {
-        recyclerView.post(() -> {
-            for (int i = 0; i < data.size(); i++) {
-                if (data.get(i).getCartId() == cartId) {
-                    data.remove(i);
-                    notifyItemRemoved(i);
-                    break;
-                }
-            }
-        });
-    }
 
     public void addCartItems(ArrayList<CartItemModel> cartItems) {
         recyclerView.post(() -> {
             data.addAll(cartItems);
             notifyItemRangeInserted(getItemCount(), cartItems.size());
-        });
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    public void clearCartItems() {
-        recyclerView.post(() -> {
-            data.clear();
-            notifyDataSetChanged();
         });
     }
 
@@ -169,6 +128,5 @@ public class CheckoutListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         });
     }
-
 
 }

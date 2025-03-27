@@ -8,7 +8,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.viewmodel.ViewModelInitializer;
 
-import com.prm392.assignment.productsale.data.Repository;
 import com.prm392.assignment.productsale.data.repository.ProductsSaleRepository;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
 import com.prm392.assignment.productsale.model.UserModel;
@@ -25,11 +24,10 @@ import lombok.Setter;
 import retrofit2.Response;
 
 public class ProductPageViewModel extends ViewModel {
-    private Repository repository;
-    private ProductsSaleRepository productsSaleRepository;
+    private final ProductsSaleRepository productsSaleRepository;
 
     private long productId;
-    private String token;
+    private final String token;
 
     @Getter
     @Setter
@@ -48,8 +46,6 @@ public class ProductPageViewModel extends ViewModel {
 
     public ProductPageViewModel(@NotNull Application application) {
         super();
-
-        repository = new Repository();
         productsSaleRepository = new ProductsSaleRepository();
 
         token = UserAccountManager.getToken(application, UserAccountManager.TOKEN_TYPE_BEARER);
@@ -60,7 +56,7 @@ public class ProductPageViewModel extends ViewModel {
     public static final ViewModelInitializer<ProductPageViewModel> initializer = new ViewModelInitializer<>(
             ProductPageViewModel.class,
             creationExtras -> {
-                Application app = (Application) creationExtras.get(APPLICATION_KEY);
+                Application app = creationExtras.get(APPLICATION_KEY);
                 assert app != null;
                 return new ProductPageViewModel(app);
             }

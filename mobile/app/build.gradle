@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.gms.google-services")
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
@@ -128,6 +129,14 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.36'
     annotationProcessor 'org.projectlombok:lombok:1.18.36'
 
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+    // Firebase core
+    implementation libs.firebase.core
+
+    // Firebase Realtime Database
+    implementation(libs.firebase.database)
+    implementation platform(libs.firebase.bom)
+    implementation libs.firebase.messaging
     implementation("com.squareup.okhttp3:okhttp:4.6.0")
     implementation("commons-codec:commons-codec:1.14")
 

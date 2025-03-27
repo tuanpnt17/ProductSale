@@ -13,8 +13,6 @@ public class NetworkBroadcastReceiver extends BroadcastReceiver {
     public NetworkBroadcastReceiver() {
     }
 
-    ;
-
     public NetworkBroadcastReceiver(AppCompatActivity activity) {
         this.activity = activity;
     }

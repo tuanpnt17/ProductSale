@@ -261,6 +261,10 @@
     <string name="Camera_Permission_Denied">Camera Permission Denied</string>
     <string name="main_settings">Main Settings</string>
     <string name="theme">Theme</string>
+    <string name="this_is_opponent_message" />
+    <string name="this_is_my_message" />
+    <string name="my_message" />
+    <string name="type_something" />
     <string name="back_btn_description" translatable="false">back_btn_description</string>
     <string name="Invalid_username_or_password" translatable="false">Invalid username or password</string>
     <string name="Login_failed" translatable="false">Login Failed</string>

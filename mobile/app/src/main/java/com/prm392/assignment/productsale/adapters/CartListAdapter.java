@@ -2,6 +2,7 @@ package com.prm392.assignment.productsale.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,11 +36,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class CartListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private ArrayList<CartItemModel> data;
-    private RecyclerView recyclerView;
-    private Context context;
-    private LifecycleOwner lifecycleOwner;
-    private OnSaleViewModel viewModel;
+    private final ArrayList<CartItemModel> data;
+    private final RecyclerView recyclerView;
+    private final Context context;
+    private final LifecycleOwner lifecycleOwner;
+    private final OnSaleViewModel viewModel;
 
     @Getter
     @Setter
@@ -132,6 +133,11 @@ public class CartListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //            holder.brand.setText((data.get(position).getProduct().getCategory().getCategoryName()));
             holder.productPrice.setText(String.format("%s %s", data.get(position).getPrice(), context.getString(R.string.currency)));
             holder.productQuantity.setText(String.valueOf(data.get(position).getQuantity()));
+            Glide.with(context)
+                    .load(Uri.parse(data.get(position).getProduct().getProductImage()))
+                    .centerCrop()
+                    .transition(DrawableTransitionOptions.withCrossFade(250))
+                    .into(holder.productImage);
 
             holder.increaseButton.setOnClickListener(v -> {
                 int updatedQuantity = cartItem.getQuantity() + 1;
@@ -162,7 +168,7 @@ public class CartListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private void updateCartItemQuantity(CartItemModel cartItem) {
-        int userId = userModel.getId(); // Replace with the actual user ID
+        int userId = viewModel.getUserModel().getId();
         int productId = cartItem.getProductId(); // Get the product ID
         int newQuantity = cartItem.getQuantity(); // Get the updated quantity
 
@@ -174,9 +180,6 @@ public class CartListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     // If the update is successful, notify the user
                     Toast.makeText(context, "Cart item updated successfully", Toast.LENGTH_SHORT).show();
                     getCartTotalPrice();
-
-
-
                     break;
 
                 case BaseResponseModel.FAILED_REQUEST_FAILURE:
@@ -193,7 +196,7 @@ public class CartListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public void removeCartItem(CartItemModel cartItem) {
-        int userId = 1; // Lấy userId thực tế
+        int userId = viewModel.getUserModel().getId();
         int productId = cartItem.getProductId(); // Lấy productId của item cần xóa
 
         // Gọi phương thức removeCartItem từ ViewModel
@@ -208,6 +211,8 @@ public class CartListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 notifyItemRemoved(index);
                             }
                         });
+
+
 
                         getCartTotalPrice();
                         Toast.makeText(context, "Product removed from cart", Toast.LENGTH_SHORT).show();
@@ -257,7 +262,7 @@ public class CartListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //    }
 
     private void getCartTotalPrice() {
-        int userId = 1; // Thay thế bằng userId thực tế
+        int userId = viewModel.getUserModel().getId();
 
         // Gọi API để lấy tổng giá trị giỏ hàng từ server
         viewModel.getCartTotal(userId).observe(lifecycleOwner, response -> {
@@ -296,38 +301,5 @@ public class CartListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         });
     }
-
-
-//    @Override
-//    public void onBindViewHolder(@NonNull DataViewHolder holder, int position) {
-//        CartItemModel cartItem = data.get(position);
-//
-//        holder.productName.setText(cartItem.getProductName());
-//        holder.productPrice.setText(String.format("%s %s", cartItem.getPrice(), context.getString(R.string.currency)));
-//        holder.productQuantity.setText(String.valueOf(cartItem.getQuantity()));
-//
-//        // Load product image using Glide
-//        Glide.with(context)
-//                .load(cartItem.getProductImage())
-//                .centerCrop()
-//                .transition(DrawableTransitionOptions.withCrossFade(250))
-//                .into(holder.productImage);
-//
-//
-//        holder.itemView.setOnClickListener(v -> {
-//            if (itemInteractionListener != null) {
-//                itemInteractionListener.onCartItemClicked(cartItem);
-//            }
-//        });
-//
-//        holder.favCheckBox.setOnClickListener(v -> {
-//            boolean isFav = holder.favCheckBox.isChecked();
-//            if (itemInteractionListener != null) {
-//                itemInteractionListener.onProductAddedToFav(cartItem.getProductId(), isFav);
-//            }
-//        });
-//    }
-
-
 
 }
