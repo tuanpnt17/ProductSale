@@ -56,9 +56,9 @@
 
     <fragment
         android:id="@+id/onSaleFragment"
-        android:name="com.prm392.assignment.productsale.view.fragment.main.home.OnSaleFragment"
+        android:name="com.prm392.assignment.productsale.view.fragment.main.home.CartFragment"
         android:label="fragment_on_sale"
-        tools:layout="@layout/fragment_on_sale">
+        tools:layout="@layout/fragment_cart">
         <action
             android:id="@+id/action_onSaleFragment_to_historyFragment"
             app:destination="@id/historyFragment" />

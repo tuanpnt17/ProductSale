@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/background"
-    tools:context=".view.fragment.main.home.OnSaleFragment">
+    tools:context=".view.fragment.main.home.CartFragment">
 
     <!-- Title TextView -->
     <TextView
@@ -13,33 +13,36 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/on_sale"
+        android:text="Cart"
         android:textSize="34sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Reset Cart Button -->
-    <Button
-        android:id="@+id/reset_cart_button"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:text="Clear Cart"
-        android:textSize="28dp"
-        android:background="@drawable/remove"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/onSale_title"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginEnd="16dp" />
 
     <!-- RecyclerView to display items -->
 
     <!-- ProgressBar for loading -->
 
+    <Button
+        android:id="@+id/reset_cart_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="165dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/remove"
+        app:layout_constraintBottom_toTopOf="@+id/onSale_recyclerVeiw"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/onSale_title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.181" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/onSale_recyclerVeiw"
         android:layout_width="0dp"
-        android:layout_height="520dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
@@ -53,7 +56,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/onSale_title"
-        app:layout_constraintVertical_bias="0.073"
+        app:layout_constraintVertical_bias="0.0"
         tools:itemCount="4"
         tools:listitem="@layout/cart_item_layout" />
 
@@ -91,21 +94,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/totalPriceText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:text="Total Price: $0.00"
-        android:textSize="18sp"
-        android:textColor="#FF4081"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.82"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/onSale_recyclerVeiw"
-        app:layout_constraintVertical_bias="0.377"
-        android:shadowColor="#000000"
-        android:shadowDy="2"
-        android:shadowDx="2"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

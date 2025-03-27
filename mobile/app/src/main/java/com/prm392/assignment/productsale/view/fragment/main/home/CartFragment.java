@@ -19,22 +19,20 @@ import java.util.ArrayList;
 
 import com.prm392.assignment.productsale.R;
 import com.prm392.assignment.productsale.adapters.CartListAdapter;
-import com.prm392.assignment.productsale.adapters.ProductsListAdapter;
-import com.prm392.assignment.productsale.databinding.FragmentOnSaleBinding;
+import com.prm392.assignment.productsale.databinding.FragmentCartBinding;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
-import com.prm392.assignment.productsale.model.ProductModel;
 import com.prm392.assignment.productsale.model.cart.CartItemModel;
 import com.prm392.assignment.productsale.util.DialogsProvider;
 import com.prm392.assignment.productsale.view.activity.MainActivity;
 import com.prm392.assignment.productsale.viewmodel.fragment.main.home.OnSaleViewModel;
 
-public class OnSaleFragment extends Fragment {
-    private FragmentOnSaleBinding vb;
+public class CartFragment extends Fragment {
+    private FragmentCartBinding vb;
     private NavController navController;
     private OnSaleViewModel viewModel;
     private CartListAdapter adapter;
 
-    public OnSaleFragment() {
+    public CartFragment() {
         // Required empty public constructor
     }
 
@@ -49,7 +47,7 @@ public class OnSaleFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        if (vb == null) vb = FragmentOnSaleBinding.inflate(inflater, container, false);
+        if (vb == null) vb = FragmentCartBinding.inflate(inflater, container, false);
         return vb.getRoot();
     }
 
@@ -81,24 +79,6 @@ public class OnSaleFragment extends Fragment {
         });
 
         loadCartItems();
-        loadCartTotal();
-    }
-
-    private void loadCartTotal() {
-        vb.onSaleLoading.setVisibility(View.VISIBLE);
-        int userId = viewModel.getUserModel().getId();  // Sử dụng userId thực tế
-
-        // Lấy tổng giá trị giỏ hàng từ ViewModel
-        viewModel.getCartTotal(userId)
-                .observe(getViewLifecycleOwner(), response -> {
-                    if (response != null && response.isSuccessful()) {
-                        vb.onSaleLoading.setVisibility(View.GONE);
-                        double totalPrice = response.body().getTotal(); // Lấy giá trị tổng từ API
-                        vb.totalPriceText.setText("Total Price: $" + String.format("%.2f", totalPrice)); // Cập nhật UI
-                    } else {
-                        Toast.makeText(getContext(), "Không thể lấy tổng giỏ hàng", Toast.LENGTH_SHORT).show();
-                    }
-                });
     }
 
     private void clearCart() {
@@ -138,6 +118,9 @@ public class OnSaleFragment extends Fragment {
                     // Kiểm tra nếu giỏ hàng trống
                     if (response.body() == null) {
                         return;
+                    }
+                    if (response.body().getCartItems().stream().count() == 0) {
+                        vb.checkout.setVisibility(View.GONE);
                     }
 
                     // Cập nhật giỏ hàng vào adapter
