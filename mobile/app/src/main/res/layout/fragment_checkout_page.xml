@@ -15,85 +15,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-<!--        <com.google.android.material.appbar.AppBarLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:fitsSystemWindows="true"-->
-<!--            android:background="?attr/background"-->
-<!--            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">-->
-
-<!--            <com.google.android.material.appbar.CollapsingToolbarLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="70dp"-->
-<!--                app:contentScrim="?attr/background"-->
-<!--                app:scrimAnimationDuration="250"-->
-<!--                app:scrimVisibleHeightTrigger="100dp"-->
-<!--                app:layout_scrollFlags="scroll|snap|enterAlwaysCollapsed|exitUntilCollapsed"-->
-<!--                app:toolbarId="@id/product_page_toolbar">-->
-
-<!--                <androidx.appcompat.widget.Toolbar-->
-<!--                    android:id="@+id/product_page_toolbar"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="70dp"-->
-<!--                    app:layout_collapseMode="pin"-->
-<!--                    android:layout_gravity="bottom"-->
-<!--                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light">-->
-
-<!--                    <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:layout_marginEnd="16dp">-->
-
-<!--                        <TextView-->
-<!--                            android:id="@+id/product_page_title"-->
-<!--                            android:layout_width="0dp"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_gravity="center"-->
-<!--                            android:layout_marginStart="5dp"-->
-<!--                            android:layout_marginEnd="5dp"-->
-<!--                            android:includeFontPadding="false"-->
-<!--                            android:letterSpacing="-0.01"-->
-<!--                            android:text="Checkout"-->
-<!--                            android:textColor="?attr/textFillColor"-->
-<!--                            android:textSize="24sp"-->
-<!--                            android:textStyle="bold"-->
-<!--                            android:textAlignment="center"-->
-<!--                            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                            app:layout_constraintEnd_toEndOf="parent"-->
-<!--                            app:layout_constraintStart_toEndOf="@+id/product_page_back"-->
-<!--                            app:layout_constraintTop_toTopOf="parent"-->
-<!--                            />-->
-
-<!--                        <ImageButton-->
-<!--                            android:id="@+id/product_page_back"-->
-<!--                            android:layout_width="25dp"-->
-<!--                            android:layout_height="40dp"-->
-<!--                            android:adjustViewBounds="true"-->
-<!--                            android:background="@drawable/borderless_ripple"-->
-<!--                            android:cropToPadding="true"-->
-<!--                            android:scaleType="centerCrop"-->
-<!--                            app:layout_constraintBottom_toBottomOf="@+id/product_page_title"-->
-<!--                            app:layout_constraintEnd_toStartOf="@+id/product_page_title"-->
-<!--                            app:layout_constraintStart_toStartOf="parent"-->
-<!--                            app:layout_constraintTop_toTopOf="parent"-->
-<!--                            app:layout_constraintVertical_bias="1.8"-->
-<!--                            app:srcCompat="@drawable/ic_round_arrow_back_ios_new_24"-->
-<!--                            app:tint="?attr/textFillColor" />-->
-
-<!--                    </androidx.constraintlayout.widget.ConstraintLayout>-->
-
-<!--                </androidx.appcompat.widget.Toolbar>-->
-
-<!--            </com.google.android.material.appbar.CollapsingToolbarLayout>-->
-
-<!--        </com.google.android.material.appbar.AppBarLayout>-->
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="16dp"
             android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
             android:layout_marginRight="16dp"
             android:fadingEdgeLength="15dp"
             android:overScrollMode="never"
@@ -104,6 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/user_information"
                     android:layout_width="match_parent"
@@ -116,9 +45,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:text="Your Information"
+                        android:textAlignment="textStart"
                         android:textSize="24sp"
                         android:textStyle="bold"
-                        android:textAlignment="textStart"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -185,17 +114,17 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:text="Your products"
+                        android:textAlignment="textStart"
                         android:textSize="24sp"
                         android:textStyle="bold"
-                        android:textAlignment="textStart"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/checkout_recyclerView"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:id="@+id/checkout_recyclerView"
                         android:layout_marginStart="0dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="0dp"
@@ -227,9 +156,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:text="Payment Information"
+                        android:textAlignment="textStart"
                         android:textSize="24sp"
                         android:textStyle="bold"
-                        android:textAlignment="textStart"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -278,33 +207,34 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Total:"
+                        android:textAlignment="textStart"
                         android:textColor="?attr/colorAccent"
                         android:textSize="40sp"
                         android:textStyle="bold"
-                        android:textAlignment="textStart"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
+
                     <TextView
                         android:id="@+id/txtTotalAmount"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="1500$"
+                        android:textAlignment="textEnd"
                         android:textColor="?attr/colorPrimary"
                         android:textSize="40sp"
                         android:textStyle="bold"
-                        android:textAlignment="textEnd"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toBottomOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
                 <android.widget.Button
                     android:id="@+id/buyNowBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="20dp"
+                    android:layout_marginBottom="0dp"
                     android:background="@drawable/button"
                     android:gravity="center|start"
                     android:includeFontPadding="false"
@@ -314,9 +244,30 @@
                     android:textColor="#FFFFFF"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="50dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                    <android.widget.Button
+                        android:id="@+id/navBack"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="50dp"
+                        android:background="@drawable/button_simple"
+                        android:gravity="center|start"
+                        android:includeFontPadding="false"
+                        android:text="Cancel"
+                        android:textAlignment="center"
+                        android:textAllCaps="false"
+                        android:textColor="#333"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

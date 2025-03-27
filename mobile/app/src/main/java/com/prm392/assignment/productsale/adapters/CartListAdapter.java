@@ -160,7 +160,7 @@ public class CartListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private void updateCartItemQuantity(CartItemModel cartItem) {
-        int userId = 1; // Replace with the actual user ID
+        int userId = viewModel.getUserModel().getId();
         int productId = cartItem.getProductId(); // Get the product ID
         int newQuantity = cartItem.getQuantity(); // Get the updated quantity
 
@@ -172,9 +172,6 @@ public class CartListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     // If the update is successful, notify the user
                     Toast.makeText(context, "Cart item updated successfully", Toast.LENGTH_SHORT).show();
                     getCartTotalPrice();
-
-
-
                     break;
 
                 case BaseResponseModel.FAILED_REQUEST_FAILURE:
@@ -191,7 +188,7 @@ public class CartListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public void removeCartItem(CartItemModel cartItem) {
-        int userId = 1; // Lấy userId thực tế
+        int userId = viewModel.getUserModel().getId();
         int productId = cartItem.getProductId(); // Lấy productId của item cần xóa
 
         // Gọi phương thức removeCartItem từ ViewModel
@@ -206,6 +203,8 @@ public class CartListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 notifyItemRemoved(index);
                             }
                         });
+
+
 
                         getCartTotalPrice();
                         Toast.makeText(context, "Product removed from cart", Toast.LENGTH_SHORT).show();
@@ -255,7 +254,7 @@ public class CartListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //    }
 
     private void getCartTotalPrice() {
-        int userId = 1; // Thay thế bằng userId thực tế
+        int userId = viewModel.getUserModel().getId();
 
         // Gọi API để lấy tổng giá trị giỏ hàng từ server
         viewModel.getCartTotal(userId).observe(lifecycleOwner, response -> {

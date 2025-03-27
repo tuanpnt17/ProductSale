@@ -35,24 +35,25 @@
         android:name="com.prm392.assignment.productsale.view.fragment.main.ProductPageFragment"
         android:label="fragment_product_page"
         tools:layout="@layout/fragment_product_page" >
+        <action
+            android:id="@+id/action_checkoutPageFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:enterAnim="@anim/slide_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
     </fragment>
     <fragment
         android:id="@+id/checkoutPageFragment"
         android:name="com.prm392.assignment.productsale.view.fragment.main.CheckoutPageFragment"
         android:label="fragment_checkout_page"
         tools:layout="@layout/fragment_checkout_page" >
-<!--        <action-->
-<!--            android:id="@+id/action_productPageFragment_to_storePageFragment"-->
-<!--            app:destination="@id/storePageFragment"-->
-<!--            app:enterAnim="@anim/slide_from_right"-->
-<!--            app:exitAnim="@anim/slide_to_left"-->
-<!--            app:popEnterAnim="@anim/slide_from_left"-->
-<!--            app:popExitAnim="@anim/slide_to_right"/>-->
+        <action
+            android:id="@+id/action_checkoutPageFragment_to_searchFragment"
+            app:destination="@id/homeFragment"
+            app:enterAnim="@anim/slide_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
     </fragment>
-
-    <fragment
-        android:id="@+id/settingsFragment"
-        android:name="com.prm392.assignment.productsale.view.fragment.main.SettingsFragment"
-        android:label="fragment_settings"
-        tools:layout="@layout/fragment_settings" />
 </navigation>

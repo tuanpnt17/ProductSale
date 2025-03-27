@@ -93,6 +93,10 @@ public class CheckoutPageFragment extends Fragment {
             viewModel.buyNow();
         });
 
+        vb.navBack.setOnClickListener((v) -> {
+            getActivity().getOnBackPressedDispatcher().onBackPressed();
+        });
+
         loadCheckoutData();
     }
 
