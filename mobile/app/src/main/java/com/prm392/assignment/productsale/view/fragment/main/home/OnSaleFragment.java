@@ -49,7 +49,7 @@ public class OnSaleFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        if(vb==null) vb = FragmentOnSaleBinding.inflate(inflater,container,false);
+        if (vb == null) vb = FragmentOnSaleBinding.inflate(inflater, container, false);
         return vb.getRoot();
     }
 
@@ -63,29 +63,18 @@ public class OnSaleFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        new Handler().post(()->{
-            navController = ((MainActivity)getActivity()).getAppNavController();
+        new Handler().post(() -> {
+            navController = ((MainActivity) getActivity()).getAppNavController();
         });
         viewModel = new ViewModelProvider(this, ViewModelProvider.Factory.from(OnSaleViewModel.initializer)).get(OnSaleViewModel.class);
 
-        adapter = new CartListAdapter(getContext(), new ArrayList<>());
+        adapter = new CartListAdapter(getContext(), vb.onSaleRecyclerVeiw);
         vb.onSaleRecyclerVeiw.setLayoutManager(new LinearLayoutManager(getContext()));
         vb.onSaleRecyclerVeiw.setAdapter(adapter);
 
-        adapter.setItemInteractionListener(new CartListAdapter.ItemInteractionListener() {
-            @Override
-            public void onCartItemClicked(CartItemModel cartItem) {
-                // Navigate to cart item detail page or handle the interaction
-            }
-
-            @Override
-            public void onProductAddedToFav(long productId, boolean favChecked) {
-                // Handle adding/removing from favorites
-            }
-        });
-
         loadCartItems();
     }
+
     void loadCartItems() {
         vb.onSaleLoading.setVisibility(View.VISIBLE);
         int userId = 1;
@@ -94,7 +83,6 @@ public class OnSaleFragment extends Fragment {
             switch (response.code()) {
                 case BaseResponseModel.SUCCESSFUL_OPERATION:
                     vb.onSaleLoading.setVisibility(View.GONE);
-
                     // Kiểm tra nếu giỏ hàng trống
                     if (response.body() == null) {
                         return;
@@ -102,7 +90,7 @@ public class OnSaleFragment extends Fragment {
 
                     // Cập nhật giỏ hàng vào adapter
                     ArrayList<CartItemModel> cartItems = response.body().getCartItems(); // Đảm bảo rằng response trả về có danh sách cartItems
-                    adapter.addCartItem(cartItems); // Trực tiếp dùng cartItems
+                    adapter.addCartItems(cartItems); // Trực tiếp dùng cartItems
 
                     break;
 
