@@ -27,12 +27,4 @@ public class CartModel {
     @SerializedName("cartItems")
     private ArrayList<CartItemModel> cartItems;
 
-    public ArrayList<CartItemModel> getCartItems() {
-        return cartItems;
-    }
-
-    // Optionally, you can provide setters or other methods if needed
-    public void setCartItems(ArrayList<CartItemModel> cartItems) {
-        this.cartItems = cartItems;
-    }
 }

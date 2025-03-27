@@ -72,6 +72,10 @@ public class OnSaleFragment extends Fragment {
         vb.onSaleRecyclerVeiw.setLayoutManager(new LinearLayoutManager(getContext()));
         vb.onSaleRecyclerVeiw.setAdapter(adapter);
 
+        vb.checkout.setOnClickListener(v -> {
+            navController.navigate(R.id.action_homeFragment_to_checkoutPageFragment);
+        });
+
         loadCartItems();
     }
 
