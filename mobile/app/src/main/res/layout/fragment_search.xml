@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/background"
-            android:fitsSystemWindows="true"
+            android:fitsSystemWindows="false"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
@@ -96,42 +96,22 @@
                             android:paddingEnd="35dp"
                             android:paddingBottom="10dp"
                             android:requiresFadingEdge="horizontal"
+                            android:textColor="?attr/textFillColor"
                             android:textColorHint="?attr/textFillColor"
                             android:textSize="17sp"
-                            android:textColor="?attr/textFillColor"
-                            app:layout_constraintEnd_toStartOf="@+id/search_barcodeScan"
+                            app:layout_constraintEnd_toStartOf="@+id/filter_button"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <ImageButton
-                            android:id="@+id/search_barcodeScan"
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
-                            android:adjustViewBounds="true"
+                            android:id="@+id/filter_button"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/button_round"
-                            android:cropToPadding="false"
-                            android:foregroundGravity="center"
-                            android:scaleType="centerInside"
-                            android:src="@drawable/barcode_scan"
                             app:layout_constraintBottom_toBottomOf="@+id/search_searchbar"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="@+id/search_searchbar" />
-
-                        <ImageButton
-                            android:id="@+id/search_voice"
-                            android:layout_width="21dp"
-                            android:layout_height="21dp"
-                            android:layout_marginEnd="5dp"
-                            android:background="@drawable/borderless_ripple"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="10dp"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/voice_search"
-                            app:layout_constraintBottom_toBottomOf="@+id/search_searchbar"
-                            app:layout_constraintEnd_toEndOf="@+id/search_searchbar"
-                            app:layout_constraintHorizontal_bias="0.98"
-                            app:layout_constraintStart_toStartOf="@+id/search_searchbar"
-                            app:layout_constraintTop_toTopOf="@+id/search_searchbar" />
+                            app:layout_constraintTop_toTopOf="@+id/search_searchbar"
+                            app:srcCompat="@drawable/filter" />
 
                         <TextView
                             android:id="@+id/textView9"
@@ -139,10 +119,10 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
                             android:layout_marginBottom="20dp"
-                            android:textStyle="bold"
-                            android:text="@string/recommended"
+                            android:text="@string/products"
                             android:textColor="?attr/textFillColor"
                             android:textSize="20sp"
+                            android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -176,13 +156,23 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView9"
-            tools:itemCount="10"
+            tools:itemCount="8"
             tools:listitem="@layout/product_sale_card_layout" />
 
+        <Button
+            android:id="@+id/loadMoreButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="40sp"
+            android:text="@string/load_more"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/search_products_recyclerView" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <ProgressBar
-        android:id="@+id/search_loadingRecommended"
+        android:id="@+id/search_loading"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -193,4 +183,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.63" />
+
+    <TextView
+        android:id="@+id/noResultsView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/No_products_found"
+        android:textSize="20sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.63" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
