@@ -2,6 +2,7 @@ package com.prm392.assignment.productsale.data.service;
 
 import com.prm392.assignment.productsale.model.BaseResponseModel;
 import com.prm392.assignment.productsale.model.cart.AddProductCartModel;
+import com.prm392.assignment.productsale.model.cart.CartModel;
 import com.prm392.assignment.productsale.model.products.ProductSalePageResponseModel;
 import com.prm392.assignment.productsale.model.products.ProductsSaleResponseModel;
 
@@ -27,4 +28,7 @@ public interface ProductSaleService {
     @Headers({"client: mobile"})
     @POST("cart")
     Observable<Response<BaseResponseModel>> addToCart(@Header("Authorization") String token, @Body AddProductCartModel addProductCartModel);
+    @Headers({"client: mobile"})
+    @GET("cart/{userId}")
+    Observable<Response<CartModel>> getCart(@Header("Authorization") String token, @Path("userId") int userId);
 }

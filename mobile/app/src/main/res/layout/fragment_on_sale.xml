@@ -7,7 +7,7 @@
     android:background="?attr/background"
     tools:context=".view.fragment.main.home.OnSaleFragment">
 
-
+    <!-- Title TextView -->
     <TextView
         android:id="@+id/onSale_title"
         android:layout_width="wrap_content"
@@ -19,6 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- RecyclerView for displaying the Cart items -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/onSale_recyclerVeiw"
         android:layout_width="0dp"
@@ -37,8 +38,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/onSale_title"
         tools:itemCount="10"
-        tools:listitem="@layout/product_list_item_layout" />
+        tools:listitem="@layout/cart_item_layout" /> <!-- Update to use cart_item layout -->
 
+    <!-- ProgressBar to show loading indicator -->
     <ProgressBar
         android:id="@+id/onSale_loading"
         style="?android:attr/progressBarStyle"

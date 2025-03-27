@@ -18,11 +18,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import com.prm392.assignment.productsale.R;
+import com.prm392.assignment.productsale.adapters.CartListAdapter;
 import com.prm392.assignment.productsale.adapters.ProductsListAdapter;
 import com.prm392.assignment.productsale.databinding.FragmentFavBinding;
 import com.prm392.assignment.productsale.databinding.FragmentOnSaleBinding;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
 import com.prm392.assignment.productsale.model.ProductModel;
+import com.prm392.assignment.productsale.model.cart.CartItemModel;
 import com.prm392.assignment.productsale.util.DialogsProvider;
 import com.prm392.assignment.productsale.view.activity.MainActivity;
 import com.prm392.assignment.productsale.viewmodel.fragment.main.home.OnSaleViewModel;
@@ -31,8 +33,7 @@ public class OnSaleFragment extends Fragment {
     private FragmentOnSaleBinding vb;
     private NavController navController;
     private OnSaleViewModel viewModel;
-
-    private ProductsListAdapter adapter;
+    private CartListAdapter adapter;
 
     public OnSaleFragment() {
         // Required empty public constructor
@@ -67,46 +68,42 @@ public class OnSaleFragment extends Fragment {
         });
         viewModel = new ViewModelProvider(this, ViewModelProvider.Factory.from(OnSaleViewModel.initializer)).get(OnSaleViewModel.class);
 
-        adapter = new ProductsListAdapter(getContext(),vb.onSaleRecyclerVeiw);
+        adapter = new CartListAdapter(getContext(), new ArrayList<>());
         vb.onSaleRecyclerVeiw.setLayoutManager(new LinearLayoutManager(getContext()));
         vb.onSaleRecyclerVeiw.setAdapter(adapter);
 
-        adapter.setItemInteractionListener(new ProductsListAdapter.ItemInteractionListener() {
+        adapter.setItemInteractionListener(new CartListAdapter.ItemInteractionListener() {
             @Override
-            public void onProductClicked(ProductModel product) {
-                Bundle bundle = new Bundle();
-                bundle.putLong("productId",product.getId());
-                navController.navigate(R.id.action_homeFragment_to_productPageFragment,bundle);
+            public void onCartItemClicked(CartItemModel cartItem) {
+                // Navigate to cart item detail page or handle the interaction
             }
 
             @Override
             public void onProductAddedToFav(long productId, boolean favChecked) {
-                setFavourite(productId,favChecked);
+                // Handle adding/removing from favorites
             }
         });
 
-        loadProducts();
+        loadCartItems();
     }
-
-    void loadProducts(){
+    void loadCartItems() {
         vb.onSaleLoading.setVisibility(View.VISIBLE);
-
-        viewModel.getOnSaleProducts().observe(getViewLifecycleOwner(),  response ->{
-
-            switch (response.code()){
+        int userId = 1;
+        // Lấy giỏ hàng từ ViewModel
+        viewModel.getCart(userId).observe(getViewLifecycleOwner(), response -> {
+            switch (response.code()) {
                 case BaseResponseModel.SUCCESSFUL_OPERATION:
                     vb.onSaleLoading.setVisibility(View.GONE);
 
-                    if(response.body().getProducts() == null || response.body().getProducts().isEmpty()){
-                        DialogsProvider.get(getActivity()).messageDialog(getString(R.string.There_are_no_products_on_sale),getString(R.string.Check_this_page_later));
+                    // Kiểm tra nếu giỏ hàng trống
+                    if (response.body() == null) {
                         return;
                     }
 
-                    ArrayList<ProductModel> products = response.body().getProducts();
+                    // Cập nhật giỏ hàng vào adapter
+                    ArrayList<CartItemModel> cartItems = response.body().getCartItems(); // Đảm bảo rằng response trả về có danh sách cartItems
+                    adapter.addCartItem(cartItems); // Trực tiếp dùng cartItems
 
-                    adapter.addProducts(products);
-
-                    viewModel.removeObserverOfProducts(getViewLifecycleOwner());
                     break;
 
                 case BaseResponseModel.FAILED_REQUEST_FAILURE:
@@ -114,25 +111,55 @@ public class OnSaleFragment extends Fragment {
                     break;
 
                 default:
-                    DialogsProvider.get(getActivity()).messageDialog(getString(R.string.Server_Error),getString(R.string.Code)+ response.code());
+                    DialogsProvider.get(getActivity()).messageDialog(getString(R.string.Server_Error), getString(R.string.Code) + response.code());
             }
         });
-
     }
+//    void loadProducts(){
+//        vb.onSaleLoading.setVisibility(View.VISIBLE);
+//
+//        viewModel.getOnSaleProducts().observe(getViewLifecycleOwner(),  response ->{
+//
+//            switch (response.code()){
+//                case BaseResponseModel.SUCCESSFUL_OPERATION:
+//                    vb.onSaleLoading.setVisibility(View.GONE);
+//
+//                    if(response.body().getProducts() == null || response.body().getProducts().isEmpty()){
+//                        DialogsProvider.get(getActivity()).messageDialog(getString(R.string.There_are_no_products_on_sale),getString(R.string.Check_this_page_later));
+//                        return;
+//                    }
+//
+//                    ArrayList<ProductModel> products = response.body().getProducts();
+//
+//                    adapter.addProducts(products);
+//
+//                    viewModel.removeObserverOfProducts(getViewLifecycleOwner());
+//                    break;
+//
+//                case BaseResponseModel.FAILED_REQUEST_FAILURE:
+//                    DialogsProvider.get(getActivity()).messageDialog(getString(R.string.Loading_Failed), getString(R.string.Please_Check_your_connection));
+//                    break;
+//
+//                default:
+//                    DialogsProvider.get(getActivity()).messageDialog(getString(R.string.Server_Error),getString(R.string.Code)+ response.code());
+//            }
+//        });
+//
+//    }
 
-    void setFavourite(long productId, boolean favourite){
-        if(favourite){
-            viewModel.addFavourite(productId).observe(getViewLifecycleOwner(), response ->{
-                if (response.code() != BaseResponseModel.SUCCESSFUL_CREATION)
-                    Toast.makeText(getContext(), "Error" + response.code(), Toast.LENGTH_SHORT).show();
-            });
-        }
-        else {
-            viewModel.removeFavourite(productId).observe(getViewLifecycleOwner(), response ->{
-                if (response.code() != BaseResponseModel.SUCCESSFUL_DELETED)
-                    Toast.makeText(getContext(), "Error" + response.code(), Toast.LENGTH_SHORT).show();
-            });
-        }
-
-    }
+//    void setFavourite(long productId, boolean favourite){
+//        if(favourite){
+//            viewModel.addFavourite(productId).observe(getViewLifecycleOwner(), response ->{
+//                if (response.code() != BaseResponseModel.SUCCESSFUL_CREATION)
+//                    Toast.makeText(getContext(), "Error" + response.code(), Toast.LENGTH_SHORT).show();
+//            });
+//        }
+//        else {
+//            viewModel.removeFavourite(productId).observe(getViewLifecycleOwner(), response ->{
+//                if (response.code() != BaseResponseModel.SUCCESSFUL_DELETED)
+//                    Toast.makeText(getContext(), "Error" + response.code(), Toast.LENGTH_SHORT).show();
+//            });
+//        }
+//
+//    }
 }
