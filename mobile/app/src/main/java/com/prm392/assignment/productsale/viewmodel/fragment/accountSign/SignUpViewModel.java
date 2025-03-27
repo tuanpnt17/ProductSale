@@ -22,7 +22,6 @@ public class SignUpViewModel extends ViewModel {
         signUpModel.setUsername(username);
         signUpModel.setEmail(email);
         signUpModel.setPassword(password);
-        if (phoneNumber != null && phoneNumber.isEmpty()) phoneNumber = null;
         signUpModel.setPhoneNumber(phoneNumber);
         if (address != null && address.isEmpty()) address = null;
         signUpModel.setAddress(address);

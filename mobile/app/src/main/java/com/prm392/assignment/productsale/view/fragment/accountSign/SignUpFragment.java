@@ -223,6 +223,12 @@ public class SignUpFragment extends Fragment {
             validData = false;
         }
 
+        if (vb.signUpPhone.getError() != null || vb.signUpPhone.getEditText().getText().length() == 0) {
+            vb.signUpPhone.requestFocus();
+            vb.signUpPhone.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.fieldmissing));
+            validData = false;
+        }
+
         return validData;
     }
 
