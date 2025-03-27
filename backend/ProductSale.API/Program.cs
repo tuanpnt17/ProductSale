@@ -149,6 +149,11 @@ namespace ProductSale.API
 
             app.MapControllers();
 
+            System.Globalization.CultureInfo.DefaultThreadCurrentCulture =
+                new System.Globalization.CultureInfo("en-US");
+            System.Globalization.CultureInfo.DefaultThreadCurrentUICulture =
+                new System.Globalization.CultureInfo("en-US");
+
             app.Run();
         }
     }
