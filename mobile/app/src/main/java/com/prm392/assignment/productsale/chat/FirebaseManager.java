@@ -1,28 +1,23 @@
 package com.prm392.assignment.productsale.chat;
 
 import androidx.annotation.NonNull;
-
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.prm392.assignment.productsale.model.UserModel;
 import com.prm392.assignment.productsale.util.UserAccountManager;
-
 import android.content.Context;
 import android.util.Log;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
 
 public class FirebaseManager {
     private static final String TAG = "FirebaseManager";
@@ -37,7 +32,6 @@ public class FirebaseManager {
     private String currentUserId;
     private UserModel currentUser;
     private Context context;
-    private String testPartnerId; // Store the test partner ID
 
     private static FirebaseManager instance;
 
@@ -50,127 +44,97 @@ public class FirebaseManager {
 
     private FirebaseManager(Context context) {
         this.context = context;
-        mDatabase = FirebaseDatabase.getInstance();
-        mUsersRef = mDatabase.getReference(USERS_REF);
-        mMessagesRef = mDatabase.getReference(MESSAGES_REF);
-        mConversationsRef = mDatabase.getReference(CONVERSATIONS_REF);
-
-        // MODIFIED: Create fake user data instead of getting from UserAccountManager
-        createFakeUser();
-
-        // Save or update user info in Firebase for chat functionality
-        saveUserToFirebase();
+        initializeFirebase();
     }
 
-    // ADDED: Method to create fake user data
-    private void createFakeUser() {
-        // Generate a random ID if needed
-        String userId = UUID.randomUUID().toString().substring(0, 8);
+    private void initializeFirebase() {
+        try {
+            mDatabase = FirebaseDatabase.getInstance();
+            mUsersRef = mDatabase.getReference(USERS_REF);
+            mMessagesRef = mDatabase.getReference(MESSAGES_REF);
+            mConversationsRef = mDatabase.getReference(CONVERSATIONS_REF);
 
-        // Create a fake UserModel instance
-        currentUser = new UserModel();
-        currentUser.setId(userId);
-        currentUser.setFullName("Test User");
-        currentUser.setEmail("test@example.com");
+            // Get current user from UserAccountManager
+            currentUser = UserAccountManager.getUser(context);
+            if (currentUser != null) {
+                // Ensure currentUserId is a string and valid for Firebase
+                currentUserId = String.valueOf(currentUser.getId());
 
-        // Set the current user ID
-        currentUserId = userId;
+                if (isValidUserId(currentUserId)) {
+                    saveUserToFirebase();
+                } else {
+                    Log.e(TAG, "Invalid user ID");
+                }
+            } else {
+                Log.e(TAG, "No current user found");
+            }
+
+            debugFirebaseConnection();
+        } catch (Exception e) {
+            Log.e(TAG, "Firebase initialization error", e);
+        }
+    }
+
+    private boolean isValidUserId(String userId) {
+        return userId != null && !userId.isEmpty();
+    }
+
+    private void debugFirebaseConnection() {
+        try {
+            DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+            connectedRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    boolean connected = Boolean.TRUE.equals(snapshot.getValue(Boolean.class));
+                    Log.d(TAG, "Firebase Connection Status: " + connected);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e(TAG, "Firebase Connection Error: " + error.getMessage());
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "Debug connection error", e);
+        }
     }
 
     private void saveUserToFirebase() {
-        if (currentUser != null) {
-            Map<String, Object> userMap = new HashMap<>();
-            userMap.put("id", currentUser.getId());
-            userMap.put("name", currentUser.getFullName());
-            userMap.put("email", currentUser.getEmail());
-            userMap.put("role", currentUser.hasStore() ? "seller" : "buyer");
-            userMap.put("profileImageUrl", currentUser.getImageLink());
-            userMap.put("online", true);
+        try {
+            if (currentUser != null && isValidUserId(currentUserId)) {
+                Map<String, Object> userMap = new HashMap<>();
+                userMap.put("id", currentUserId);
+                userMap.put("name", currentUser.getFullName());
+                userMap.put("email", currentUser.getEmail());
+                userMap.put("role", currentUser.hasStore() ? "seller" : "buyer");
+                userMap.put("profileImageUrl", currentUser.getImageLink());
+                userMap.put("online", true);
 
-            mUsersRef.child(currentUserId).updateChildren(userMap)
-                    .addOnSuccessListener(aVoid -> {
-                        Log.d(TAG, "User saved successfully, now creating test partner");
-                        // Create another fake user to chat with once our user is saved
-                        createFakePartnerUser();
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e(TAG, "Failed to save user: " + e.getMessage());
-                    });
-        }
-    }
-
-    // MODIFIED: Method to create a fake partner user for testing with callback
-    private void createFakePartnerUser() {
-        testPartnerId = "partner-" + UUID.randomUUID().toString().substring(0, 6);
-
-        Map<String, Object> partnerMap = new HashMap<>();
-        partnerMap.put("id", testPartnerId);
-        partnerMap.put("name", "Test Partner");
-        partnerMap.put("email", "partner@example.com");
-        partnerMap.put("role", "buyer");
-        partnerMap.put("profileImageUrl", "https://ui-avatars.com/api/?name=Test+Partner&background=random");
-        partnerMap.put("online", false);
-        partnerMap.put("lastSeen", new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault()).format(new Date()));
-
-        mUsersRef.child(testPartnerId).setValue(partnerMap)
-                .addOnSuccessListener(aVoid -> {
-                    Log.d(TAG, "Test partner created successfully with ID: " + testPartnerId);
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Failed to create test partner: " + e.getMessage());
-                });
-    }
-
-    public String getCurrentUserId() {
-        if (currentUserId == null && currentUser != null) {
-            currentUserId = currentUser.getId();
-        }
-        return currentUserId;
-    }
-
-    public UserModel getCurrentUser() {
-        return currentUser;
-    }
-
-    // ADDED: Method to get test partner ID
-    public String getTestPartnerId() {
-        return testPartnerId;
-    }
-
-    // User Profile
-    public void getUserProfile(String userId, ValueEventListener listener) {
-        mUsersRef.child(userId).addValueEventListener(listener);
-    }
-
-    // User Online Status
-    public void updateUserOnlineStatus(boolean online) {
-        String userId = getCurrentUserId();
-        if (userId != null) {
-            Map<String, Object> updates = new HashMap<>();
-            updates.put("online", online);
-            if (!online) {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault());
-                String lastSeenTime = sdf.format(new Date());
-                updates.put("lastSeen", lastSeenTime);
-
-                // Also update in UserModel
-                if (currentUser != null) {
-                    currentUser.setLastSeen(lastSeenTime);
-                }
+                mUsersRef.child(currentUserId).setValue(userMap)
+                        .addOnSuccessListener(aVoid -> Log.d(TAG, "User saved successfully"))
+                        .addOnFailureListener(e -> Log.e(TAG, "Failed to save user", e));
+            } else {
+                Log.e(TAG, "Cannot save user - null user or user ID");
             }
-            mUsersRef.child(userId).updateChildren(updates);
+        } catch (Exception e) {
+            Log.e(TAG, "Error in saveUserToFirebase", e);
         }
     }
 
-    // MODIFIED: Get all users for chat
-    public void getAllUsers(ValueEventListener listener) {
-        mUsersRef.addListenerForSingleValueEvent(listener);
+    public void findChatPartner(String currentUserRole, ValueEventListener listener) {
+        // Determine partner role based on current user's role
+        String partnerRole = currentUserRole.equals("seller") ? "buyer" : "seller";
+
+        // Query for users with the opposite role
+        mUsersRef.orderByChild("role").equalTo(partnerRole)
+                .addListenerForSingleValueEvent(listener);
     }
 
-    // Messages
     public void sendMessage(String receiverId, String content, OnCompleteListener<Void> listener) {
-        String senderId = getCurrentUserId();
-        if (senderId == null) return;
+        if (!isValidUserId(currentUserId) || !isValidUserId(receiverId)) {
+            Log.e(TAG, "Invalid sender or receiver ID");
+            return;
+        }
 
         // Create a new message ID
         String messageId = mMessagesRef.push().getKey();
@@ -178,110 +142,119 @@ public class FirebaseManager {
 
         // Create message object
         long timestamp = System.currentTimeMillis();
-        Message message = new Message(messageId, senderId, receiverId, content, timestamp);
+        Message message = new Message(
+                messageId,
+                currentUserId,
+                receiverId,
+                content,
+                timestamp
+        );
 
         // Save the message
         mMessagesRef.child(messageId).setValue(message)
                 .addOnCompleteListener(listener);
 
-        // Update conversation for sender
-        updateConversation(senderId, receiverId, messageId, content, timestamp, false);
-
-        // Update conversation for receiver
-        updateConversation(receiverId, senderId, messageId, content, timestamp, true);
+        // Update conversations for both users
+        updateConversation(currentUserId, receiverId, messageId, content, timestamp);
     }
 
-    private void updateConversation(String userId, String partnerId, String lastMessageId,
-                                    String lastMessageContent, long timestamp, boolean incrementUnread) {
-        Map<String, Object> conversationMap = new HashMap<>();
-        conversationMap.put("lastMessageId", lastMessageId);
-        conversationMap.put("lastMessageContent", lastMessageContent);
-        conversationMap.put("timestamp", timestamp);
+    private void updateConversation(String senderId, String receiverId,
+                                    String lastMessageId, String lastMessageContent,
+                                    long timestamp) {
+        // Update sender's conversation (reset unread count)
+        Map<String, Object> senderConversation = new HashMap<>();
+        senderConversation.put("lastMessageId", lastMessageId);
+        senderConversation.put("lastMessageContent", lastMessageContent);
+        senderConversation.put("timestamp", timestamp);
+        senderConversation.put("unreadCount", 0);
+        mConversationsRef.child(senderId).child(receiverId).updateChildren(senderConversation);
 
-        // Add or update the conversation
-        if (incrementUnread) {
-            // For receiver: increment unread count
-            mConversationsRef.child(userId).child(partnerId).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    Map<String, Object> receiverUpdate = new HashMap<>(conversationMap);
-
-                    // Increment unread count if the conversation exists
-                    if (snapshot.exists() && snapshot.child("unreadCount").exists()) {
-                        long currentUnreadCount = (long) snapshot.child("unreadCount").getValue();
-                        receiverUpdate.put("unreadCount", currentUnreadCount + 1);
-                    } else {
-                        receiverUpdate.put("unreadCount", 1);
+        // Update receiver's conversation (increment unread count)
+        mConversationsRef.child(receiverId).child(senderId)
+                .child("unreadCount")
+                .runTransaction(new com.google.firebase.database.Transaction.Handler() {
+                    @NonNull
+                    @Override
+                    public com.google.firebase.database.Transaction.Result doTransaction(@NonNull MutableData currentData) {
+                        Integer currentCount = currentData.getValue(Integer.class);
+                        currentData.setValue((currentCount == null ? 0 : currentCount) + 1);
+                        return com.google.firebase.database.Transaction.success(currentData);
                     }
 
-                    mConversationsRef.child(userId).child(partnerId).updateChildren(receiverUpdate);
-                }
+                    @Override
+                    public void onComplete(DatabaseError error, boolean committed, DataSnapshot currentData) {
+                        if (error != null) {
+                            Log.e(TAG, "Conversation update failed", error.toException());
+                        }
+                    }
+                });
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Log.e(TAG, "Failed to update conversation: " + error.getMessage());
-                }
-            });
-        } else {
-            // For sender: reset unread count
-            conversationMap.put("unreadCount", 0);
-            mConversationsRef.child(userId).child(partnerId).updateChildren(conversationMap);
-        }
+        // Update receiver's last message details
+        Map<String, Object> receiverConversation = new HashMap<>();
+        receiverConversation.put("lastMessageId", lastMessageId);
+        receiverConversation.put("lastMessageContent", lastMessageContent);
+        receiverConversation.put("timestamp", timestamp);
+        mConversationsRef.child(receiverId).child(senderId).updateChildren(receiverConversation);
     }
 
     public void getMessages(String partnerId, ValueEventListener listener) {
-        String currentUserId = getCurrentUserId();
-        if (currentUserId == null) return;
+        if (!isValidUserId(currentUserId) || !isValidUserId(partnerId)) return;
 
+        // Get messages between current user and partner
         Query query = mMessagesRef.orderByChild("timestamp");
         query.addValueEventListener(listener);
     }
 
     public void markMessagesAsRead(String partnerId) {
-        String currentUserId = getCurrentUserId();
-        if (currentUserId == null || partnerId == null) return;
+        if (!isValidUserId(currentUserId) || !isValidUserId(partnerId)) return;
 
-        // Reset unread count
-        mConversationsRef.child(currentUserId).child(partnerId).child("unreadCount").setValue(0);
-
-        // Find unread messages from this sender
-        Query query = mMessagesRef.orderByChild("senderId").equalTo(partnerId);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot messageSnapshot : snapshot.getChildren()) {
-                    Message message = messageSnapshot.getValue(Message.class);
-                    if (message != null && message.getReceiverId().equals(currentUserId) && !message.isReadBy(currentUserId)) {
-                        // Mark as read
-                        mMessagesRef.child(message.getMessageId()).child("readBy").child(currentUserId).setValue(true);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e(TAG, "Failed to mark messages as read: " + error.getMessage());
-            }
-        });
+        // Reset unread count for this conversation
+        mConversationsRef.child(currentUserId)
+                .child(partnerId)
+                .child("unreadCount")
+                .setValue(0);
     }
 
-    // Conversations
-    public void getConversations(ValueEventListener listener) {
-        String userId = getCurrentUserId();
-        if (userId != null) {
-            mConversationsRef.child(userId).orderByChild("timestamp").addValueEventListener(listener);
-        }
+    // Existing getters and other methods remain the same
+    public String getCurrentUserId() {
+        return currentUserId;
     }
 
-    // DEPRECATED: Use getTestPartnerId() or getAllUsers() instead
-    public void getTestPartnerId(ValueEventListener listener) {
-        mUsersRef.orderByChild("role").equalTo("buyer").limitToFirst(1).addListenerForSingleValueEvent(listener);
+    public UserModel getCurrentUser() {
+        return currentUser;
     }
 
     public boolean isCurrentUserSeller() {
-        if (currentUser != null) {
-            return currentUser.hasStore(); // Check if user has a store (is a seller)
+        return currentUser != null && currentUser.hasStore();
+    }
+    public void getUserProfile(String userId, ValueEventListener listener) {
+        if (!isValidUserId(userId)) {
+            Log.e(TAG, "Invalid user ID for profile retrieval");
+            return;
         }
-        return false;
+
+        // Query the users reference to get user profile
+        mUsersRef.child(userId).addListenerForSingleValueEvent(listener);
+    }
+
+    public void getAllUsers(ValueEventListener listener) {
+        // Query all users in the database
+        mUsersRef.addListenerForSingleValueEvent(listener);
+    }
+    public void updateUserOnlineStatus(boolean isOnline) {
+        // Ensure current user is valid
+        if (currentUser == null || !isValidUserId(currentUserId)) {
+            Log.e(TAG, "Cannot update online status - invalid user");
+            return;
+        }
+
+        try {
+            // Update the user's online status in Firebase
+            mUsersRef.child(currentUserId).child("online").setValue(isOnline)
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "Online status updated to: " + isOnline))
+                    .addOnFailureListener(e -> Log.e(TAG, "Failed to update online status", e));
+        } catch (Exception e) {
+            Log.e(TAG, "Error updating online status", e);
+        }
     }
 }

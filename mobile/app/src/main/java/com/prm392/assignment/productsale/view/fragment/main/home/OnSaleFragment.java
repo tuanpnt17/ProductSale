@@ -19,7 +19,6 @@ import java.util.ArrayList;
 
 import com.prm392.assignment.productsale.R;
 import com.prm392.assignment.productsale.adapters.ProductsListAdapter;
-import com.prm392.assignment.productsale.databinding.FragmentFavBinding;
 import com.prm392.assignment.productsale.databinding.FragmentOnSaleBinding;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
 import com.prm392.assignment.productsale.model.ProductModel;

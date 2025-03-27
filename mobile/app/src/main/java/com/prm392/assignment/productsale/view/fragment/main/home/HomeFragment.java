@@ -107,7 +107,8 @@ public class HomeFragment extends Fragment {
         vb.homeBarFavourite.setOnClickListener(button -> {
             index = 2;
             animateFab(button, false);
-            navController.navigate(R.id.favFragment, null, new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
+            navController = Navigation.findNavController(view.findViewById(R.id.home_framgmentContainer));
+            navController.navigate(R.id.chatFragment, null, new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
             vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.navbar_icon_favourite, getActivity().getTheme()));
         });
 

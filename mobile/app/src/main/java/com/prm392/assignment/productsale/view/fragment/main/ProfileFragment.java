@@ -187,8 +187,8 @@ public class ProfileFragment extends Fragment {
 
     void renderProfileData() {
         picChanged = usernameChanged = emailChanged = false;
-        vb.profileUsername.setText(user.getUserName());
-        vb.profileUsernameField.getEditText().setText(user.getUserName());
+        vb.profileUsername.setText(user.getFullName());
+        vb.profileUsernameField.getEditText().setText(user.getFullName());
         vb.profileEmailField.getEditText().setText(user.getEmail());
         vb.profilePasswordField.getEditText().setText("00000000");
         vb.profileAccountType.setText(user.getAccountType());

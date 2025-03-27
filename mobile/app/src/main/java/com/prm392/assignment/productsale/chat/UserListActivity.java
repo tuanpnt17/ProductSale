@@ -16,63 +16,56 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.prm392.assignment.productsale.R;
+import com.prm392.assignment.productsale.view.fragment.main.home.ChatFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserListActivity extends AppCompatActivity implements UserListAdapter.OnUserClickListener {
     private static final String TAG = "UserListActivity";
-    
+
     private RecyclerView recyclerView;
     private UserListAdapter adapter;
     private List<ChatUser> userList;
     private FirebaseManager firebaseManager;
     private TextView emptyView;
-    private ImageView backBtn;
     private TextView titleText;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_list);
-        
+
         // Initialize FirebaseManager
         firebaseManager = FirebaseManager.getInstance(this);
-        
+
         // Initialize views
         recyclerView = findViewById(R.id.userRecyclerView);
         emptyView = findViewById(R.id.emptyView);
-        backBtn = findViewById(R.id.backBtn);
         titleText = findViewById(R.id.titleText);
-        
-        // Set title
-        titleText.setText("Chat Users");
-        
-        // Set up back button
-        backBtn.setOnClickListener(v -> finish());
-        
+
         // Initialize user list
         userList = new ArrayList<>();
-        
+
         // Set up RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new UserListAdapter(this, userList, this);
         recyclerView.setAdapter(adapter);
-        
-        // Load users
+
+        // Load users based on current user's role
         loadUsers();
     }
-    
+
     private void loadUsers() {
         // Show loading state
         emptyView.setText("Loading users...");
         emptyView.setVisibility(View.VISIBLE);
-        
+
         firebaseManager.getAllUsers(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 userList.clear();
-                
+
                 if (snapshot.exists()) {
                     String currentUserId = firebaseManager.getCurrentUserId();
                     for (DataSnapshot userSnapshot : snapshot.getChildren()) {
@@ -82,9 +75,9 @@ public class UserListActivity extends AppCompatActivity implements UserListAdapt
                         }
                     }
                 }
-                
+
                 adapter.notifyDataSetChanged();
-                
+
                 // Show empty view if no users found
                 if (userList.isEmpty()) {
                     emptyView.setText("No users found");
@@ -93,7 +86,7 @@ public class UserListActivity extends AppCompatActivity implements UserListAdapt
                     emptyView.setVisibility(View.GONE);
                 }
             }
-            
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e(TAG, "Failed to load users: " + error.getMessage());
@@ -102,22 +95,22 @@ public class UserListActivity extends AppCompatActivity implements UserListAdapt
             }
         });
     }
-    
+
     @Override
     public void onUserClick(ChatUser user) {
         // Open chat with selected user
-        Intent intent = new Intent(this, ChatActivity.class);
+        Intent intent = new Intent(this, ChatFragment.class);
         intent.putExtra("partner_id", user.getId());
         startActivity(intent);
     }
-    
+
     @Override
     protected void onResume() {
         super.onResume();
         // Update online status
         firebaseManager.updateUserOnlineStatus(true);
     }
-    
+
     @Override
     protected void onPause() {
         super.onPause();
