@@ -42,7 +42,12 @@ namespace ProductSale.API.Helpers
 
             #region // ======= Product =======
 
-            CreateMap<Product, ProductSummaryVM>();
+            CreateMap<Product, ProductSummaryVM>()
+                .ForMember(
+                    dest => dest.CategoryName,
+                    opt =>
+                        opt.MapFrom(src => src.Category == null ? "N/A" : src.Category.CategoryName)
+                );
 
             CreateMap<Repository.Entities.Product, ProductDetailVM>()
                 .ForMember(

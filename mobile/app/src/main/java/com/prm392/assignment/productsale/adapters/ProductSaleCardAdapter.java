@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,24 +20,21 @@ import com.prm392.assignment.productsale.model.products.ProductSaleModel;
 
 import java.util.ArrayList;
 
+import lombok.Getter;
 import lombok.Setter;
 
 public class ProductSaleCardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    //    public static int TYPE_DATA_VIEW_HOLDER = 0;
-//    public static int TYPE_LOADING_VIEW_HOLDER = 1;
-//    public static int TYPE_NO_RESULT_VIEW_HOLDER = 2;
-//    private final ProductSaleModel loadingCardObject = new ProductSaleModel();
-//    private final ProductSaleModel noResultCardObject = new ProductSaleModel();
+    private static final int VIEW_TYPE_ITEM = 0;
+    private static final int VIEW_TYPE_FOOTER = 1;
     private final ArrayList<ProductSaleModel> data;
     private final RecyclerView recyclerView;
     private final Context context;
+    @Getter
+    private boolean hasMore = true; // Flag to show/hide the "Load More" button
     //    private final boolean noResultsFound = false;
     @Setter
     private boolean hideFavButton = false;
 
-    //    @Setter
-//    private ProductSaleCardAdapter.LastItemReachedListener lastItemReachedListener;
     @Setter
     private ProductSaleCardAdapter.ItemInteractionListener itemInteractionListener;
 
@@ -46,86 +44,88 @@ public class ProductSaleCardAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.data = new ArrayList<>();
     }
 
-//    @Override
-//    public int getItemViewType(int position) {
-//        if (data.get(position) == loadingCardObject) return TYPE_LOADING_VIEW_HOLDER;
-//        else if (data.get(position) == noResultCardObject) return TYPE_NO_RESULT_VIEW_HOLDER;
-//        else return TYPE_DATA_VIEW_HOLDER;
-//    }
+    // Method to update hasMore and refresh the adapter
+    @SuppressLint("NotifyDataSetChanged")
+    public void setHasMore(boolean hasMore) {
+        this.hasMore = hasMore;
+        notifyDataSetChanged(); // Or use notifyItemInserted/Removed for efficiency
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (hasMore && position == data.size()) {
+            return VIEW_TYPE_FOOTER; // Footer is the last item when hasMore is true
+        }
+        return VIEW_TYPE_ITEM; // Regular product item
+    }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//        if (viewType == TYPE_LOADING_VIEW_HOLDER) {
-//            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_card_loading_layout, parent, false);
-//            return new ProductSaleCardAdapter.LoadingViewHolder(view);
-//        } else if (viewType == TYPE_NO_RESULT_VIEW_HOLDER) {
-//            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_card_no_results_layout, parent, false);
-//            return new ProductSaleCardAdapter.NoResultViewHolder(view);
-//        }
 
-        //Default ViewHolder
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_sale_card_layout, parent, false);
-        return new ProductSaleCardAdapter.DataViewHolder(view);
+        if (viewType == VIEW_TYPE_ITEM) {
+            //Default ViewHolder
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_sale_card_layout, parent, false);
+            return new ProductSaleCardAdapter.DataViewHolder(view);
+        } else {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.footer_load_more, parent, false);
+            return new FooterViewHolder(view);
+        }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
-//        if (getItemViewType(position) == TYPE_DATA_VIEW_HOLDER) {
+        if (viewHolder instanceof DataViewHolder) {
+            ProductSaleCardAdapter.DataViewHolder holder = (ProductSaleCardAdapter.DataViewHolder) viewHolder;
 
-        ProductSaleCardAdapter.DataViewHolder holder = (ProductSaleCardAdapter.DataViewHolder) viewHolder;
 
+            holder.name.setText(data.get(position).getProductName());
+            holder.category.setText(data.get(position).getCategoryName());
+            holder.price.setText(data.get(position).getCurrencyPrice());
+            holder.favourite.setChecked(false);
 
-        holder.name.setText(data.get(position).getProductName());
-        holder.brand.setText(data.get(position).getCategoryName());
-        holder.price.setText(data.get(position).getCurrencyPrice());
-        holder.favourite.setChecked(false);
+            if (hideFavButton) holder.favourite.setVisibility(View.GONE);
 
-        if (hideFavButton) holder.favourite.setVisibility(View.GONE);
+            //Image
+            Glide.with(context)
+                    .load(data.get(position).getImageUrl())
+                    .centerCrop()
+                    .transition(DrawableTransitionOptions.withCrossFade(250))
+                    .into(holder.image);
 
-        //Image
-        Glide.with(context)
-                .load(data.get(position).getImageUrl())
-                .centerCrop()
-                .transition(DrawableTransitionOptions.withCrossFade(250))
-                .into(holder.image);
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (itemInteractionListener != null)
+                        itemInteractionListener.onProductClicked(data.get(holder.getBindingAdapterPosition()).getProductId(), "");
+                }
+            });
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (itemInteractionListener != null)
-                    itemInteractionListener.onProductClicked(data.get(holder.getBindingAdapterPosition()).getProductId(), "");
-            }
-        });
+            holder.favourite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //data.get(holder.getAbsoluteAdapterPosition()).setFavorite(holder.favourite.isChecked());
+                    if (itemInteractionListener != null)
+                        itemInteractionListener.onProductAddedToFav(data.get(holder.getBindingAdapterPosition()).getProductId(), holder.favourite.isChecked());
+                }
+            });
 
-        holder.favourite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //data.get(holder.getAbsoluteAdapterPosition()).setFavorite(holder.favourite.isChecked());
-                if (itemInteractionListener != null)
-                    itemInteractionListener.onProductAddedToFav(data.get(holder.getBindingAdapterPosition()).getProductId(), holder.favourite.isChecked());
-            }
-        });
-
-//        }
+        } else if (viewHolder instanceof FooterViewHolder) {
+            FooterViewHolder holder = (FooterViewHolder) viewHolder;
+            holder.loadMoreButton.setOnClickListener(v -> {
+                if (itemInteractionListener != null) {
+                    itemInteractionListener.onLoadMoreClicked(); // New callback for "Load More"
+                }
+            });
+        }
     }
 
-//    @Override
-//    public void onViewAttachedToWindow(@NonNull RecyclerView.ViewHolder holder) {
-//        super.onViewAttachedToWindow(holder);
-//
-
-    /// /        if (noResultsFound) return;
-//        if (holder.getBindingAdapterPosition() == data.size() - 1 && lastItemReachedListener != null && !isLoading())
-//            lastItemReachedListener.onLastItemReached();
-//    }
     @Override
     public int getItemCount() {
-        return data.size();
+        return data.size() + (hasMore ? 1 : 0); // Add 1 for footer if hasMore is true
     }
 
     public void addProducts(ArrayList<ProductSaleModel> products) {
-//        if (noResultsFound) return;
 
         recyclerView.post(() -> {
             int startPosition = data.size();
@@ -134,109 +134,28 @@ public class ProductSaleCardAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         });
     }
 
-//    public boolean isLoading() {
-//        return data.contains(loadingCardObject);
-//    }
-//
-//    public void showNoResultsFound() {
-//        if (data.contains(noResultCardObject)) return;
-//
-//        data.add(noResultCardObject);
-//        notifyItemInserted(0);
-
     @SuppressLint("NotifyDataSetChanged")
     public void clearProducts() {
         data.clear();
         notifyDataSetChanged();
     }
 
-//    public void addProduct(ProductSaleModel product) {
-//        if (noResultsFound) return;
-//
-//        recyclerView.post(() -> {
-//            data.add(product);
-//            notifyItemInserted(getItemCount());
-//        });
-//    }
-
-    //NoPost for nested recyclerviews adapters
-//    public void addProductNoPost(ProductSaleModel product) {
-//        if (noResultsFound) return;
-//
-//        data.add(product);
-//        notifyItemInserted(getItemCount());
-//    }
-
-    /// /        noResultsFound = true;
-//    }
-
-//    public interface LastItemReachedListener {
-//        void onLastItemReached();
-//    }
-
     public interface ItemInteractionListener {
         void onProductClicked(long productId, String storeType);
 
         void onProductAddedToFav(long productId, boolean favChecked);
+
+        void onLoadMoreClicked();
     }
-
-    //NoPost for nested recyclerviews adapters
-//    public void addProductsNoPost(ArrayList<ProductSaleModel> products) {
-//        if (noResultsFound) return;
-//
-//        data.addAll(products);
-//        notifyItemRangeInserted(getItemCount(), products.size());
-//    }
-
-    public static class LoadingViewHolder extends RecyclerView.ViewHolder {
-        public LoadingViewHolder(View view) {
-            super(view);
-        }
-    }
-
-    public static class NoResultViewHolder extends RecyclerView.ViewHolder {
-        public NoResultViewHolder(View view) {
-            super(view);
-        }
-    }
-
-//    public void setLoading(boolean loading) {
-//        recyclerView.post(() -> {
-//            if (isLoading() == loading) return;
-//
-//            if (loading) {
-//                data.add(loadingCardObject);
-//                notifyItemInserted(getItemCount());
-//            } else {
-//                data.remove(loadingCardObject);
-//                notifyItemChanged(getItemCount());
-//            }
-//        });
-//
-    //    }
-
-    //NoPost for nested recyclerviews adapters
-//    public void setLoadingNoPost(boolean loading) {
-//        if (isLoading() == loading) return;
-//
-//        if (loading) {
-//            data.add(loadingCardObject);
-//            notifyItemInserted(getItemCount());
-//        } else {
-//            data.remove(loadingCardObject);
-//            notifyItemChanged(getItemCount());
-//        }
-//    }
 
     public static class DataViewHolder extends RecyclerView.ViewHolder {
-        TextView brand, name, price, rate, sale;
-        ImageView image, store;
+        TextView category, name, price;
+        ImageView image;
         CheckBox favourite;
-        ImageView rateIcon;
 
         public DataViewHolder(View view) {
             super(view);
-            brand = view.findViewById(R.id.product_sale_card_brand);
+            category = view.findViewById(R.id.product_sale_card_category);
             name = view.findViewById(R.id.product_sale_card_Name);
             price = view.findViewById(R.id.product_sale_card_price);
             image = view.findViewById(R.id.product_sale_card_image);
@@ -244,21 +163,13 @@ public class ProductSaleCardAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
     }
 
-//    public boolean isDarkModeEnabled() {
-//        int currentMode = context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-//        return currentMode == Configuration.UI_MODE_NIGHT_YES;
-//    }
+    public static class FooterViewHolder extends RecyclerView.ViewHolder {
+        Button loadMoreButton;
 
-//    boolean renderDataInLocalLanguage() {
-//        switch (AppSettingsManager.getLanguageKey(context)) {
-//            case AppSettingsManager.LANGUAGE_ENGLISH:
-//                return false;
-//            case AppSettingsManager.LANGUAGE_ARABIC:
-//                return true;
-//            default:
-//                String systemLanguage = Locale.getDefault().getLanguage();
-//                if (systemLanguage.equals(AppSettingsManager.LANGUAGE_ARABIC)) return true;
-//                else return false;
-//        }
-//    }
+        public FooterViewHolder(View view) {
+            super(view);
+            loadMoreButton = view.findViewById(R.id.loadMoreButton);
+        }
+    }
+
 }

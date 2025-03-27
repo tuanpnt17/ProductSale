@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using ProductSale.Business.Models;
 using ProductSale.Repository.Helpers;
 using ProductSale.Repository.Interfaces;
-using System.Linq.Expressions;
 
 namespace ProductSale.Business.Product
 {
@@ -63,7 +63,7 @@ namespace ProductSale.Business.Product
                 .GenericRepository<Repository.Entities.Product>()
                 .GetPaginationAsync(
                     predicate: predicate,
-                    //includeProperties: "Category",
+                    includeProperties: "Category",
                     pageIndex: query.PageIndex,
                     pageSize: query.PageSize,
                     orderBy: orderBy,

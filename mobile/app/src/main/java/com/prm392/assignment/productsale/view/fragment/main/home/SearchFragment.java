@@ -75,7 +75,8 @@ public class SearchFragment extends Fragment {
         });
 
         adapter = new ProductSaleCardAdapter(getContext(), vb.searchProductsRecyclerView);
-        vb.searchProductsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        GridLayoutManager gridLayoutManager = getGridLayoutManager();
+        vb.searchProductsRecyclerView.setLayoutManager(gridLayoutManager);
         vb.searchProductsRecyclerView.setAdapter(adapter);
         adapter.setHideFavButton(true);
 
@@ -91,13 +92,6 @@ public class SearchFragment extends Fragment {
             });
         });
 
-        vb.loadMoreButton.setOnClickListener(button -> {
-            ProductSortAndFilterModel model = viewModel.getProductSortAndFilterModel();
-            model.setPageIndex(model.getPageIndex() + 1);
-//            viewModel.setProductSortAndFilterModel(model);
-            loadProducts(false);
-        });
-
         adapter.setItemInteractionListener(new ProductSaleCardAdapter.ItemInteractionListener() {
             @Override
             public void onProductClicked(long productId, String storeType) {
@@ -111,10 +105,33 @@ public class SearchFragment extends Fragment {
             public void onProductAddedToFav(long productId, boolean favChecked) {
 //                setFavourite(productId, favChecked);
             }
+
+            @Override
+            public void onLoadMoreClicked() {
+                ProductSortAndFilterModel model = viewModel.getProductSortAndFilterModel();
+                model.setPageIndex(model.getPageIndex() + 1);
+                loadProducts(false);
+            }
         });
 
         loadProducts(true);
 
+    }
+
+    @NonNull
+    private GridLayoutManager getGridLayoutManager() {
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                ProductSaleCardAdapter adapter = (ProductSaleCardAdapter) vb.searchProductsRecyclerView.getAdapter();
+                if (adapter != null && adapter.isHasMore() && position == adapter.getItemCount() - 1) {
+                    return 2; // Footer spans both columns
+                }
+                return 1; // Product items span 1 column
+            }
+        });
+        return gridLayoutManager;
     }
 
     void searchRequest(String keyword) {
@@ -131,18 +148,13 @@ public class SearchFragment extends Fragment {
                     if (replace) adapter.clearProducts();
                     if (response.body().getProducts() == null || response.body().getProducts().isEmpty()) {
                         vb.noResultsView.setVisibility(View.VISIBLE);
-                        vb.loadMoreButton.setVisibility(View.GONE);
+                        adapter.setHasMore(false);
                         return;
                     } else {
                         vb.noResultsView.setVisibility(View.GONE);
                         ArrayList<ProductSaleModel> products = response.body().getProducts();
                         adapter.addProducts(products);
-                        if (response.body().isNext()) {
-                            vb.loadMoreButton.setVisibility(View.VISIBLE);
-                        } else {
-                            vb.loadMoreButton.setVisibility(View.GONE);
-                        }
-//                        viewModel.removeObserverProducts(getViewLifecycleOwner());
+                        adapter.setHasMore(response.body().isNext());
                     }
                     break;
                 case BaseResponseModel.FAILED_REQUEST_FAILURE:
@@ -153,21 +165,5 @@ public class SearchFragment extends Fragment {
             }
         });
     }
-
-
-//    void setFavourite(long productId, boolean favourite) {
-//        if (favourite) {
-//            viewModel.addFavourite(productId).observe(getViewLifecycleOwner(), response -> {
-//                if (response.code() != BaseResponseModel.SUCCESSFUL_CREATION)
-//                    Toast.makeText(getContext(), "Error" + response.code(), Toast.LENGTH_SHORT).show();
-//            });
-//        } else {
-//            viewModel.removeFavourite(productId).observe(getViewLifecycleOwner(), response -> {
-//                if (response.code() != BaseResponseModel.SUCCESSFUL_DELETED)
-//                    Toast.makeText(getContext(), "Error" + response.code(), Toast.LENGTH_SHORT).show();
-//            });
-//        }
-//
-//    }
 
 }
