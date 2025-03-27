@@ -76,10 +76,10 @@ public class HomeFragment extends Fragment {
                 animateFab(vb.homeBarFavourite, true);
                 vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.navbar_icon_favourite, getActivity().getTheme()));
                 break;
-            case 3:
-                animateFab(vb.homeBarHistory, true);
-                vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.menu_icon_history, getActivity().getTheme()));
-                break;
+//            case 3:
+//                animateFab(vb.homeBarHistory, true);
+//                vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.menu_icon_history, getActivity().getTheme()));
+//                break;
         }
 
 
@@ -111,12 +111,12 @@ public class HomeFragment extends Fragment {
             vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.navbar_icon_favourite, getActivity().getTheme()));
         });
 
-        vb.homeBarHistory.setOnClickListener(button -> {
-            index = 3;
-            animateFab(button, false);
-            navController.navigate(R.id.historyFragment, null, new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
-            vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.menu_icon_history, getActivity().getTheme()));
-        });
+//        vb.homeBarHistory.setOnClickListener(button -> {
+//            index = 3;
+//            animateFab(button, false);
+//            navController.navigate(R.id.historyFragment, null, new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
+//            vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.menu_icon_history, getActivity().getTheme()));
+//        });
 
     }
 
