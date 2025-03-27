@@ -37,6 +37,8 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Product Image -->
+
+        <!-- Favourite Checkbox -->
         <ImageView
             android:id="@+id/product_list_item_image"
             android:layout_width="0dp"
@@ -44,20 +46,21 @@
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/zz_havit_stereo_speakers_175" />
 
-        <!-- Favourite Checkbox -->
         <CheckBox
-            android:id="@+id/product_list_item_favourite"
+            android:id="@+id/product_list_item_delete"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/add_favourite_selector"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="4dp"
+            android:background="@drawable/x_mark"
             android:button="@null"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Product Name Text -->
@@ -78,17 +81,49 @@
             app:layout_constraintTop_toBottomOf="@+id/product_list_item_brand" />
 
 
-        <TextView
-            android:id="@+id/product_list_item_quantity"
+        <LinearLayout
+            android:id="@+id/product_list_item_quantity_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Quantity: 1"
-        android:textSize="14sp"
-        android:textColor="?attr/colorPrimary"
-        app:layout_constraintStart_toStartOf="@+id/product_list_item_Name"
-        app:layout_constraintTop_toBottomOf="@+id/product_list_item_Name" />
-        <!-- Product Price Text -->
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="5dp"
+            app:layout_constraintStart_toStartOf="@+id/product_list_item_Name"
+            app:layout_constraintTop_toBottomOf="@+id/product_list_item_Name">
+
+            <!-- Decrease Button -->
+            <ImageButton
+                android:id="@+id/decreaseBtn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/button_round"
+                android:src="@drawable/ic_round_horizontal_rule_24" />
+
+            <!-- Quantity Text -->
+
+            <!-- Increase Button -->
+            <TextView
+                android:id="@+id/product_list_item_quantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="3dp"
+                android:text="1987"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="16sp" />
+
+            <ImageButton
+                android:id="@+id/increaseBtn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/button_round"
+                android:src="@drawable/ic_baseline_add_24" />
+        </LinearLayout>
+
+
+
         <TextView
             android:id="@+id/product_list_item_price"
             android:layout_width="wrap_content"
@@ -102,30 +137,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/product_list_item_Name" />
-
-        <!-- Store Logo -->
-        <ImageView
-            android:id="@+id/product_list_item_store"
-            android:layout_width="40dp"
-            android:layout_height="22dp"
-            android:layout_marginEnd="8dp"
-            android:scaleType="centerInside"
-            app:layout_constraintBottom_toBottomOf="@+id/product_list_item_brand"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/product_list_item_brand"
-            app:srcCompat="@drawable/jumia_seeklogo_com_" />
-
-        <!-- Product Rating -->
-        <TextView
-            android:id="@+id/product_list_item_rate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="4.5"
-            android:textColor="#FD892F"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="@+id/product_list_item_price"
-            app:layout_constraintTop_toTopOf="@+id/product_list_item_price" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

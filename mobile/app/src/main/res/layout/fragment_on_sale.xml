@@ -19,13 +19,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- RecyclerView for displaying the Cart items -->
+    <!-- Reset Cart Button -->
+    <Button
+        android:id="@+id/reset_cart_button"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:text="Clear Cart"
+        android:textSize="28dp"
+        android:background="@drawable/remove"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/onSale_title"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="16dp" />
+
+    <!-- RecyclerView to display items -->
+
+    <!-- ProgressBar for loading -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/onSale_recyclerVeiw"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="520dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="5dp"
         android:clipChildren="false"
@@ -35,14 +51,13 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/onSale_title"
+        app:layout_constraintTop_toBottomOf="@+id/reset_cart_button"
+        app:layout_constraintVertical_bias="0.0"
         tools:itemCount="10"
-        tools:listitem="@layout/cart_item_layout" /> <!-- Update to use cart_item layout -->
+        tools:listitem="@layout/cart_item_layout" />
 
-
-
-    <!-- ProgressBar to show loading indicator -->
     <ProgressBar
         android:id="@+id/onSale_loading"
         style="?android:attr/progressBarStyle"
@@ -52,6 +67,23 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/onSale_title" />
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/totalPriceText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="Total Price: $0.00"
+        android:textSize="18sp"
+        android:textColor="#FF4081"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.82"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/onSale_recyclerVeiw"
+        app:layout_constraintVertical_bias="0.377"
+        android:shadowColor="#000000"
+        android:shadowDy="2"
+        android:shadowDx="2"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

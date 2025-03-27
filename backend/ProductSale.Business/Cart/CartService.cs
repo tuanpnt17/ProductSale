@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProductSale.Business.Product;
 using ProductSale.Repository.Entities;
 using ProductSale.Repository.Interfaces;
 
 namespace ProductSale.Business.Cart
 {
-    public class CartService(IUnitOfWork unitOfWork) : ICartService
+    public class CartService(IUnitOfWork unitOfWork, IProductService productService) : ICartService
     {
         public async Task<Repository.Entities.Cart?> GetCart(int userId)
         {
@@ -20,7 +21,8 @@ namespace ProductSale.Business.Cart
 
         public async Task AddToCart(int userId, int productId, int quantity)
         {
-            var cart = await GetCart(userId);
+            var product = await productService.GetProductById(productId);
+			var cart = await GetCart(userId);
             if (cart == null)
             {
                 cart = new Repository.Entities.Cart
@@ -34,24 +36,27 @@ namespace ProductSale.Business.Cart
             }
 
             var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
-            if (cartItem == null)
-            {
-                cartItem = new CartItem
-                {
-                    ProductId = productId,
-                    Quantity = quantity,
-                    Price =
-                        0 // Assume price will be set later
-                    ,
-                };
-                cart.CartItems.Add(cartItem);
-            }
-            else
-            {
-                cartItem.Quantity += quantity;
-            }
+			if (cartItem == null)
+			{
+				cartItem = new CartItem
+				{
+					ProductId = productId,
+					Quantity = quantity,
+					Price = product.Price * quantity, 
+				};
 
-            cart.TotalPrice += cartItem.Price * quantity;
+				cart.CartItems.Add(cartItem);
+				cart.TotalPrice += cartItem.Price;
+			}
+			else
+			{
+				cartItem.Quantity += quantity;
+
+				cartItem.Price = product.Price * cartItem.Quantity;
+
+				cart.TotalPrice += product.Price * quantity;
+			}
+
             unitOfWork.GenericRepository<Repository.Entities.Cart>().Update(cart);
             await unitOfWork.SaveChangesAsync();
         }
@@ -67,31 +72,32 @@ namespace ProductSale.Business.Cart
             {
                 cart.TotalPrice -= cartItem.Price * cartItem.Quantity;
                 cart.CartItems.Remove(cartItem);
-                unitOfWork.GenericRepository<Repository.Entities.Cart>().Update(cart);
+				unitOfWork.GenericRepository<Repository.Entities.CartItem>().Delete(cartItem);
+				unitOfWork.GenericRepository<Repository.Entities.Cart>().Update(cart);
                 await unitOfWork.SaveChangesAsync();
             }
         }
 
-        public async Task UpdateCartItemQuantity(int userId, int productId, int quantity)
-        {
-            var cart = await GetCart(userId);
-            if (cart == null)
-                return;
+		public async Task UpdateCartItemQuantity(int userId, int productId, int quantity)
+		{
+			var cart = await GetCart(userId);
+			if (cart == null)
+				return;
 
-            var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
-            if (cartItem != null)
-            {
-                // Update total price
-                cart.TotalPrice -= cartItem.Price * cartItem.Quantity;
-                cartItem.Quantity = quantity;
-                cart.TotalPrice += cartItem.Price * cartItem.Quantity;
+			var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
+			if (cartItem != null)
+			{
+				cartItem.Price = cartItem.Product.Price * quantity;
+				cartItem.Quantity = quantity;
 
-                unitOfWork.GenericRepository<Repository.Entities.Cart>().Update(cart);
-                await unitOfWork.SaveChangesAsync();
-            }
-        }
+				cart.TotalPrice = cart.CartItems.Sum(ci => ci.Price);
 
-        public async Task ClearCart(int userId)
+				unitOfWork.GenericRepository<Repository.Entities.Cart>().Update(cart);
+				await unitOfWork.SaveChangesAsync();
+			}
+		}
+
+		public async Task ClearCart(int userId)
         {
             var cart = await GetCart(userId);
             if (cart == null)
@@ -112,7 +118,7 @@ namespace ProductSale.Business.Cart
             decimal total = 0;
             foreach (var cartItem in cart.CartItems)
             {
-                total += cartItem.Price * cartItem.Quantity;
+                total += cartItem.Price;
             }
 
             return total;

@@ -7,6 +7,7 @@ import com.prm392.assignment.productsale.data.remote.RetrofitClient;
 import com.prm392.assignment.productsale.data.service.ProductSaleService;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
 import com.prm392.assignment.productsale.model.cart.AddProductCartModel;
+import com.prm392.assignment.productsale.model.cart.CartTotalResponse;
 import com.prm392.assignment.productsale.model.products.ProductSalePageResponseModel;
 import com.prm392.assignment.productsale.model.products.ProductsSaleResponseModel;
 
@@ -75,4 +76,6 @@ public class ProductsSaleRepository {
                         .toFlowable(BackpressureStrategy.LATEST)
         );
     }
+
+
 }
