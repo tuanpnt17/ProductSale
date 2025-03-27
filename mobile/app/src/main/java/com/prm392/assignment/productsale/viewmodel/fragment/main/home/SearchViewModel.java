@@ -9,63 +9,65 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.viewmodel.ViewModelInitializer;
 
-import com.prm392.assignment.productsale.data.Repository;
+import com.prm392.assignment.productsale.data.repository.CategoryRepository;
 import com.prm392.assignment.productsale.data.repository.ProductsSaleRepository;
-import com.prm392.assignment.productsale.model.BaseResponseModel;
-import com.prm392.assignment.productsale.model.ProductsResponseModel;
+import com.prm392.assignment.productsale.model.categories.CategoriesResponseModel;
+import com.prm392.assignment.productsale.model.products.ProductSortAndFilterModel;
 import com.prm392.assignment.productsale.model.products.ProductsSaleResponseModel;
 import com.prm392.assignment.productsale.util.UserAccountManager;
 
-
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
 import retrofit2.Response;
 
 public class SearchViewModel extends ViewModel {
-    private Repository repository;
-    private ProductsSaleRepository productsRepository;
-    private LiveData<Response<ProductsResponseModel>> recommendedProducts;
-    private LiveData<Response<ProductsSaleResponseModel>> demoProducts;
-    private String token;
-
-    public SearchViewModel(@NotNull Application application) {
-        super();
-
-        repository = new Repository();
-        productsRepository = new ProductsSaleRepository();
-
-        token = UserAccountManager.getToken(application, UserAccountManager.TOKEN_TYPE_BEARER);
-    }
-
     public static final ViewModelInitializer<SearchViewModel> initializer = new ViewModelInitializer<>(
             SearchViewModel.class,
             creationExtras -> {
-                Application app = (Application) creationExtras.get(APPLICATION_KEY);
+                Application app = creationExtras.get(APPLICATION_KEY);
                 assert app != null;
                 return new SearchViewModel(app);
             }
     );
+    private final ProductsSaleRepository productsRepository;
+    private final CategoryRepository categoryRepository;
+    private final String token;
+    @Getter
+    @Setter
+    private ProductSortAndFilterModel productSortAndFilterModel;
 
-    public LiveData<Response<ProductsSaleResponseModel>> getDemoProducts() {
-        demoProducts = productsRepository.getDemoProducts(token);
-        return demoProducts;
+    @Getter
+    @Setter
+    private String searchStr;
+    private LiveData<Response<ProductsSaleResponseModel>> products;
+
+    public SearchViewModel(@NotNull Application application) {
+        super();
+
+        productsRepository = new ProductsSaleRepository();
+        categoryRepository = new CategoryRepository();
+        productSortAndFilterModel = new ProductSortAndFilterModel();
+        productSortAndFilterModel.setPageIndex(1);
+        productSortAndFilterModel.setPageSize(8);
+        token = UserAccountManager.getToken(application, UserAccountManager.TOKEN_TYPE_BEARER);
     }
 
-
-    public LiveData<Response<ProductsResponseModel>> getRecommendedProducts() {
-        recommendedProducts = repository.getRecommendedProducts(token);
-        return recommendedProducts;
+    public LiveData<Response<ProductsSaleResponseModel>> getProducts() {
+        List<Integer> categoryIds = new ArrayList<>(productSortAndFilterModel.getCategories());
+        return productsRepository.getProducts(token, productSortAndFilterModel.getPageIndex(), productSortAndFilterModel.getPageSize(), searchStr, productSortAndFilterModel.getSortBy(), productSortAndFilterModel.getSortDescending(), productSortAndFilterModel.getMinPrice(), productSortAndFilterModel.getMaxPrice(), categoryIds.isEmpty() ? null : categoryIds);
     }
 
-    public void removeObserverRecommendedProducts(LifecycleOwner lifecycleOwner) {
-        recommendedProducts.removeObservers(lifecycleOwner);
+    public void removeObserverProducts(LifecycleOwner lifecycleOwner) {
+        products.removeObservers(lifecycleOwner);
     }
 
-    public LiveData<Response<BaseResponseModel>> addFavourite(long productId) {
-        return repository.addFavourite(token, productId);
+    public LiveData<Response<CategoriesResponseModel>> getCategories() {
+        return categoryRepository.getCategories();
     }
 
-    public LiveData<Response<BaseResponseModel>> removeFavourite(long productId) {
-        return repository.removeFavourite(token, productId);
-    }
 }

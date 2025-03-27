@@ -47,16 +47,38 @@
         android:clipChildren="false"
         android:clipToPadding="false"
         android:orientation="vertical"
-        android:paddingBottom="100dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/reset_cart_button"
-        app:layout_constraintVertical_bias="0.0"
-        tools:itemCount="10"
+        app:layout_constraintTop_toBottomOf="@+id/onSale_title"
+        app:layout_constraintVertical_bias="0.073"
+        tools:itemCount="4"
         tools:listitem="@layout/cart_item_layout" />
+
+    <android.widget.Button
+        android:id="@+id/checkout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button"
+        android:gravity="center|start"
+        android:includeFontPadding="false"
+        android:text="Checkout"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:visibility="visible"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/onSale_recyclerVeiw" />
+
 
     <ProgressBar
         android:id="@+id/onSale_loading"

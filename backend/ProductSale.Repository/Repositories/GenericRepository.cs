@@ -96,7 +96,9 @@ namespace ProductSale.Repository.Repositories
             Expression<Func<T, bool>>? predicate = null,
             string? includeProperties = null,
             int pageIndex = 1,
-            int pageSize = 10
+            int pageSize = 10,
+            Expression<Func<T, object>>? orderBy = null,
+            bool isDescending = false
         )
         {
             IQueryable<T> query = dbSet;
@@ -113,6 +115,10 @@ namespace ProductSale.Repository.Repositories
                 {
                     query = query.Include(item);
                 }
+            }
+            if (orderBy != null)
+            {
+                query = isDescending ? query.OrderByDescending(orderBy) : query.OrderBy(orderBy);
             }
             var itemCount = await query.CountAsync();
             var items = await query

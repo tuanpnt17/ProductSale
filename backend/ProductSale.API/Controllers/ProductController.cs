@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using ProductSale.API.Models.Products;
+using ProductSale.Business.Models;
 using ProductSale.Business.Product;
 using ProductSale.Business.StoreLocation;
+using ProductSale.Repository.Helpers;
 
 namespace ProductSale.API.Controllers
 {
@@ -14,6 +16,28 @@ namespace ProductSale.API.Controllers
         IMapper mapper
     ) : ControllerBase
     {
+        //[Authorize(Roles = nameof(Role.Customer))]
+        [HttpGet]
+        public async Task<IActionResult> GetProductsAsync([FromQuery] ProductQueryDto query)
+        {
+            try
+            {
+                var products = await productService.GetProductsAsync(query);
+                var productsVm = new Pagination<ProductSummaryVM>()
+                {
+                    TotalItemsCount = products.TotalItemsCount,
+                    PageSize = products.PageSize,
+                    PageIndex = products.PageIndex,
+                    Items = mapper.Map<ICollection<ProductSummaryVM>>(products.Items),
+                };
+                return Ok(productsVm);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
         [HttpGet("demo")]
         public async Task<IActionResult> GetDemoProducts()
         {

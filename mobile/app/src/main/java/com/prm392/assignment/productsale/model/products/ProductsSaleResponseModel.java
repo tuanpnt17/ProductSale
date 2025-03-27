@@ -12,10 +12,25 @@ import lombok.Setter;
 @Getter
 public class ProductsSaleResponseModel extends BaseResponseModel {
 
-    @SerializedName("results")
-    private int resultsCount;
+    @SerializedName("totalItemsCount")
+    private int totalItemsCount;
 
-    @SerializedName("products")
+    @SerializedName("pageSize")
+    private int pageSize;
+
+    @SerializedName("pageIndex")
+    private int pageIndex;
+
+    @SerializedName("totalPagesCount")
+    private int totalPagesCount;
+
+    @SerializedName("next")
+    private boolean next;
+
+    @SerializedName("previous")
+    private boolean previous;
+
+    @SerializedName("items")
     private ArrayList<ProductSaleModel> products;
 
 }
