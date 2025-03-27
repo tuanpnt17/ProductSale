@@ -14,6 +14,11 @@
 # Create a stage for building the application.
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
 
+RUN apt-get update && apt-get install -y libicu
+
+# Set up environment
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+
 COPY . /source
 
 WORKDIR /source/ProductSale.API
