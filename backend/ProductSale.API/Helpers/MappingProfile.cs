@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ProductSale.API.Models.Categories;
 using ProductSale.API.Models.Products;
 using ProductSale.Business.Models;
 using ProductSale.Repository.Entities;
@@ -10,7 +11,9 @@ namespace ProductSale.API.Helpers
         public MappingProfile()
         {
             #region // ======= Category =======
-            //CreateMap<ProductSale.Repository.Entities.Category, ProductSale.Business.Category.CategoryDto>().ReverseMap();
+
+            CreateMap<Category, CategoryVM>();
+
             #endregion
 
             #region // ======= Cart =======
@@ -39,7 +42,12 @@ namespace ProductSale.API.Helpers
 
             #region // ======= Product =======
 
-            CreateMap<Product, ProductSummaryVM>();
+            CreateMap<Product, ProductSummaryVM>()
+                .ForMember(
+                    dest => dest.CategoryName,
+                    opt =>
+                        opt.MapFrom(src => src.Category == null ? "N/A" : src.Category.CategoryName)
+                );
 
             CreateMap<Repository.Entities.Product, ProductDetailVM>()
                 .ForMember(

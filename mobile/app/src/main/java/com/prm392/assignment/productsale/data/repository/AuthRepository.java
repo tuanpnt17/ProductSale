@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.LiveDataReactiveStreams;
 
 import com.prm392.assignment.productsale.data.remote.RetrofitClient;
-import com.prm392.assignment.productsale.data.remote.RetrofitInterface;
+import com.prm392.assignment.productsale.data.service.AuthService;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
 import com.prm392.assignment.productsale.model.SignInModel;
 import com.prm392.assignment.productsale.model.SignUpModel;
@@ -28,7 +28,7 @@ public class AuthRepository {
 
     public LiveData<Response<UserResponseModel>> signIn(SignInModel signInModel) {
         return LiveDataReactiveStreams.fromPublisher(
-                mainClient.create(RetrofitInterface.class)
+                mainClient.create(AuthService.class)
                         .signIn(signInModel)
                         .subscribeOn(Schedulers.io())
                         .onErrorReturn(exception -> {
@@ -48,7 +48,7 @@ public class AuthRepository {
 
     public LiveData<Response<UserResponseModel>> signUp(SignUpModel signUpModel) {
         return LiveDataReactiveStreams.fromPublisher(
-                mainClient.create(RetrofitInterface.class)
+                mainClient.create(AuthService.class)
                         .signUp(signUpModel)
                         .subscribeOn(Schedulers.io())
                         .onErrorReturn(exception -> {

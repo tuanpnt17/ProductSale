@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Sale Hunter</string>
+    <string name="app_name">Product Sale</string>
 
     <!-- Facebook Auth-->
     <string name="facebook_app_id">FACEBOOK_APP_ID</string>
@@ -9,13 +9,13 @@
     <string name="google_backend_id">GOOGLE_BACKEND_ID</string>
 
     <!-- Google Map -->
-    <string name="google_map_api_key">GOOGLE_MAP_API_KEY</string>
+    <string name="google_map_api_key">AIzaSyCtnca5gH8RFB9WdZySjmfNgFq0vBSb22w</string>
 
     <!-- App Font-->
     <string name="app_font"><![CDATA[@font/raleway_regular]]></string>
 
     <!-- App Currency-->
-    <string name="currency">LE</string>
+    <string name="currency">$</string>
 
     <!-- App Strings -->
     <string name="english">English</string>
@@ -273,5 +273,7 @@
     <string name="Address_not_valid" translatable="false">Address: 10-100 chars (letters, digits, , - . /)</string>
     <string name="Password_not_valid" translatable="false">Password: 8+ chars, 1 lowercase, 1 digit, 1 special</string>
     <string name="Register_failed" translatable="false">Registration Failed</string>
+    <string name="No_products_found" translatable="false">No Products Found</string>
+    <string name="load_more">Load More</string>
 
 </resources>

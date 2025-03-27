@@ -5,13 +5,18 @@ using ProductSale.API.Models.Products;
 using ProductSale.Business.Enums;
 using ProductSale.Business.Models;
 using ProductSale.Business.Product;
+using ProductSale.Business.StoreLocation;
 using ProductSale.Repository.Helpers;
 
 namespace ProductSale.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController(IProductService productService, IMapper mapper) : ControllerBase
+    public class ProductController(
+        IProductService productService,
+        IStoreLocationService storeLocationService,
+        IMapper mapper
+    ) : ControllerBase
     {
         //[Authorize(Roles = nameof(Role.Customer))]
         [HttpGet]
@@ -52,8 +57,11 @@ namespace ProductSale.API.Controllers
                 return NotFound();
 
             var productVm = mapper.Map<ProductDetailVM>(product);
+            var storeLocation = await storeLocationService.GetStoreLocations();
 
-            return Ok(productVm);
+            var result = new { product = productVm, storeLocation };
+
+            return Ok(result);
         }
     }
 }

@@ -9,12 +9,20 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.viewmodel.ViewModelInitializer;
 
+import com.prm392.assignment.productsale.data.repository.CategoryRepository;
 import com.prm392.assignment.productsale.data.repository.ProductsSaleRepository;
+import com.prm392.assignment.productsale.model.categories.CategoriesResponseModel;
+import com.prm392.assignment.productsale.model.products.ProductSortAndFilterModel;
 import com.prm392.assignment.productsale.model.products.ProductsSaleResponseModel;
 import com.prm392.assignment.productsale.util.UserAccountManager;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
 import retrofit2.Response;
 
 public class SearchViewModel extends ViewModel {
@@ -27,37 +35,39 @@ public class SearchViewModel extends ViewModel {
             }
     );
     private final ProductsSaleRepository productsRepository;
+    private final CategoryRepository categoryRepository;
     private final String token;
-    //    private LiveData<Response<ProductsSaleResponseModel>> demoProducts;
-    private LiveData<Response<ProductsSaleResponseModel>> recommendedProducts;
+    @Getter
+    @Setter
+    private ProductSortAndFilterModel productSortAndFilterModel;
+
+    @Getter
+    @Setter
+    private String searchStr;
+    private LiveData<Response<ProductsSaleResponseModel>> products;
 
     public SearchViewModel(@NotNull Application application) {
         super();
 
         productsRepository = new ProductsSaleRepository();
-
+        categoryRepository = new CategoryRepository();
+        productSortAndFilterModel = new ProductSortAndFilterModel();
+        productSortAndFilterModel.setPageIndex(1);
+        productSortAndFilterModel.setPageSize(8);
         token = UserAccountManager.getToken(application, UserAccountManager.TOKEN_TYPE_BEARER);
     }
 
-//    public LiveData<Response<ProductsSaleResponseModel>> getDemoProducts() {
-//        demoProducts = productsRepository.getDemoProducts(token);
-//        return demoProducts;
-//    }
-
-    public LiveData<Response<ProductsSaleResponseModel>> getRecommendedProducts() {
-        recommendedProducts = productsRepository.getProducts(token);
-        return recommendedProducts;
+    public LiveData<Response<ProductsSaleResponseModel>> getProducts() {
+        List<Integer> categoryIds = new ArrayList<>(productSortAndFilterModel.getCategories());
+        return productsRepository.getProducts(token, productSortAndFilterModel.getPageIndex(), productSortAndFilterModel.getPageSize(), searchStr, productSortAndFilterModel.getSortBy(), productSortAndFilterModel.getSortDescending(), productSortAndFilterModel.getMinPrice(), productSortAndFilterModel.getMaxPrice(), categoryIds.isEmpty() ? null : categoryIds);
     }
 
-    public void removeObserverRecommendedProducts(LifecycleOwner lifecycleOwner) {
-        recommendedProducts.removeObservers(lifecycleOwner);
+    public void removeObserverProducts(LifecycleOwner lifecycleOwner) {
+        products.removeObservers(lifecycleOwner);
     }
 
-//    public LiveData<Response<BaseResponseModel>> addFavourite(long productId) {
-//        return repository.addFavourite(token, productId);
-//    }
-//
-//    public LiveData<Response<BaseResponseModel>> removeFavourite(long productId) {
-//        return repository.removeFavourite(token, productId);
-//    }
+    public LiveData<Response<CategoriesResponseModel>> getCategories() {
+        return categoryRepository.getCategories();
+    }
+
 }
