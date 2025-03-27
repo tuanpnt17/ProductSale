@@ -24,11 +24,14 @@ import java.util.ArrayList;
 import com.prm392.assignment.productsale.R;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
 import com.prm392.assignment.productsale.model.ProductModel;
+import com.prm392.assignment.productsale.model.UserModel;
 import com.prm392.assignment.productsale.model.cart.CartItemModel;
 import com.prm392.assignment.productsale.model.cart.CartModel;
 import com.prm392.assignment.productsale.util.AppSettingsManager;
+import com.prm392.assignment.productsale.util.UserAccountManager;
 import com.prm392.assignment.productsale.viewmodel.fragment.main.home.OnSaleViewModel;
 
+import lombok.Getter;
 import lombok.Setter;
 
 public class CartListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -37,6 +40,10 @@ public class CartListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private Context context;
     private LifecycleOwner lifecycleOwner;
     private OnSaleViewModel viewModel;
+
+    @Getter
+    @Setter
+    private UserModel userModel;
 
     private final CartItemModel loadingCardObject = new CartItemModel();
 
@@ -67,6 +74,7 @@ public class CartListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.data = new ArrayList<>();
         this.lifecycleOwner = lifecycleOwner;
         this.viewModel = onSaleViewModel;
+        this.userModel = UserAccountManager.getUser(context);
     }
 
     public static class DataViewHolder extends RecyclerView.ViewHolder {
@@ -154,7 +162,7 @@ public class CartListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private void updateCartItemQuantity(CartItemModel cartItem) {
-        int userId = 1; // Replace with the actual user ID
+        int userId = userModel.getId(); // Replace with the actual user ID
         int productId = cartItem.getProductId(); // Get the product ID
         int newQuantity = cartItem.getQuantity(); // Get the updated quantity
 

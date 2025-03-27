@@ -70,9 +70,9 @@ namespace ProductSale.API.Controllers
         }
 
        [HttpPost("complete-payment")]
-        public async Task<IActionResult> CompletePaymentAndConvertCartToOrder([FromBody] CompletePaymentVM completePaymentVm)
+        public async Task<IActionResult> CompletePaymentAndConvertCartToOrder([FromQuery] int userId, [FromQuery] string PaymentMethod, [FromQuery] string BillingAddress)
         {
-            await cartService.CompletePaymentAndConvertCartToOrder(completePaymentVm.UserId, completePaymentVm.PaymentMethod, completePaymentVm.BillingAddress);
+            await cartService.CompletePaymentAndConvertCartToOrder(userId,PaymentMethod,BillingAddress);
             var result = new { status = 200, message = "Payment completed and cart converted to order successfully" };
             return Ok(result);
         }

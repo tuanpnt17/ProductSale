@@ -76,4 +76,13 @@ public interface ProductSaleService {
     @Headers({"client: mobile"})
     @GET("cart/total")
     Observable<Response<CartTotalResponse>> getCartTotal(@Header("Authorization") String token, @Query("userId") int userId);
+
+    @Headers({"client: mobile"})
+    @POST("cart/complete-payment")
+    Observable<Response<BaseResponseModel>> completePaymentAndConvertCartToOrder(
+            @Header("Authorization") String token,
+            @Query("userId") int userId,
+            @Query("PaymentMethod") String paymentMethod,
+            @Query("BillingAddress") String billingAddress
+    );
 }

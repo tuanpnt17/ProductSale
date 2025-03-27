@@ -111,4 +111,22 @@ public class CartRepository {
                         .toFlowable(BackpressureStrategy.LATEST)
         );
     }
+
+    public LiveData<Response<BaseResponseModel>> completePaymentAndConvertCartToOrder(
+            String token, int userId, String paymentMethod, String billingAddress) {
+        return LiveDataReactiveStreams.fromPublisher(
+                mainClient.create(ProductSaleService.class)
+                        .completePaymentAndConvertCartToOrder(token, userId, paymentMethod, billingAddress)
+                        .subscribeOn(Schedulers.io())
+                        .onErrorReturn(exception -> {
+                            exception.printStackTrace();
+
+                            if (exception.getClass() == HttpException.class)
+                                return Response.error(((HttpException) exception).code(), ResponseBody.create(null, ""));
+
+                            return Response.error(BaseResponseModel.FAILED_REQUEST_FAILURE, ResponseBody.create(null, ""));
+                        })
+                        .toFlowable(BackpressureStrategy.LATEST)
+        );
+    }
 }

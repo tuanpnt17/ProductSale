@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -49,6 +50,7 @@ import com.prm392.assignment.productsale.model.products.StoreLocation;
 import com.prm392.assignment.productsale.util.AppSettingsManager;
 import com.prm392.assignment.productsale.util.DialogsProvider;
 import com.prm392.assignment.productsale.view.activity.MainActivity;
+import com.prm392.assignment.productsale.view.activity.PaymentNotification;
 import com.prm392.assignment.productsale.viewmodel.fragment.main.CheckoutPageViewModel;
 import com.prm392.assignment.productsale.viewmodel.fragment.main.ProductPageViewModel;
 
@@ -59,6 +61,8 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import lecho.lib.hellocharts.view.LineChartView;
+//import vn.zalopay.sdk.Environment;
+//import vn.zalopay.sdk.ZaloPaySDK;
 
 
 public class CheckoutPageFragment extends Fragment {
@@ -74,6 +78,12 @@ public class CheckoutPageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        StrictMode.ThreadPolicy policy = new
+//                StrictMode.ThreadPolicy.Builder().permitAll().build();
+//        StrictMode.setThreadPolicy(policy);
+//
+//        // ZaloPay SDK Init
+//        ZaloPaySDK.init(2553, Environment.SANDBOX);
     }
 
 
@@ -122,10 +132,17 @@ public class CheckoutPageFragment extends Fragment {
         vb.cash.setChecked(true);
 
         vb.buyNowBtn.setOnClickListener((v) -> {
-            viewModel.buyNow();
+            viewModel.buyNow(getActivity());
         });
 
         loadCheckoutData();
+
+        viewModel.getPaymentResult().observe(getViewLifecycleOwner(), result -> {
+            // Hiển thị kết quả thanh toán trên giao diện người dùng
+            Intent intent = new Intent(getContext(), PaymentNotification.class);
+            intent.putExtra("result", result);
+            startActivity(intent);
+        });
     }
 
     void loadCheckoutData() {
@@ -157,6 +174,8 @@ public class CheckoutPageFragment extends Fragment {
             }
         });
     }
+
+
 
     void renderCheckoutPage() {
         CartModel cartModel = viewModel.getCartModel();

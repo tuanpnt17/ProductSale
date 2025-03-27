@@ -37,6 +37,8 @@ import com.prm392.assignment.productsale.viewmodel.activity.MainActivityViewMode
 
 import java.util.Locale;
 
+//import vn.zalopay.sdk.ZaloPaySDK;
+
 
 public class MainActivity extends AppCompatActivity {
     public static final String JUST_SIGNED_IN = "justSignedIn";
@@ -204,6 +206,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+//    @Override
+//    protected void onNewIntent(Intent intent) {
+//        super.onNewIntent(intent);
+//        ZaloPaySDK.getInstance().onResult(intent);
+//    }
+
     @Override
     public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
         super.onPostCreate(savedInstanceState, persistentState);
@@ -236,6 +244,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         if (networkBroadcastReceiver != null) unregisterReceiver(networkBroadcastReceiver);
     }
+
 
     void navigateToFragment(int id) {
 
