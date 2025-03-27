@@ -41,24 +41,12 @@ public class ChatFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentChatBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-
         firebaseManager = FirebaseManager.getInstance(requireContext());
-
         UserModel currentUser = firebaseManager.getCurrentUser();
         currentUserId = firebaseManager.getCurrentUserId();
-
-        // Validate user
-        if (currentUser == null || currentUserId == null) {
-            showErrorAndExit("User authentication failed");
-            return view;
-        }
-
         initializeUIComponents();
-
         String currentUserRole = currentUser.hasStore() ? "seller" : "buyer";
-
         findChatPartner(currentUserRole);
-
         return view;
     }
 

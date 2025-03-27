@@ -1,9 +1,18 @@
 package com.prm392.assignment.productsale.view.fragment.main.home;
 
+import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -32,15 +41,26 @@ public class CartFragment extends Fragment {
     private OnSaleViewModel viewModel;
     private CartListAdapter adapter;
 
+    private static final int REQUEST_NOTIFICATION_PERMISSION = 1;
+
     public CartFragment() {
         // Required empty public constructor
+    }
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        REQUEST_NOTIFICATION_PERMISSION);
+            }
+        }
     }
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        requestNotificationPermission();
     }
 
     @Override
@@ -91,6 +111,7 @@ public class CartFragment extends Fragment {
                     // Nếu xóa giỏ hàng thành công
                     adapter.clearCartItems();  // Xóa tất cả các sản phẩm trong adapter
                     Toast.makeText(getContext(), "Giỏ hàng đã được làm sạch", Toast.LENGTH_SHORT).show();
+                    sendCartNotification(requireContext());
                     loadCartItems();
                     break;
 
@@ -105,6 +126,41 @@ public class CartFragment extends Fragment {
                     break;
             }
         });
+    }
+    private void sendCartNotification(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+        }
+
+        String channelId = "cart_notifications";
+        String channelName = "Cart Notifications";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    channelId,
+                    channelName,
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            NotificationManager manager = context.getSystemService(NotificationManager.class);
+            if (manager != null) {
+                manager.createNotificationChannel(channel);
+            }
+        }
+
+        // Tạo thông báo
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(R.drawable.ic_cart)
+                .setContentTitle("Giỏ hàng")
+                .setContentText("Giỏ hàng đã được làm sạch")
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+        // Hiển thị thông báo
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(1001, builder.build());
     }
 
     void loadCartItems() {
