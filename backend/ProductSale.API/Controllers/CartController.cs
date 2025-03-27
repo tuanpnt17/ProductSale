@@ -69,13 +69,12 @@ namespace ProductSale.API.Controllers
             return Ok(new { status = 200, total });
         }
 
-        // Complete payment and convert cart to order
-        //[HttpPost("complete-payment")]
-        //public async Task<IActionResult> CompletePaymentAndConvertCartToOrder([FromBody] CompletePaymentVM completePaymentVm)
-        //{
-        //	await cartService.CompletePaymentAndConvertCartToOrder(completePaymentVm.UserId, completePaymentVm.PaymentMethod, completePaymentVm.BillingAddress);
-        //	var result = new { status = 200, message = "Payment completed and cart converted to order successfully" };
-        //	return Ok(result);
-        //}
+       [HttpPost("complete-payment")]
+        public async Task<IActionResult> CompletePaymentAndConvertCartToOrder([FromBody] CompletePaymentVM completePaymentVm)
+        {
+            await cartService.CompletePaymentAndConvertCartToOrder(completePaymentVm.UserId, completePaymentVm.PaymentMethod, completePaymentVm.BillingAddress);
+            var result = new { status = 200, message = "Payment completed and cart converted to order successfully" };
+            return Ok(result);
+        }
     }
 }

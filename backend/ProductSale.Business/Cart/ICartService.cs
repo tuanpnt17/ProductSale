@@ -8,6 +8,6 @@
         public Task UpdateCartItemQuantity(int userId, int productId, int quantity);
         public Task ClearCart(int userId);
         public Task<decimal> GetCartTotal(int userId);
-
+		public Task CompletePaymentAndConvertCartToOrder(int userId, string paymentMethod, string billingAddress);
 	}
 }

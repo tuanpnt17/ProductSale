@@ -136,24 +136,23 @@ namespace ProductSale.Business.Cart
                 .GenericRepository<Repository.Entities.Cart>()
                 .GetAll()
                 .Include(c => c.CartItems)
-                .FirstOrDefaultAsync(x => x.UserId == userId && x.Status == "Pending");
+                .FirstOrDefaultAsync(x => x.UserId == userId);
 
             if (cart == null || cart.CartItems.Count == 0)
                 return;
-            cart.Status = "Completed";
 
             var order = new Repository.Entities.Order
             {
                 UserId = userId,
-                CartId = cart.CartId,
                 OrderStatus = "Processing",
                 OrderDate = DateTime.Now,
                 PaymentMethod = PaymentMethod,
                 BillingAddress = BillingAddress,
             };
             await unitOfWork.GenericRepository<Repository.Entities.Order>().InsertAsync(order);
+			await unitOfWork.SaveChangesAsync();
 
-            var payment = new Repository.Entities.Payment
+			var payment = new Repository.Entities.Payment
             {
                 OrderId = order.OrderId,
                 Amount = cart.TotalPrice,
@@ -164,8 +163,8 @@ namespace ProductSale.Business.Cart
 
             await unitOfWork.SaveChangesAsync();
 
-            unitOfWork.GenericRepository<Repository.Entities.Cart>().Update(cart);
-            await unitOfWork.SaveChangesAsync();
+            await ClearCart(userId);
+			await unitOfWork.SaveChangesAsync();
         }
     }
 }
