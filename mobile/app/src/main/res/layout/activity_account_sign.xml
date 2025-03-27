@@ -11,12 +11,13 @@
     <ImageButton
         android:id="@+id/account_sign_back"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="0px"
         android:layout_marginStart="24dp"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="2dp"
         android:adjustViewBounds="true"
         android:background="@drawable/borderless_ripple"
+        android:contentDescription="@string/back_btn_description"
         android:cropToPadding="true"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="@+id/account_sign_title"
@@ -25,7 +26,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/account_sign_title"
         app:srcCompat="@drawable/ic_round_arrow_back_ios_new_24"
-        app:tint="?attr/textFillColor" />
+        app:tint="?attr/textFillColor"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <TextView
         android:id="@+id/account_sign_title"
@@ -59,15 +61,14 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <androidx.fragment.app.FragmentContainerView
+            <fragment
                 android:id="@+id/account_sign_fragmentsContainer"
                 android:name="androidx.navigation.fragment.NavHostFragment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:navGraph="@navigation/account_sign_nav"
-                app:defaultNavHost="true"
-                >
-            </androidx.fragment.app.FragmentContainerView>
+                app:defaultNavHost="true">
+            </fragment>
 
         </LinearLayout>
     </ScrollView>

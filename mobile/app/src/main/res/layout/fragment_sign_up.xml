@@ -32,7 +32,7 @@
             android:background="@drawable/input"
             android:fadingEdge="horizontal"
             android:fadingEdgeLength="10dp"
-            android:hint="@string/name"
+            android:hint="@string/user_name"
             android:inputType="textPersonName"
             android:maxLength="32"
             android:paddingLeft="15dp"
@@ -82,6 +82,78 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/sign_up_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:boxBackgroundMode="filled"
+        app:boxStrokeColor="#008E8E8E"
+        app:boxStrokeErrorColor="#00FFFFFF"
+        app:boxStrokeWidth="0dp"
+        app:errorEnabled="true"
+        app:expandedHintEnabled="true"
+        app:hintAnimationEnabled="true"
+        app:hintEnabled="true"
+        app:hintTextColor="?attr/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sign_up_email">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/input"
+            android:fadingEdge="horizontal"
+            android:fadingEdgeLength="10dp"
+            android:hint="@string/phone_optional"
+            android:inputType="textEmailAddress"
+            android:paddingLeft="15dp"
+            android:paddingTop="15dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="15dp"
+            android:requiresFadingEdge="horizontal"
+            android:singleLine="true"
+            android:textSize="20sp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/sign_up_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:boxBackgroundMode="filled"
+        app:boxStrokeColor="#008E8E8E"
+        app:boxStrokeErrorColor="#00FFFFFF"
+        app:boxStrokeWidth="0dp"
+        app:errorEnabled="true"
+        app:expandedHintEnabled="true"
+        app:hintAnimationEnabled="true"
+        app:hintEnabled="true"
+        app:hintTextColor="?attr/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sign_up_phone">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/input"
+            android:fadingEdge="horizontal"
+            android:fadingEdgeLength="10dp"
+            android:hint="@string/address_optional"
+            android:inputType="textEmailAddress"
+            android:paddingLeft="15dp"
+            android:paddingTop="15dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="15dp"
+            android:requiresFadingEdge="horizontal"
+            android:singleLine="true"
+            android:textSize="20sp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/sign_up_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -97,7 +169,7 @@
         app:hintTextColor="?attr/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sign_up_email"
+        app:layout_constraintTop_toBottomOf="@+id/sign_up_address"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="#838383">
 
@@ -160,11 +232,11 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="150dp"
         android:background="@drawable/button"
-        android:textStyle="bold"
         android:text="@string/sign_up"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

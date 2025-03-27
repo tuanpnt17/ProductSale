@@ -9,8 +9,8 @@ import lombok.Setter;
 @Getter
 public class SignUpModel {
 
-    @SerializedName("fullname")
-    private String fullName;
+    @SerializedName("username")
+    private String username;
 
     @SerializedName("email")
     private String email;
@@ -18,10 +18,9 @@ public class SignUpModel {
     @SerializedName("password")
     private String password;
 
-    @SerializedName("passwordConfirm")
-    private String passwordConfirm;
+    @SerializedName("phoneNumber")
+    private String phoneNumber;
 
-    @SerializedName("profile_img")
-    private String profileImage;
-
+    @SerializedName("address")
+    private String address;
 }
