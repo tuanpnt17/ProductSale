@@ -11,6 +11,7 @@ import androidx.lifecycle.viewmodel.ViewModelInitializer;
 import com.prm392.assignment.productsale.data.Repository;
 import com.prm392.assignment.productsale.data.repository.ProductsSaleRepository;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
+import com.prm392.assignment.productsale.model.UserModel;
 import com.prm392.assignment.productsale.model.cart.AddProductCartModel;
 import com.prm392.assignment.productsale.model.products.ProductSaleModel;
 import com.prm392.assignment.productsale.model.products.ProductSalePageResponseModel;
@@ -41,6 +42,9 @@ public class ProductPageViewModel extends ViewModel {
     @Getter
     @Setter
     private int productQuantity = 1;
+    @Getter
+    @Setter
+    private UserModel userModel;
 
     public ProductPageViewModel(@NotNull Application application) {
         super();
@@ -49,7 +53,9 @@ public class ProductPageViewModel extends ViewModel {
         productsSaleRepository = new ProductsSaleRepository();
 
         token = UserAccountManager.getToken(application, UserAccountManager.TOKEN_TYPE_BEARER);
+        userModel = UserAccountManager.getUser(application);
     }
+
 
     public static final ViewModelInitializer<ProductPageViewModel> initializer = new ViewModelInitializer<>(
             ProductPageViewModel.class,
@@ -65,7 +71,7 @@ public class ProductPageViewModel extends ViewModel {
     }
 
     public LiveData<Response<BaseResponseModel>> addProductToCart() {
-        AddProductCartModel addProductCartModel = new AddProductCartModel(productId, productQuantity);
+        AddProductCartModel addProductCartModel = new AddProductCartModel(userModel.getId(),productId, productQuantity);
         return productsSaleRepository.addProductToCart(token, addProductCartModel);
     }
 

@@ -87,7 +87,7 @@ public class OnSaleFragment extends Fragment {
 
     private void loadCartTotal() {
         vb.onSaleLoading.setVisibility(View.VISIBLE);
-        int userId = 1;  // Sử dụng userId thực tế
+        int userId = viewModel.getUserModel().getId();  // Sử dụng userId thực tế
 
         // Lấy tổng giá trị giỏ hàng từ ViewModel
         viewModel.getCartTotal(userId)
@@ -103,7 +103,7 @@ public class OnSaleFragment extends Fragment {
     }
 
     private void clearCart() {
-        int userId = 1;  // Sử dụng userId thực tế của người dùng
+        int userId = viewModel.getUserModel().getId();  // Sử dụng userId thực tế
 
         // Gọi phương thức clearCart trong ViewModel
         viewModel.clearCart(userId).observe(getViewLifecycleOwner(), response -> {
@@ -130,7 +130,7 @@ public class OnSaleFragment extends Fragment {
 
     void loadCartItems() {
         vb.onSaleLoading.setVisibility(View.VISIBLE);
-        int userId = 1;
+        int userId = viewModel.getUserModel().getId();  // Sử dụng userId thực tế
         // Lấy giỏ hàng từ ViewModel
         viewModel.getCart(userId).observe(getViewLifecycleOwner(), response -> {
             switch (response.code()) {

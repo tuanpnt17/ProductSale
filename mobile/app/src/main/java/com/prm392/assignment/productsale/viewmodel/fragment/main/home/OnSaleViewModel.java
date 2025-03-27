@@ -16,9 +16,13 @@ import com.prm392.assignment.productsale.data.Repository;
 import com.prm392.assignment.productsale.data.repository.CartRepository;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
 import com.prm392.assignment.productsale.model.ProductsResponseModel;
+import com.prm392.assignment.productsale.model.UserModel;
 import com.prm392.assignment.productsale.model.cart.CartModel;
 import com.prm392.assignment.productsale.model.cart.CartTotalResponse;
 import com.prm392.assignment.productsale.util.UserAccountManager;
+
+import lombok.Getter;
+import lombok.Setter;
 import retrofit2.Response;
 
 public class OnSaleViewModel extends ViewModel {
@@ -28,6 +32,9 @@ public class OnSaleViewModel extends ViewModel {
     private LiveData<Response<ProductsResponseModel>> products;
     private MutableLiveData<Double> totalPrice;
     private String token;
+    @Getter
+    @Setter
+    private UserModel userModel;
 
     public OnSaleViewModel(@NonNull Application application) {
         super();
@@ -35,6 +42,7 @@ public class OnSaleViewModel extends ViewModel {
         repository = new Repository();
         token = UserAccountManager.getToken(application,UserAccountManager.TOKEN_TYPE_BEARER);
         totalPrice = new MutableLiveData<>();
+        userModel = UserAccountManager.getUser(application);
     }
 
     public LiveData<Double> getTotalPrice() {

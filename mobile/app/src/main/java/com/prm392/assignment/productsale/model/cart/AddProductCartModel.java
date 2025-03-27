@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddProductCartModel {
+    @SerializedName("userId")
+    private long userId;
     @SerializedName("productId")
     private long productId;
     @SerializedName("quantity")
