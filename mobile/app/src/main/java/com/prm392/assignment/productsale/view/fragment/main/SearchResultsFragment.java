@@ -511,7 +511,7 @@ public class SearchResultsFragment extends Fragment {
             viewModel.setUserLocation(new LatLng(location.getLatitude(), location.getLongitude()));
 
             if (userMark == null)
-                userMark = googleMap.addMarker(new MarkerOptions().position(viewModel.getUserLocation()).title(UserAccountManager.getUser(getContext()).getFullName()).snippet(getString(R.string.Your_Location)).icon(BitmapDescriptorFactory.fromResource(R.drawable.gps_user_mark)));
+                userMark = googleMap.addMarker(new MarkerOptions().position(viewModel.getUserLocation()).title(UserAccountManager.getUser(getContext()).getUserName()).snippet(getString(R.string.Your_Location)).icon(BitmapDescriptorFactory.fromResource(R.drawable.gps_user_mark)));
             else userMark.setPosition(viewModel.getUserLocation());
 
             userMark.showInfoWindow();

@@ -13,10 +13,8 @@ import com.prm392.assignment.productsale.model.UserModel;
 import com.prm392.assignment.productsale.util.UserAccountManager;
 import android.content.Context;
 import android.util.Log;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class FirebaseManager {
@@ -104,7 +102,7 @@ public class FirebaseManager {
             if (currentUser != null && isValidUserId(currentUserId)) {
                 Map<String, Object> userMap = new HashMap<>();
                 userMap.put("id", currentUserId);
-                userMap.put("name", currentUser.getFullName());
+                userMap.put("name", currentUser.getUserName());
                 userMap.put("email", currentUser.getEmail());
                 userMap.put("role", currentUser.hasStore() ? "seller" : "buyer");
                 userMap.put("profileImageUrl", currentUser.getImageLink());
@@ -130,6 +128,60 @@ public class FirebaseManager {
                 .addListenerForSingleValueEvent(listener);
     }
 
+    // Add these methods to the existing FirebaseManager class
+
+    public void updateUserFCMToken(String token) {
+        if (currentUser == null || !isValidUserId(currentUserId)) {
+            Log.e(TAG, "Cannot update FCM token - invalid user");
+            return;
+        }
+
+        try {
+            // Update the user's FCM token in Firebase
+            mUsersRef.child(currentUserId).child("fcmToken").setValue(token)
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "FCM token updated successfully"))
+                    .addOnFailureListener(e -> Log.e(TAG, "Failed to update FCM token", e));
+        } catch (Exception e) {
+            Log.e(TAG, "Error updating FCM token", e);
+        }
+    }
+
+    public void sendNotificationToUser(String receiverId, String title, String body) {
+        if (!isValidUserId(receiverId)) {
+            Log.e(TAG, "Invalid receiver ID for notification");
+            return;
+        }
+
+        // Query the receiver's FCM token
+        mUsersRef.child(receiverId).child("fcmToken")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            String fcmToken = snapshot.getValue(String.class);
+                            if (fcmToken != null) {
+                                // Use a cloud function or external service to send FCM notification
+                                // This is a placeholder - you'll need to implement actual FCM sending
+                                sendFCMNotification(fcmToken, title, body);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e(TAG, "Error retrieving FCM token", error.toException());
+                    }
+                });
+    }
+
+    private void sendFCMNotification(String token, String title, String body) {
+        // Implement FCM notification sending
+        // Note: This typically requires a backend service or cloud function
+        // For now, we'll log the intention
+        Log.d(TAG, "Sending notification to token: " + token);
+        Log.d(TAG, "Title: " + title);
+        Log.d(TAG, "Body: " + body);
+    }
     public void sendMessage(String receiverId, String content, OnCompleteListener<Void> listener) {
         if (!isValidUserId(currentUserId) || !isValidUserId(receiverId)) {
             Log.e(TAG, "Invalid sender or receiver ID");
@@ -156,6 +208,13 @@ public class FirebaseManager {
 
         // Update conversations for both users
         updateConversation(currentUserId, receiverId, messageId, content, timestamp);
+
+        // Send notification to receiver
+        sendNotificationToUser(
+                receiverId,
+                "New Message",
+                currentUser.getUserName() + ": " + content
+        );
     }
 
     private void updateConversation(String senderId, String receiverId,

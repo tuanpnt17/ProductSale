@@ -135,4 +135,5 @@ dependencies {
     // Firebase Realtime Database
     implementation(libs.firebase.database)
     implementation platform(libs.firebase.bom)
+    implementation libs.firebase.messaging
 }

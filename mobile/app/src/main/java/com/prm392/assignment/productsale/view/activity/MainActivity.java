@@ -275,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
         if (userModel != null) user = userModel;
         else user = UserAccountManager.getUser(this);
 
-        vb.menuUsername.setText(user.getFullName());
+        vb.menuUsername.setText(user.getUserName());
         vb.menuAccountType.setText(user.getAccountType());
         Glide.with(this).load(user.getImageLink())
                 .centerCrop()

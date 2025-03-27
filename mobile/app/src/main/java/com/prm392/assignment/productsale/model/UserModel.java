@@ -15,8 +15,8 @@ public class UserModel {
 
     @Setter
     @Getter
-    @SerializedName("fullname")
-    private String fullName;
+    @SerializedName("username")
+    private String userName;
 
     @Setter
     @Getter
