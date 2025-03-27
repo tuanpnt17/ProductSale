@@ -3,6 +3,7 @@ package com.prm392.assignment.productsale.viewmodel.fragment.main;
 import static androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY;
 
 import android.app.Application;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
@@ -42,11 +43,15 @@ public class CheckoutPageViewModel extends ViewModel {
     @Getter
     private UserModel userModel;
 
+    @Getter
+    @Setter
+    private String paymentMethod;
 
+    private Application app;
 
     public CheckoutPageViewModel(@NotNull Application application) {
         super();
-
+        app = application;
         repository = new Repository();
         cartRepository = new CartRepository();
         productsSaleRepository = new ProductsSaleRepository();
@@ -67,6 +72,11 @@ public class CheckoutPageViewModel extends ViewModel {
     public LiveData<Response<CartModel>> getCart(int userId) {
         cartLiveData = cartRepository.getCart(token, userId);
         return cartLiveData;
+    }
+
+    public void buyNow() {
+        if (cartModel == null) return;
+
     }
 
 }

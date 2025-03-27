@@ -111,6 +111,20 @@ public class CheckoutPageFragment extends Fragment {
         vb.checkoutRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         vb.checkoutRecyclerView.setAdapter(adapter);
 
+        vb.paymentGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.cash) {
+                viewModel.setPaymentMethod("Cash");
+            } else if (checkedId == R.id.creditCard) {
+                viewModel.setPaymentMethod("CreditCard");
+            }
+        });
+
+        vb.cash.setChecked(true);
+
+        vb.buyNowBtn.setOnClickListener((v) -> {
+            viewModel.buyNow();
+        });
+
         loadCheckoutData();
     }
 
@@ -148,6 +162,10 @@ public class CheckoutPageFragment extends Fragment {
         CartModel cartModel = viewModel.getCartModel();
         UserModel userModel = viewModel.getUserModel();
         vb.txtTotalAmount.setText(cartModel.getTotalPrice() + "$");
+        vb.lblUsername.setText(userModel.getUserName());
+        vb.lblUserPhone.setText(userModel.getPhone());
+        vb.lblUserAddress.setText(userModel.getAddress());
+
     }
 
 }

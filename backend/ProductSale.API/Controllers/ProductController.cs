@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProductSale.API.Models.Products;
-using ProductSale.Business.Enums;
 using ProductSale.Business.Models;
 using ProductSale.Business.Product;
 using ProductSale.Business.StoreLocation;
