@@ -162,7 +162,6 @@ public class SearchFragment extends Fragment {
             @Override
             public void onProductClicked(long productId, String storeType) {
                 Bundle bundle = new Bundle();
-                Log.d("ProductID", "onProductClicked: " + productId);
                 bundle.putLong("productId", productId);
                 navController.navigate(R.id.action_homeFragment_to_productPageFragment, bundle);
             }

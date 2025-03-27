@@ -40,6 +40,8 @@
         tools:itemCount="10"
         tools:listitem="@layout/cart_item_layout" /> <!-- Update to use cart_item layout -->
 
+
+
     <!-- ProgressBar to show loading indicator -->
     <ProgressBar
         android:id="@+id/onSale_loading"
