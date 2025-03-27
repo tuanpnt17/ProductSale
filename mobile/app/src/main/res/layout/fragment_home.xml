@@ -111,26 +111,26 @@
                     app:iconSize="22dp"
                     app:iconTint="?attr/textFillColor" />
 
-                <Button
-                    android:id="@+id/home_BarHistory"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:layout_weight="1"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:backgroundTint="?attr/background"
-                    android:textStyle="bold"
-                    android:gravity="bottom|center"
-                    android:text="@string/history"
-                    android:textAlignment="gravity"
-                    android:textAllCaps="false"
-                    android:textColor="?attr/textFillColor"
-                    android:textSize="11sp"
-                    app:icon="@drawable/menu_icon_history"
-                    app:iconGravity="top"
-                    app:iconPadding="5dp"
-                    app:iconSize="22dp"
-                    app:iconTint="?attr/textFillColor" />
+<!--                <Button-->
+<!--                    android:id="@+id/home_BarHistory"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginBottom="5dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:background="?android:attr/selectableItemBackgroundBorderless"-->
+<!--                    android:backgroundTint="?attr/background"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:gravity="bottom|center"-->
+<!--                    android:text="@string/history"-->
+<!--                    android:textAlignment="gravity"-->
+<!--                    android:textAllCaps="false"-->
+<!--                    android:textColor="?attr/textFillColor"-->
+<!--                    android:textSize="11sp"-->
+<!--                    app:icon="@drawable/menu_icon_history"-->
+<!--                    app:iconGravity="top"-->
+<!--                    app:iconPadding="5dp"-->
+<!--                    app:iconSize="22dp"-->
+<!--                    app:iconTint="?attr/textFillColor" />-->
             </LinearLayout>
 
         </com.google.android.material.bottomappbar.BottomAppBar>

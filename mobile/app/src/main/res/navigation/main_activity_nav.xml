@@ -21,6 +21,10 @@
             android:id="@+id/action_homeFragment_to_productPageFragment"
             app:destination="@id/productPageFragment"
             app:popExitAnim="@anim/lay_off" />
+        <action
+            android:id="@+id/action_homeFragment_to_checkoutPageFragment"
+            app:destination="@id/checkoutPageFragment"
+            app:popExitAnim="@anim/lay_off" />
     </fragment>
     <fragment
         android:id="@+id/underConstructionFragment2"
@@ -57,6 +61,19 @@
             app:exitAnim="@anim/slide_to_left"
             app:popEnterAnim="@anim/slide_from_left"
             app:popExitAnim="@anim/slide_to_right"/>
+    </fragment>
+    <fragment
+        android:id="@+id/checkoutPageFragment"
+        android:name="com.prm392.assignment.productsale.view.fragment.main.CheckoutPageFragment"
+        android:label="fragment_checkout_page"
+        tools:layout="@layout/fragment_checkout_page" >
+<!--        <action-->
+<!--            android:id="@+id/action_productPageFragment_to_storePageFragment"-->
+<!--            app:destination="@id/storePageFragment"-->
+<!--            app:enterAnim="@anim/slide_from_right"-->
+<!--            app:exitAnim="@anim/slide_to_left"-->
+<!--            app:popEnterAnim="@anim/slide_from_left"-->
+<!--            app:popExitAnim="@anim/slide_to_right"/>-->
     </fragment>
     <fragment
         android:id="@+id/createStoreFragment"
