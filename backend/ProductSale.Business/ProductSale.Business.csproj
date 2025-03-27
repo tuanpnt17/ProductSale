@@ -1,34 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<InvariantGlobalization>false</InvariantGlobalization>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Cart\ICartService" />
-    <None Remove="Cart\NewFile1.txt" />
-    <None Remove="Category\NewFile1.txt" />
-    <None Remove="ChatMessage\IChatMessageService" />
-    <None Remove="ChatMessage\NewFile1.txt" />
-    <None Remove="Notification\NewFile1.txt" />
-    <None Remove="Order\NewFile1.txt" />
-    <None Remove="Payment\NewFile1.txt" />
-    <None Remove="Product\IProduct" />
-    <None Remove="Product\NewFile1.txt" />
-    <None Remove="Product\ProductService" />
-    <None Remove="StoreLocation\NewFile1.txt" />
-    <None Remove="User\NewFile1.txt" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Cart\ICartService" />
+		<None Remove="Cart\NewFile1.txt" />
+		<None Remove="Category\NewFile1.txt" />
+		<None Remove="ChatMessage\IChatMessageService" />
+		<None Remove="ChatMessage\NewFile1.txt" />
+		<None Remove="Notification\NewFile1.txt" />
+		<None Remove="Order\NewFile1.txt" />
+		<None Remove="Payment\NewFile1.txt" />
+		<None Remove="Product\IProduct" />
+		<None Remove="Product\NewFile1.txt" />
+		<None Remove="Product\ProductService" />
+		<None Remove="StoreLocation\NewFile1.txt" />
+		<None Remove="User\NewFile1.txt" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="14.0.0" />
-    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="14.0.0" />
+		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ProductSale.Repository\ProductSale.Repository.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\ProductSale.Repository\ProductSale.Repository.csproj" />
+	</ItemGroup>
 
 </Project>
