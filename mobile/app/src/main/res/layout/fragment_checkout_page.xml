@@ -188,7 +188,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="4dp"
-                            android:text="Credit Card"
+                            android:text="Zalo Pay"
                             android:textSize="20sp" />
                     </RadioGroup>
 

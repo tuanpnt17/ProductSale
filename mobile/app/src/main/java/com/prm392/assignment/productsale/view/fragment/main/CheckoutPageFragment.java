@@ -135,7 +135,7 @@ public class CheckoutPageFragment extends Fragment {
                         return;
                     }
                     viewModel.setCartModel(response.body());
-
+                    adapter.clearCartItems();
                     ArrayList<CartItemModel> cartItems = response.body().getCartItems();
                     adapter.addCartItems(cartItems);
 

@@ -111,6 +111,10 @@ public class CheckoutListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         });
     }
 
+    public void clearCartItems() {
+        data.clear();  // Xóa tất cả các item trong danh sách giỏ hàng
+        notifyDataSetChanged();  // Cập nhật lại RecyclerView
+    }
     public boolean isLoading() {
         return data.contains(loadingCardObject);
     }

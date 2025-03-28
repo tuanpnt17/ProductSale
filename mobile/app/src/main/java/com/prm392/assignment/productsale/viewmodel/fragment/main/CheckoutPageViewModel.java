@@ -4,15 +4,23 @@ import static android.app.PendingIntent.getActivity;
 import static androidx.core.content.ContextCompat.startActivity;
 import static androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.gesture.OrientedBoundingBox;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -151,13 +159,15 @@ public class CheckoutPageViewModel extends ViewModel {
                                     bundle.putString("Result", "Success");
                                     bundle.putString("Title", "Thanh toán thành công");
                                     bundle.putString("Message", "Giỏ hàng đã được chuyển thành đơn hàng. Xin cảm ơn!");
+                                    sendCartNotification(context);
+                                    navController.navigate(R.id.action_checkoutPageFragment_to_paymentResultFragment, bundle);
                                 } else {
                                     bundle.putString("Result", "Failed");
                                     bundle.putString("Title", "Thanh toán thất bại");
                                     bundle.putString("Message", "Có lỗi xảy ra trong khi thanh toán đơn hàng.");
+                                    navController.navigate(R.id.action_checkoutPageFragment_to_paymentResultFragment, bundle);
                                 }
                             });
-                            navController.navigate(R.id.action_checkoutPageFragment_to_paymentResultFragment, bundle);
                         }
 
                         @Override
@@ -186,5 +196,41 @@ public class CheckoutPageViewModel extends ViewModel {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void sendCartNotification(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+        }
+
+        String channelId = "checkout_notifications";
+        String channelName = "Checkout Notifications";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    channelId,
+                    channelName,
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            NotificationManager manager = context.getSystemService(NotificationManager.class);
+            if (manager != null) {
+                manager.createNotificationChannel(channel);
+            }
+        }
+
+        // Tạo thông báo
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(R.drawable.ic_cart)
+                .setContentTitle("Thanh toán")
+                .setContentText("Thanh toán thành công")
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+        // Hiển thị thông báo
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(1001, builder.build());
     }
 }

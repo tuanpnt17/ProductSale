@@ -1,8 +1,12 @@
 package com.prm392.assignment.productsale.view.activity;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -18,6 +22,7 @@ import android.widget.RadioButton;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
@@ -44,6 +49,8 @@ import vn.zalopay.sdk.ZaloPaySDK;
 
 public class MainActivity extends AppCompatActivity {
     public static final String JUST_SIGNED_IN = "justSignedIn";
+
+    private static final int REQUEST_NOTIFICATION_PERMISSION = 1;
     private NavController navController;
     private ActivityMainBinding vb;
     private MainActivityViewModel viewModel;
@@ -87,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        requestNotificationPermission();
+
         //Set App Settings
         switch (AppSettingsManager.getTheme(this)) {
             case AppSettingsManager.THEME_LIGHT:
@@ -183,6 +192,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        REQUEST_NOTIFICATION_PERMISSION);
+            }
+        }
+    }
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -208,15 +226,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onTouchEvent(event);
     }
 
-//    @SuppressLint("RestrictedApi")
-//    @Override
-//    public void onBackPressed() {
-//
-//        if (underlayNavigationDrawer.isOpened()) underlayNavigationDrawer.closeMenu();
-//        else if (vb.menu.getCheckedRadioButtonId() != R.id.menu_home && navController.getBackQueue().getSize() == 3)
-//            vb.menuHome.setChecked(true);
-//        else super.onBackPressed();
-//    }
 
     @Override
     protected void onDestroy() {
@@ -238,25 +247,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    public void syncUserData() {
-//        viewModel.getUser(token).observe(this, response -> {
-//            switch (response.code()) {
-//                case BaseResponseModel.SUCCESSFUL_OPERATION:
-//                    UserModel user = response.body().getUser();
-//                    UserAccountManager.updateUser(getApplicationContext(), user);
-//                    loadUserData(user);
-//                    break;
-//
-//                case BaseResponseModel.FAILED_AUTH:
-//                    UserAccountManager.signOut(MainActivity.this, true);
-//                    break;
-//
-//                case BaseResponseModel.FAILED_REQUEST_FAILURE:
-//                    Toast.makeText(this, "Data Sync Failed !", Toast.LENGTH_SHORT).show();
-//                    break;
-//            }
-//        });
-//    }
 
     public void loadUserData(UserModel userModel) {
         if (userModel != null) user = userModel;
