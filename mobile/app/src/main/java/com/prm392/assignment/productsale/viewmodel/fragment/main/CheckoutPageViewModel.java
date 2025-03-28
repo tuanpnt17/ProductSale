@@ -15,8 +15,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.viewmodel.ViewModelInitializer;
+import androidx.navigation.NavController;
 
 import com.prm392.assignment.productsale.Api.CreateOrder;
+import com.prm392.assignment.productsale.R;
 import com.prm392.assignment.productsale.data.repository.CartRepository;
 import com.prm392.assignment.productsale.data.repository.ProductsSaleRepository;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
@@ -59,6 +61,8 @@ public class CheckoutPageViewModel extends ViewModel {
     @Setter
     private String paymentMethod;
 
+    private NavController controller;
+
     private final Application app;
 
     public LiveData<String> getPaymentResult() {
@@ -73,6 +77,7 @@ public class CheckoutPageViewModel extends ViewModel {
 
         token = UserAccountManager.getToken(application, UserAccountManager.TOKEN_TYPE_BEARER);
         userModel = UserAccountManager.getUser(application);
+
     }
 
     public static final ViewModelInitializer<CheckoutPageViewModel> initializer = new ViewModelInitializer<>(
@@ -103,9 +108,10 @@ public class CheckoutPageViewModel extends ViewModel {
         completePaymentAndConvertCartToOrder(userId, "Cash", billingAddress).observeForever(response -> {
             if (response != null && response.isSuccessful()) {
                 Toast.makeText(context, "Thanh toán thành công, giỏ hàng đã được chuyển thành đơn hàng.", Toast.LENGTH_SHORT).show();
-                Intent intent1 = new Intent(context, PaymentNotification.class);
-                intent1.putExtra("result", "Thanh toán thành công");
-                context.startActivity(intent1);
+//                Intent intent1 = new Intent(context, PaymentNotification.class);
+//                intent1.putExtra("result", "Thanh toán thành công");
+//                context.startActivity(intent1);
+
             } else {
                 Toast.makeText(context, "Thanh toán thất bại, vui lòng thử lại.", Toast.LENGTH_SHORT).show();
                 Intent intent1 = new Intent(context, PaymentNotification.class);
