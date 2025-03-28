@@ -94,7 +94,7 @@ public class HomeFragment extends Fragment {
 
             navController = Navigation.findNavController(view.findViewById(R.id.home_framgmentContainer));
 
-            navController.navigate(R.id.action_searchFragment_to_cartFragment, null, new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
+            navController.navigate(R.id.cartFragment, null, new NavOptions.Builder().setEnterAnim(R.anim.fragment_in).setExitAnim(R.anim.fragment_out).build());
 
 
             vb.homeBottomAppBarFab.setImageDrawable(getResources().getDrawable(R.drawable.navbar_icon_onsale, getActivity().getTheme()));

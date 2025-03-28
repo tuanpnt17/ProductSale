@@ -1,5 +1,3 @@
-using System.Text;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,6 +16,8 @@ using ProductSale.Business.User;
 using ProductSale.Repository.Data;
 using ProductSale.Repository.Interfaces;
 using ProductSale.Repository.Repositories;
+using System.Text;
+using System.Text.Json.Serialization;
 
 namespace ProductSale.API
 {

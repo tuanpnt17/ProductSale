@@ -36,7 +36,7 @@
         android:label="fragment_product_page"
         tools:layout="@layout/fragment_product_page" >
         <action
-            android:id="@+id/action_checkoutPageFragment_to_homeFragment"
+            android:id="@+id/action_productPageFragment_to_homeFragment"
             app:destination="@id/homeFragment"
             app:enterAnim="@anim/slide_from_right"
             app:exitAnim="@anim/slide_to_left"
@@ -50,6 +50,26 @@
         tools:layout="@layout/fragment_checkout_page" >
         <action
             android:id="@+id/action_checkoutPageFragment_to_searchFragment"
+            app:destination="@id/homeFragment"
+            app:enterAnim="@anim/slide_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
+        <action
+            android:id="@+id/action_checkoutPageFragment_to_paymentResultFragment"
+            app:destination="@id/paymentResultFragment"
+            app:enterAnim="@anim/slide_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/paymentResultFragment"
+        android:name="com.prm392.assignment.productsale.view.fragment.main.PaymentResultFragment"
+        tools:layout="@layout/fragment_checkout_page" >
+        <action
+            android:id="@+id/action_paymentResultFragment_to_homeFragment"
             app:destination="@id/homeFragment"
             app:enterAnim="@anim/slide_from_right"
             app:exitAnim="@anim/slide_to_left"
