@@ -15,8 +15,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.viewmodel.ViewModelInitializer;
+import androidx.navigation.NavController;
 
 import com.prm392.assignment.productsale.Api.CreateOrder;
+import com.prm392.assignment.productsale.R;
 import com.prm392.assignment.productsale.data.repository.CartRepository;
 import com.prm392.assignment.productsale.data.repository.ProductsSaleRepository;
 import com.prm392.assignment.productsale.model.BaseResponseModel;
@@ -62,6 +64,8 @@ public class CheckoutPageViewModel extends ViewModel {
     @Setter
     private String paymentMethod;
 
+    private NavController controller;
+
     private final Application app;
 
     public LiveData<String> getPaymentResult() {
@@ -76,6 +80,7 @@ public class CheckoutPageViewModel extends ViewModel {
 
         token = UserAccountManager.getToken(application, UserAccountManager.TOKEN_TYPE_BEARER);
         userModel = UserAccountManager.getUser(application);
+
     }
 
     public static final ViewModelInitializer<CheckoutPageViewModel> initializer = new ViewModelInitializer<>(
@@ -98,6 +103,7 @@ public class CheckoutPageViewModel extends ViewModel {
     }
 
     public void buyNow(Context context) {
+        int result = 0;
         if (paymentMethod == "Cash") {
             if (cartModel == null) return;
             int userId = userModel.getId();
@@ -106,9 +112,11 @@ public class CheckoutPageViewModel extends ViewModel {
             completePaymentAndConvertCartToOrder(userId, "Cash", billingAddress).observeForever(response -> {
                 if (response != null && response.isSuccessful()) {
                     Toast.makeText(context, "Thanh toán thành công, giỏ hàng đã được chuyển thành đơn hàng.", Toast.LENGTH_SHORT).show();
-                    Intent intent1 = new Intent(context, PaymentNotification.class);
-                    intent1.putExtra("result", "Thanh toán thành công");
-                    context.startActivity(intent1);
+//                    Intent intent1 = new Intent(context, PaymentNotification.class);
+//                    intent1.putExtra("result", "Thanh toán thành công");
+//                    context.startActivity(intent1);
+                    NavController navController = ((MainActivity) context).getAppNavController();
+                    navController.navigate(R.id.action_checkoutPageFragment_to_paymentResultFragment);
                 } else {
                     Toast.makeText(context, "Thanh toán thất bại, vui lòng thử lại.", Toast.LENGTH_SHORT).show();
                     Intent intent1 = new Intent(context, PaymentNotification.class);
@@ -132,8 +140,9 @@ public class CheckoutPageViewModel extends ViewModel {
                     ZaloPaySDK.getInstance().payOrder((Activity) context, token, "demozpdk://app", new PayOrderListener() {
                         @Override
                         public void onPaymentSucceeded(String s, String s1, String s2) {
-                            Intent intent1 = new Intent(context, PaymentNotification.class);
-                            intent1.putExtra("result", "Thanh toán thành công");
+//                            Intent intent1 = new Intent(context, PaymentNotification.class);
+//                            intent1.putExtra("result", "Thanh toán thành công");
+                            NavController navController = ((MainActivity) context).getAppNavController();
                             completePaymentAndConvertCartToOrder(userId, "ZaloPay", billingAddress).observeForever(response -> {
                                 if (response != null && response.isSuccessful()) {
                                     Toast.makeText(context, "Thanh toán thành công, giỏ hàng đã được chuyển thành đơn hàng.", Toast.LENGTH_SHORT).show();
@@ -141,7 +150,8 @@ public class CheckoutPageViewModel extends ViewModel {
                                     Toast.makeText(context, "Thanh toán thất bại, vui lòng thử lại.", Toast.LENGTH_SHORT).show();
                                 }
                             });
-                            context.startActivity(intent1);
+//                            context.startActivity(intent1);
+                            navController.navigate(R.id.action_checkoutPageFragment_to_paymentResultFragment);
                         }
 
                         @Override

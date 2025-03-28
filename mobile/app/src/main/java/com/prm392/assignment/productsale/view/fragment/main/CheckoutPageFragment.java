@@ -114,6 +114,7 @@ public class CheckoutPageFragment extends Fragment {
 
         vb.buyNowBtn.setOnClickListener((v) -> {
             viewModel.buyNow(getActivity());
+//            navController.navigate(R.id.action_checkoutPageFragment_to_paymentResultFragment);
         });
 
         vb.navBack.setOnClickListener((v) -> {
@@ -121,13 +122,6 @@ public class CheckoutPageFragment extends Fragment {
         });
 
         loadCheckoutData();
-
-        viewModel.getPaymentResult().observe(getViewLifecycleOwner(), result -> {
-            // Hiển thị kết quả thanh toán trên giao diện người dùng
-            Intent intent = new Intent(getContext(), PaymentNotification.class);
-            intent.putExtra("result", result);
-            startActivity(intent);
-        });
     }
 
     void loadCheckoutData() {
