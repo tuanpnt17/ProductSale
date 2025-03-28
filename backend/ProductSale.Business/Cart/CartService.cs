@@ -105,7 +105,14 @@ namespace ProductSale.Business.Cart
             if (cart == null)
                 return;
 
-            cart.CartItems.Clear();
+            
+
+            foreach (var item in cart.CartItems)
+            {
+                unitOfWork.GenericRepository<CartItem>().Delete(item);
+            }
+			cart.CartItems.Clear();
+
             cart.TotalPrice = 0;
             unitOfWork.GenericRepository<Repository.Entities.Cart>().Update(cart);
             await unitOfWork.SaveChangesAsync();
