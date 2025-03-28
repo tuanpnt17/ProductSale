@@ -114,7 +114,7 @@ public class CheckoutPageFragment extends Fragment {
 
         vb.buyNowBtn.setOnClickListener((v) -> {
             viewModel.buyNow(getActivity());
-            navController.navigate(R.id.action_checkoutPageFragment_to_paymentResultFragment);
+//            navController.navigate(R.id.action_checkoutPageFragment_to_paymentResultFragment);
         });
 
         vb.navBack.setOnClickListener((v) -> {
