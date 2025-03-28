@@ -130,7 +130,7 @@ public class CartListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             CartItemModel cartItem = data.get(position);
 
             holder.productName.setText(data.get(position).getProduct().getProductName());
-//            holder.brand.setText((data.get(position).getProduct().getCategory().getCategoryName()));
+            holder.brand.setText((data.get(position).getProduct().getCategory().getCategoryName()));
             holder.productPrice.setText(String.format("%s %s", data.get(position).getPrice(), context.getString(R.string.currency)));
             holder.productQuantity.setText(String.valueOf(data.get(position).getQuantity()));
             Glide.with(context)

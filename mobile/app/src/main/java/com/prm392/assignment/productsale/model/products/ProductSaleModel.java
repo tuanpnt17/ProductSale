@@ -1,6 +1,7 @@
 package com.prm392.assignment.productsale.model.products;
 
 import com.google.gson.annotations.SerializedName;
+import com.prm392.assignment.productsale.model.categories.CategoryModel;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -32,6 +33,9 @@ public class ProductSaleModel {
 
     @SerializedName(value = "categoryName")
     private String categoryName;
+
+    @SerializedName(value = "category")
+    private CategoryModel category;
 
     public String getCurrencyPrice() {
         return price + "$";

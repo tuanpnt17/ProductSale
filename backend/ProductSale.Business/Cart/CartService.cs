@@ -14,8 +14,8 @@ namespace ProductSale.Business.Cart
                 .GetAll()
                 .Include(c => c.User)
                 .Include(c => c.CartItems)
-                .ThenInclude(x => x.Product)
-                .FirstOrDefaultAsync(x => x.UserId == userId);
+                .ThenInclude(x => x.Product).ThenInclude(y => y.Category)
+				.FirstOrDefaultAsync(x => x.UserId == userId);
             return cart;
         }
 

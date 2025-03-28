@@ -178,7 +178,7 @@ public class CartFragment extends Fragment {
                     if (response.body().getCartItems().stream().count() == 0) {
                         vb.checkout.setVisibility(View.GONE);
                     }
-
+                    adapter.clearCartItems();
                     // Cập nhật giỏ hàng vào adapter
                     ArrayList<CartItemModel> cartItems = response.body().getCartItems(); // Đảm bảo rằng response trả về có danh sách cartItems
                     adapter.addCartItems(cartItems); // Trực tiếp dùng cartItems
