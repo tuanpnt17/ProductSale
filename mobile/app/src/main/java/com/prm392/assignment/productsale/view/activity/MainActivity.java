@@ -37,6 +37,8 @@ import com.prm392.assignment.productsale.viewmodel.activity.MainActivityViewMode
 
 import java.util.Locale;
 
+import vn.zalopay.sdk.ZaloPaySDK;
+
 //import vn.zalopay.sdk.ZaloPaySDK;
 
 
@@ -181,11 +183,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    @Override
-//    protected void onNewIntent(Intent intent) {
-//        super.onNewIntent(intent);
-//        ZaloPaySDK.getInstance().onResult(intent);
-//    }
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        ZaloPaySDK.getInstance().onResult(intent);
+        Log.e("MainActivity", "onNewIntent");
+    }
 
     @Override
     public void onPostCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
@@ -196,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
             Log.e("MainActivity", "Error inflating layout", e);
         }
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

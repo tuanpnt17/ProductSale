@@ -55,6 +55,7 @@ dependencies {
     implementation libs.activity
     implementation libs.constraintlayout
     implementation fileTree(dir: 'C:\\Users\\PHUC\\Downloads\\ZaloPay', include: ['*.aar', '*.jar'], exclude: [])
+    implementation fileTree(dir: 'D:\\Dowload\\ZaloPay', include: ['*.aar', '*.jar'], exclude: [])
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core

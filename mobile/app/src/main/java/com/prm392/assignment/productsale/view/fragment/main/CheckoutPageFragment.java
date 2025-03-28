@@ -40,8 +40,8 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import lecho.lib.hellocharts.view.LineChartView;
-//import vn.zalopay.sdk.Environment;
-//import vn.zalopay.sdk.ZaloPaySDK;
+import vn.zalopay.sdk.Environment;
+import vn.zalopay.sdk.ZaloPaySDK;
 
 
 public class CheckoutPageFragment extends Fragment {
@@ -57,13 +57,15 @@ public class CheckoutPageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        StrictMode.ThreadPolicy policy = new
-//                StrictMode.ThreadPolicy.Builder().permitAll().build();
-//        StrictMode.setThreadPolicy(policy);
-//
-//        // ZaloPay SDK Init
-//        ZaloPaySDK.init(2553, Environment.SANDBOX);
+        StrictMode.ThreadPolicy policy = new
+                StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        // ZaloPay SDK Init
+        ZaloPaySDK.init(2553, Environment.SANDBOX);
     }
+
+//
 
 
     @Override
@@ -104,7 +106,7 @@ public class CheckoutPageFragment extends Fragment {
             if (checkedId == R.id.cash) {
                 viewModel.setPaymentMethod("Cash");
             } else if (checkedId == R.id.creditCard) {
-                viewModel.setPaymentMethod("CreditCard");
+                viewModel.setPaymentMethod("ZaloPay");
             }
         });
 

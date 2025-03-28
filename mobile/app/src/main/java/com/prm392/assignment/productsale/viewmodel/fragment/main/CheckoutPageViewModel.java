@@ -34,6 +34,9 @@ import java.util.Locale;
 import lombok.Getter;
 import lombok.Setter;
 import retrofit2.Response;
+import vn.zalopay.sdk.ZaloPayError;
+import vn.zalopay.sdk.ZaloPaySDK;
+import vn.zalopay.sdk.listeners.PayOrderListener;
 //import vn.zalopay.sdk.ZaloPayError;
 //import vn.zalopay.sdk.ZaloPaySDK;
 //import vn.zalopay.sdk.listeners.PayOrderListener;
@@ -94,64 +97,72 @@ public class CheckoutPageViewModel extends ViewModel {
         return cartLiveData;
     }
 
-    public void buyNow(Context context){
-        if(paymentMethod == "Cash"){
-        if (cartModel == null) return;
-        int userId = userModel.getId();
-        String billingAddress = "Billing Address Placeholder";
+    public void buyNow(Context context) {
+        if (paymentMethod == "Cash") {
+            if (cartModel == null) return;
+            int userId = userModel.getId();
+            String billingAddress = userModel.getAddress();
 
-        completePaymentAndConvertCartToOrder(userId, "Cash", billingAddress).observeForever(response -> {
-            if (response != null && response.isSuccessful()) {
-                Toast.makeText(context, "Thanh toán thành công, giỏ hàng đã được chuyển thành đơn hàng.", Toast.LENGTH_SHORT).show();
-                Intent intent1 = new Intent(context, PaymentNotification.class);
-                intent1.putExtra("result", "Thanh toán thành công");
-                context.startActivity(intent1);
-            } else {
-                Toast.makeText(context, "Thanh toán thất bại, vui lòng thử lại.", Toast.LENGTH_SHORT).show();
-                Intent intent1 = new Intent(context, PaymentNotification.class);
-                intent1.putExtra("result", "Thanh toán thất bại");
-                context.startActivity(intent1);
+            completePaymentAndConvertCartToOrder(userId, "Cash", billingAddress).observeForever(response -> {
+                if (response != null && response.isSuccessful()) {
+                    Toast.makeText(context, "Thanh toán thành công, giỏ hàng đã được chuyển thành đơn hàng.", Toast.LENGTH_SHORT).show();
+                    Intent intent1 = new Intent(context, PaymentNotification.class);
+                    intent1.putExtra("result", "Thanh toán thành công");
+                    context.startActivity(intent1);
+                } else {
+                    Toast.makeText(context, "Thanh toán thất bại, vui lòng thử lại.", Toast.LENGTH_SHORT).show();
+                    Intent intent1 = new Intent(context, PaymentNotification.class);
+                    intent1.putExtra("result", "Thanh toán thất bại");
+                    context.startActivity(intent1);
+                }
+            });
+        } else if (paymentMethod == "ZaloPay") {
+            if (cartModel == null) return;
+            CreateOrder orderApi = new CreateOrder();
+            int userId = userModel.getId();
+            String billingAddress = userModel.getAddress();
+
+            String totalString = String.format(Locale.US, "%.0f", cartModel.getTotalPrice());
+
+            try {
+                JSONObject data = orderApi.createOrder(totalString);
+                String code = data.getString("return_code");
+                if (code.equals("1")) {
+                    String token = data.getString("zp_trans_token");
+                    ZaloPaySDK.getInstance().payOrder((Activity) context, token, "demozpdk://app", new PayOrderListener() {
+                        @Override
+                        public void onPaymentSucceeded(String s, String s1, String s2) {
+                            Intent intent1 = new Intent(context, PaymentNotification.class);
+                            intent1.putExtra("result", "Thanh toán thành công");
+                            completePaymentAndConvertCartToOrder(userId, "ZaloPay", billingAddress).observeForever(response -> {
+                                if (response != null && response.isSuccessful()) {
+                                    Toast.makeText(context, "Thanh toán thành công, giỏ hàng đã được chuyển thành đơn hàng.", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(context, "Thanh toán thất bại, vui lòng thử lại.", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            context.startActivity(intent1);
+                        }
+
+                        @Override
+                        public void onPaymentCanceled(String s, String s1) {
+                            Intent intent1 = new Intent(context, PaymentNotification.class);
+                            intent1.putExtra("result", "Hủy thanh toán");
+                            context.startActivity(intent1);
+                        }
+
+                        @Override
+                        public void onPaymentError(ZaloPayError zaloPayError, String s, String s1) {
+                            Intent intent1 = new Intent(context, PaymentNotification.class);
+                            intent1.putExtra("result", "Thanh toán thất bại");
+                            context.startActivity(intent1);
+                        }
+                    });
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        });
-    }}
-//    public void buyNow(Context context) {
-//        if (cartModel == null) return;
-//        CreateOrder orderApi = new CreateOrder();
-//
-//        String totalString = String.format(Locale.US, "%.0f", cartModel.getTotalPrice());
-//
-//        try {
-//            JSONObject data = orderApi.createOrder(totalString);
-//            String code = data.getString("return_code");
-//            if (code.equals("1")) {
-//                String token = data.getString("zp_trans_token");
-//                ZaloPaySDK.getInstance().payOrder((Activity) context, token, "demozpdk://app", new PayOrderListener() {
-//                    @Override
-//                    public void onPaymentSucceeded(String s, String s1, String s2) {
-//                        Intent intent1 = new Intent(context, PaymentNotification.class);
-//                    intent1.putExtra("result", "Thanh toán thành công");
-//                    context.startActivity(intent1);
-//                    }
-//
-//                    @Override
-//                    public void onPaymentCanceled(String s, String s1) {
-//                        Intent intent1 = new Intent(context, PaymentNotification.class);
-//                        intent1.putExtra("result", "Hủy thanh toán");
-//                        context.startActivity(intent1);
-//                    }
-//
-//                    @Override
-//                    public void onPaymentError(ZaloPayError zaloPayError, String s, String s1) {
-//                        Intent intent1 = new Intent(context, PaymentNotification.class);
-//                        intent1.putExtra("result", "Thanh toán thất bại");
-//                        context.startActivity(intent1);
-//                    }
-//                });
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
+        }
+    }
 }
