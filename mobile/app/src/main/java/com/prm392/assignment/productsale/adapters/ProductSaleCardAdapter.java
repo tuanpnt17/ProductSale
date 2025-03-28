@@ -125,13 +125,17 @@ public class ProductSaleCardAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         return data.size() + (hasMore ? 1 : 0); // Add 1 for footer if hasMore is true
     }
 
-    public void addProducts(ArrayList<ProductSaleModel> products) {
+    public void addProducts(ArrayList<ProductSaleModel> products, boolean replace) {
 
         recyclerView.post(() -> {
             int startPosition = data.size();
             data.addAll(products);
             notifyItemRangeInserted(startPosition, products.size());
+            if (replace) {
+                recyclerView.scrollToPosition(0);
+            }
         });
+
     }
 
     @SuppressLint("NotifyDataSetChanged")

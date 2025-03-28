@@ -57,6 +57,20 @@ public class PaymentResultFragment extends Fragment {
         new Handler().post(() -> {
             navController = ((MainActivity) getActivity()).getAppNavController();
         });
+        vb.imgFailedStatus.setVisibility(View.GONE);
+        vb.imgSuccessStatus.setVisibility(View.GONE);
+
+        String result = getArguments().getString("Result");
+        String title = getArguments().getString("Title");
+        String message = getArguments().getString("Message");
+
+        if (result.equals("Success")) {
+            vb.imgSuccessStatus.setVisibility(View.VISIBLE);
+        } else {
+            vb.imgFailedStatus.setVisibility(View.VISIBLE);
+        }
+        vb.textViewNotify.setText(title);
+        vb.textViewDetail.setText(message);
 
         vb.btnBackHome.setOnClickListener((v) -> {
             navController.navigate(R.id.action_paymentResultFragment_to_homeFragment);

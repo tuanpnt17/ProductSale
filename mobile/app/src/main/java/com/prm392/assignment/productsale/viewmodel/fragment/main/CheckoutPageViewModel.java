@@ -8,6 +8,8 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.gesture.OrientedBoundingBox;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -111,17 +113,19 @@ public class CheckoutPageViewModel extends ViewModel {
 
             completePaymentAndConvertCartToOrder(userId, "Cash", billingAddress).observeForever(response -> {
                 if (response != null && response.isSuccessful()) {
-                    Toast.makeText(context, "Thanh toán thành công, giỏ hàng đã được chuyển thành đơn hàng.", Toast.LENGTH_SHORT).show();
-//                    Intent intent1 = new Intent(context, PaymentNotification.class);
-//                    intent1.putExtra("result", "Thanh toán thành công");
-//                    context.startActivity(intent1);
                     NavController navController = ((MainActivity) context).getAppNavController();
-                    navController.navigate(R.id.action_checkoutPageFragment_to_paymentResultFragment);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("Result", "Success");
+                    bundle.putString("Title", "Thanh toán thành công");
+                    bundle.putString("Message", "Giỏ hàng đã được chuyển thành đơn hàng.");
+                    navController.navigate(R.id.action_checkoutPageFragment_to_paymentResultFragment, bundle);
                 } else {
-                    Toast.makeText(context, "Thanh toán thất bại, vui lòng thử lại.", Toast.LENGTH_SHORT).show();
-                    Intent intent1 = new Intent(context, PaymentNotification.class);
-                    intent1.putExtra("result", "Thanh toán thất bại");
-                    context.startActivity(intent1);
+                    NavController navController = ((MainActivity) context).getAppNavController();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("Result", "Failed");
+                    bundle.putString("Title", "Thanh toán thất bại");
+                    bundle.putString("Message", "Có lỗi xảy ra trong khi thanh toán đơn hàng.");
+                    navController.navigate(R.id.action_checkoutPageFragment_to_paymentResultFragment, bundle);
                 }
             });
         } else if (paymentMethod == "ZaloPay") {
@@ -140,32 +144,40 @@ public class CheckoutPageViewModel extends ViewModel {
                     ZaloPaySDK.getInstance().payOrder((Activity) context, token, "demozpdk://app", new PayOrderListener() {
                         @Override
                         public void onPaymentSucceeded(String s, String s1, String s2) {
-//                            Intent intent1 = new Intent(context, PaymentNotification.class);
-//                            intent1.putExtra("result", "Thanh toán thành công");
                             NavController navController = ((MainActivity) context).getAppNavController();
+                            Bundle bundle = new Bundle();
                             completePaymentAndConvertCartToOrder(userId, "ZaloPay", billingAddress).observeForever(response -> {
                                 if (response != null && response.isSuccessful()) {
-                                    Toast.makeText(context, "Thanh toán thành công, giỏ hàng đã được chuyển thành đơn hàng.", Toast.LENGTH_SHORT).show();
+                                    bundle.putString("Result", "Success");
+                                    bundle.putString("Title", "Thanh toán thành công");
+                                    bundle.putString("Message", "Giỏ hàng đã được chuyển thành đơn hàng. Xin cảm ơn!");
                                 } else {
-                                    Toast.makeText(context, "Thanh toán thất bại, vui lòng thử lại.", Toast.LENGTH_SHORT).show();
+                                    bundle.putString("Result", "Failed");
+                                    bundle.putString("Title", "Thanh toán thất bại");
+                                    bundle.putString("Message", "Có lỗi xảy ra trong khi thanh toán đơn hàng.");
                                 }
                             });
-//                            context.startActivity(intent1);
-                            navController.navigate(R.id.action_checkoutPageFragment_to_paymentResultFragment);
+                            navController.navigate(R.id.action_checkoutPageFragment_to_paymentResultFragment, bundle);
                         }
 
                         @Override
                         public void onPaymentCanceled(String s, String s1) {
-                            Intent intent1 = new Intent(context, PaymentNotification.class);
-                            intent1.putExtra("result", "Hủy thanh toán");
-                            context.startActivity(intent1);
+                            NavController navController = ((MainActivity) context).getAppNavController();
+                            Bundle bundle = new Bundle();
+                            bundle.putString("Result", "Failed");
+                            bundle.putString("Title", "Thanh toán thất bại");
+                            bundle.putString("Message", "Bạn đã từ chối thanh toán đơn hàng.");
+                            navController.navigate(R.id.action_checkoutPageFragment_to_paymentResultFragment, bundle);
                         }
 
                         @Override
                         public void onPaymentError(ZaloPayError zaloPayError, String s, String s1) {
-                            Intent intent1 = new Intent(context, PaymentNotification.class);
-                            intent1.putExtra("result", "Thanh toán thất bại");
-                            context.startActivity(intent1);
+                            NavController navController = ((MainActivity) context).getAppNavController();
+                            Bundle bundle = new Bundle();
+                            bundle.putString("Result", "Failed");
+                            bundle.putString("Title", "Thanh toán thất bại");
+                            bundle.putString("Message", "Bạn đã từ chối thanh toán đơn hàng.");
+                            navController.navigate(R.id.action_checkoutPageFragment_to_paymentResultFragment, bundle);
                         }
                     });
                 }
