@@ -152,7 +152,7 @@ public class SearchFragment extends Fragment {
                     } else {
                         vb.noResultsView.setVisibility(View.GONE);
                         ArrayList<ProductSaleModel> products = response.body().getProducts();
-                        adapter.addProducts(products);
+                        adapter.addProducts(products, replace);
                         adapter.setHasMore(response.body().isNext());
                     }
                     break;
