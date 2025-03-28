@@ -222,7 +222,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     void navigateToFragment(int id) {
-
         try {
             underlayNavigationDrawer.closeMenu();
             new Handler().postDelayed(() -> {

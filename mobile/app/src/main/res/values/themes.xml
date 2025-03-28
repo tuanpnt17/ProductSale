@@ -10,6 +10,7 @@
         <item name="colorError">@color/accent</item>
         <item name="colorOnError">@color/accent</item>
 
+        <item name="android:windowBackground">@drawable/main_logo</item>
         <item name="android:statusBarColor" tools:targetApi="31">?attr/background</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:navigationBarColor" tools:targetApi="o_mr1">?attr/background</item>
